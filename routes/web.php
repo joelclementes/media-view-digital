@@ -17,7 +17,6 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 
-    // Route::get('/medios-electronicos', [MediosElectronicosController::class, 'index'])->name('m-electronicos-index');
     require __DIR__ . '/medios-electronicos.php';
 
 });
