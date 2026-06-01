@@ -15,14 +15,23 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class Formulario extends Component
 {
     use WithFileUploads;
+    use WithPagination;
 
     //region PROPIEDADES GENERALES
 
     public string $tipo_medio = 'medios-electronicos';
+    public string $fecha_inicio_registro = '';
+    public string $fecha_fin_registro = '';
+    public string $busqueda_tabla = '';
+    public string $filtro_tipo_eleccion_id = '';
+    public int $cantidad_por_pagina = 10;
+
+    protected $paginationTheme = 'tailwind';
 
     //endregion
 
@@ -108,13 +117,17 @@ class Formulario extends Component
     public function mount(): void
     {
         $this->fecha = now()->format('Y-m-d');
+        $this->fecha_inicio_registro = now()->format('Y-m-d');
+        $this->fecha_fin_registro = now()->format('Y-m-d');
 
         $this->cargarCatalogos();
     }
 
     public function render()
     {
-        return view('livewire.medios.electronicos.formulario');
+        return view('livewire.medios.electronicos.formulario', [
+            'registros' => $this->consultarRegistros(),
+        ]);
     }
 
     //endregion
@@ -567,5 +580,94 @@ class Formulario extends Component
         $this->resetValidation();
     }
 
+    public function limpiarFiltrosTabla(): void
+    {
+        $this->fecha_inicio_registro = now()->format('Y-m-d');
+        $this->fecha_fin_registro = now()->format('Y-m-d');
+        $this->filtro_tipo_eleccion_id = '';
+        $this->busqueda_tabla = '';
+        $this->cantidad_por_pagina = 10;
+
+        $this->resetPage();
+    }
+
+    //endregion
+
+    //region TABLA DE REGISTROS
+    public function updatedFechaInicioRegistro(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFechaFinRegistro(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedBusquedaTabla(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedCantidadPorPagina(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFiltroTipoEleccionId(): void
+    {
+        $this->resetPage();
+    }
+
+    private function consultarRegistros()
+    {
+        return MonitoreoMedioElectronico::query()
+            ->leftJoin('sujetos', 'monitoreo_medios_electronicos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medios_electronicos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('portales_internet', 'monitoreo_medios_electronicos.portal_internet_id', '=', 'portales_internet.id')
+            ->select([
+                'monitoreo_medios_electronicos.id',
+                'monitoreo_medios_electronicos.referencia',
+                'monitoreo_medios_electronicos.fecha',
+                'monitoreo_medios_electronicos.url_pagina',
+                'monitoreo_medios_electronicos.archivos',
+                'monitoreo_medios_electronicos.created_at',
+                'sujetos.nombre as sujeto_nombre',
+                'partidos.nombre as organizacion_nombre',
+                'portales_internet.nombre as portal_nombre',
+            ])
+            ->where('monitoreo_medios_electronicos.tipo_medio', $this->tipo_medio)
+            ->when($this->fecha_inicio_registro, function ($query) {
+                $query->whereDate('monitoreo_medios_electronicos.created_at', '>=', $this->fecha_inicio_registro);
+            })
+            ->when($this->fecha_fin_registro, function ($query) {
+                $query->whereDate('monitoreo_medios_electronicos.created_at', '<=', $this->fecha_fin_registro);
+            })
+            ->when($this->filtro_tipo_eleccion_id !== '', function ($query) {
+                $query->where(
+                    'monitoreo_medios_electronicos.tipo_eleccion_id',
+                    $this->filtro_tipo_eleccion_id
+                );
+            })
+            ->when($this->busqueda_tabla, function ($query) {
+                $texto_busqueda = trim($this->busqueda_tabla);
+                $busqueda = '%' . $texto_busqueda . '%';
+
+                $query->where(function ($q) use ($texto_busqueda, $busqueda) {
+                    if (is_numeric($texto_busqueda)) {
+                        $q->where('monitoreo_medios_electronicos.id', (int) $texto_busqueda);
+                    }
+
+                    $q->orWhere('monitoreo_medios_electronicos.referencia', 'like', $busqueda)
+                        ->orWhere('monitoreo_medios_electronicos.observaciones', 'like', $busqueda)
+                        ->orWhere('monitoreo_medios_electronicos.url_pagina', 'like', $busqueda)
+                        ->orWhere('sujetos.nombre', 'like', $busqueda)
+                        ->orWhere('partidos.nombre', 'like', $busqueda)
+                        ->orWhere('portales_internet.nombre', 'like', $busqueda);
+                });
+            })
+            ->orderByDesc('monitoreo_medios_electronicos.id')
+            ->paginate($this->cantidad_por_pagina);
+    }
     //endregion
 }
