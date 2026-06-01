@@ -37,13 +37,19 @@
                 Limpiar
             </button>
 
-            <span wire:loading.remove wire:target="guardar">
-                {{ $registro_editando_id ? 'Actualizar registro' : 'Guardar registro' }}
-            </span>
+            <x-button type="button"
+        wire:click="guardar"
+        wire:loading.attr="disabled"
+        wire:target="guardar,archivos">
 
-            <span wire:loading wire:target="guardar">
-                {{ $registro_editando_id ? 'Actualizando...' : 'Guardando...' }}
-            </span>
+        <span wire:loading.remove wire:target="guardar">
+            {{ $registro_editando_id ? 'Actualizar registro' : 'Guardar registro' }}
+        </span>
+
+        <span wire:loading wire:target="guardar">
+            {{ $registro_editando_id ? 'Actualizando...' : 'Guardando...' }}
+        </span>
+    </x-button>
         </div>
     </div>
 

@@ -351,7 +351,7 @@ class Formulario extends Component
 
         $consecutivo_formateado = str_pad(
             (string) $consecutivo,
-            3,
+            2,
             '0',
             STR_PAD_LEFT
         );
