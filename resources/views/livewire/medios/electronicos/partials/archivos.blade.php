@@ -5,14 +5,8 @@
 
     <x-label for="archivos" value="Seleccionar archivo(s)" />
 
-    <input
-        id="archivos"
-        type="file"
-        wire:model.live="archivos"
-        multiple
-        accept="image/*"
-        class="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
-    />
+    <input id="archivos" type="file" wire:model.live="archivos" multiple accept="image/*"
+        class="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100" />
 
     <p class="mt-1 text-xs text-gray-500">
         Formatos permitidos: imágenes. Máximo 10 MB por archivo.
@@ -30,6 +24,30 @@
         Cargando archivos...
     </div>
 
+    @if (!empty($archivos_existentes))
+        <div class="mt-4">
+            <p class="mb-2 text-sm font-medium text-gray-700">
+                Imágenes actuales
+            </p>
+
+            <ul class="space-y-2 rounded-md border border-gray-200 bg-gray-50 p-3">
+                @foreach ($archivos_existentes as $indice => $archivo)
+                    <li class="flex items-center justify-between gap-3 text-sm text-gray-700">
+                        <a href="{{ Storage::url($archivo) }}" target="_blank"
+                            class="truncate text-primary-700 hover:underline">
+                            {{ basename($archivo) }}
+                        </a>
+
+                        <button type="button" wire:click="eliminarArchivoExistente({{ $indice }})"
+                            class="text-xs font-medium text-red-600 hover:text-red-800">
+                            Quitar
+                        </button>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     @if (!empty($archivos))
         <ul class="mt-3 space-y-2 rounded-md border border-gray-200 bg-gray-50 p-3">
             @foreach ($archivos as $indice => $archivo)
@@ -38,11 +56,8 @@
                         {{ $archivo->getClientOriginalName() }}
                     </span>
 
-                    <button
-                        type="button"
-                        wire:click="eliminarArchivo({{ $indice }})"
-                        class="text-xs font-medium text-red-600 hover:text-red-800"
-                    >
+                    <button type="button" wire:click="eliminarArchivo({{ $indice }})"
+                        class="text-xs font-medium text-red-600 hover:text-red-800">
                         Quitar
                     </button>
                 </li>

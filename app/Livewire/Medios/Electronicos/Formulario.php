@@ -98,6 +98,9 @@ class Formulario extends Component
     //region PROPIEDADES: ARCHIVOS
 
     public array $archivos = [];
+    public ?int $registro_editando_id = null;
+    public array $archivos_existentes = [];
+    public array $archivos_eliminados = [];
 
     //endregion
 
@@ -368,6 +371,19 @@ class Formulario extends Component
         return $ruta_relativa;
     }
 
+    public function eliminarArchivoExistente(int $indice): void
+    {
+        if (! isset($this->archivos_existentes[$indice])) {
+            return;
+        }
+
+        $this->archivos_eliminados[] = $this->archivos_existentes[$indice];
+
+        unset($this->archivos_existentes[$indice]);
+
+        $this->archivos_existentes = array_values($this->archivos_existentes);
+    }
+
     //endregion
 
     //region VALIDACIÓN EN TIEMPO REAL
@@ -401,7 +417,7 @@ class Formulario extends Component
             'referencia' => 'nullable|string|max:255',
             'observaciones' => 'nullable|string|max:255',
 
-            'archivos' => 'required|array|min:1',
+            'archivos' => $this->registro_editando_id ? 'nullable|array' : 'required|array|min:1',
             'archivos.*' => 'image|max:10240|mimes:jpg,jpeg,png',
         ];
     }
@@ -439,11 +455,98 @@ class Formulario extends Component
 
     //region GUARDADO
 
+    public function editar(int $id): void
+    {
+        $registro = MonitoreoMedioElectronico::findOrFail($id);
+
+        $this->registro_editando_id = $registro->id;
+
+        $sujeto = Sujeto::find($registro->sujeto_id);
+
+        $this->sujeto_seleccionado = $sujeto;
+        $this->sujeto_id = $registro->sujeto_id;
+        $this->busqueda_sujeto = $sujeto?->nombre ?? '';
+
+        $this->organizacion_politica_id = $registro->organizacion_politica_id;
+        $this->periodo_id = $registro->periodo_id;
+        $this->etapa_sujeto = $registro->etapa_sujeto;
+        $this->tipo_eleccion_id = $registro->tipo_eleccion_id;
+
+        $this->portal_internet_id = $registro->portal_internet_id;
+        $this->selector_portal = $registro->portal_internet_id ? (string) $registro->portal_internet_id : '';
+        $this->url_pagina = $registro->url_pagina ?? '';
+
+        $this->fecha = $registro->fecha?->format('Y-m-d') ?? now()->format('Y-m-d');
+        $this->tamano_id = $registro->tamano_id;
+        $this->genero_id = $registro->genero_id;
+
+        $this->genero_sujeto_id = $registro->genero_sujeto_id;
+        $this->nombre_autor = $registro->nombre_autor ?? '';
+
+        $this->referencia = $registro->referencia ?? '';
+        $this->observaciones = $registro->observaciones ?? '';
+
+        $this->archivos = [];
+        $this->archivos_existentes = $registro->archivos ?? [];
+        $this->archivos_eliminados = [];
+
+        $this->resetValidation();
+
+        session()->flash('success', 'Registro cargado para edición.');
+    }
+
     public function guardar(): void
     {
         $datos = $this->validate($this->rules(), $this->mensajes());
 
-        DB::transaction(function () use ($datos) {
+        $esta_editando = filled($this->registro_editando_id);
+
+        DB::transaction(function () use ($datos, $esta_editando) {
+            if ($esta_editando) {
+                $registro = MonitoreoMedioElectronico::findOrFail($this->registro_editando_id);
+
+                foreach ($this->archivos_eliminados as $ruta) {
+                    Storage::disk('public')->delete($ruta);
+                }
+
+                $rutas_nuevas = $this->guardarArchivosDelRegistro(
+                    registro_id: $registro->id,
+                    consecutivo_inicial: count($this->archivos_existentes) + 1
+                );
+
+                $rutas_archivos = array_values(array_merge(
+                    $this->archivos_existentes,
+                    $rutas_nuevas
+                ));
+
+                $registro->update([
+                    'tipo_medio' => $this->tipo_medio,
+
+                    'sujeto_id' => $datos['sujeto_id'],
+                    'organizacion_politica_id' => $datos['organizacion_politica_id'],
+                    'periodo_id' => $datos['periodo_id'],
+                    'etapa_sujeto' => $datos['etapa_sujeto'],
+                    'tipo_eleccion_id' => $datos['tipo_eleccion_id'],
+
+                    'portal_internet_id' => $datos['portal_internet_id'],
+                    'url_pagina' => $datos['url_pagina'],
+
+                    'fecha' => $datos['fecha'],
+                    'tamano_id' => $datos['tamano_id'],
+                    'genero_id' => $datos['genero_id'],
+
+                    'genero_sujeto_id' => $datos['genero_sujeto_id'],
+                    'nombre_autor' => $datos['nombre_autor'],
+
+                    'referencia' => $datos['referencia'],
+                    'observaciones' => $datos['observaciones'],
+
+                    'archivos' => $rutas_archivos,
+                ]);
+
+                return;
+            }
+
             $registro = MonitoreoMedioElectronico::create([
                 'tipo_medio' => $this->tipo_medio,
 
@@ -478,15 +581,20 @@ class Formulario extends Component
 
         $this->limpiarFormulario();
 
-        session()->flash('success', 'Registro de medio electrónico guardado correctamente.');
+        session()->flash(
+            'success',
+            $esta_editando
+                ? 'Registro actualizado correctamente.'
+                : 'Registro de medio electrónico guardado correctamente.'
+        );
     }
 
-    private function guardarArchivosDelRegistro(int $registro_id): array
+    private function guardarArchivosDelRegistro(int $registro_id, int $consecutivo_inicial = 1): array
     {
         $rutas_archivos = [];
 
         foreach ($this->archivos as $indice => $archivo) {
-            $consecutivo = $indice + 1;
+            $consecutivo = $consecutivo_inicial + $indice;
 
             $rutas_archivos[] = $this->guardarImagenOptimizada(
                 archivo: $archivo,
@@ -531,6 +639,9 @@ class Formulario extends Component
 
             'mostrar_formulario_portal',
             'nuevo_portal',
+            'registro_editando_id',
+            'archivos_existentes',
+            'archivos_eliminados',
         ]);
 
         $this->fecha = now()->format('Y-m-d');
