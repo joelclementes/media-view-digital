@@ -22,7 +22,7 @@
                             <button
                                 type="button"
                                 wire:click="seleccionarSujeto({{ $sujeto['id'] }})"
-                                class="block w-full text-left p-3 hover:bg-blue-50 border-b last:border-b-0"
+                                class="block w-full text-left p-3 hover:bg-primary-50 border-b last:border-b-0"
                             >
                                 <span class="font-medium">{{ $sujeto['nombre'] }}</span>
                             </button>
@@ -36,11 +36,11 @@
             @enderror
         </div>
     @else
-        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+        <div class="mb-4 p-3 bg-primary-50 rounded-lg">
             <div class="flex justify-between items-start gap-4">
                 <div>
                     <p class="text-sm text-gray-600">Sujeto seleccionado:</p>
-                    <p class="font-medium text-blue-800">{{ $sujeto_seleccionado->nombre }}</p>
+                    <p class="font-medium text-primary-800">{{ $sujeto_seleccionado->nombre }}</p>
                 </div>
 
                 <button
@@ -61,7 +61,7 @@
                 <select
                     id="organizacion_politica_id"
                     wire:model.live="organizacion_politica_id"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                     <option value="">Seleccionar organización</option>
                     @foreach ($partidos as $partido)
@@ -81,7 +81,7 @@
                 <select
                     id="periodo_id"
                     wire:model.live="periodo_id"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                     <option value="">Seleccionar periodo</option>
                     @foreach ($periodos as $periodo)
@@ -99,7 +99,7 @@
                 <select
                     id="etapa_sujeto"
                     wire:model.live="etapa_sujeto"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                     <option value="">Seleccionar etapa</option>
                     @foreach ($etapas_sujeto as $valor => $texto)
@@ -117,7 +117,7 @@
                 <select
                     id="tipo_eleccion_id"
                     wire:model.live="tipo_eleccion_id"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                     <option value="">Seleccionar tipo de elección</option>
                     @foreach ($tipos_eleccion as $tipo)

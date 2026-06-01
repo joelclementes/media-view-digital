@@ -26,7 +26,7 @@
             <select
                 id="tamano_id"
                 wire:model.live="tamano_id"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
                 <option value="">Seleccionar tamaño</option>
                 @foreach ($tamanos as $tamano)
@@ -45,7 +45,7 @@
             <select
                 id="genero_id"
                 wire:model.live="genero_id"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
                 <option value="">Seleccionar género</option>
                 @foreach ($generos as $genero)

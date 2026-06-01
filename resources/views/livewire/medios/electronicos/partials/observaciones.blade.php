@@ -11,7 +11,7 @@
         maxlength="255"
         rows="4"
         placeholder="Observaciones del registro, si aplica"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
     ></textarea>
 
     <div class="mt-1 flex justify-between text-xs text-gray-500">

@@ -216,20 +216,20 @@
                             </td>
 
                             <td class="px-4 py-3">
-                                <div class="flex items-center justify-center gap-2 text-blue-600">
+                                <div class="flex items-center justify-center gap-2 text-primary-600">
                                     <button type="button" title="Cualitativos"
-                                        class="rounded-md p-1.5 hover:bg-blue-50 hover:text-blue-800">
+                                        class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
                                         <x-lucide-file-diff class="h-5 w-5" />
                                     </button>
 
                                     <button type="button" title="Testigo"
-                                    class="rounded-md p-1.5 hover:bg-blue-50 hover:text-blue-800">
-                                    <x-lucide-file-type class="h-5 w-5" />
-                                </button>
+                                        class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
+                                        <x-lucide-file-type class="h-5 w-5" />
+                                    </button>
 
-                                <button type="button" title="Editar"
-                                class="rounded-md p-1.5 hover:bg-blue-50 hover:text-blue-800">
-                                <x-lucide-pencil class="h-5 w-5" />
+                                    <button type="button" title="Editar" wire:click="editar({{ $registro->id }})"
+                                        class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
+                                        <x-lucide-pencil class="h-5 w-5" />
                                     </button>
 
                                     <button type="button" title="Eliminar"
