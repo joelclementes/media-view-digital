@@ -32,6 +32,7 @@ class Formulario extends Component
     public int $cantidad_por_pagina = 10;
 
     protected $paginationTheme = 'tailwind';
+    public bool $mostrar_filtros_tabla = false;
 
     //endregion
 
@@ -117,7 +118,7 @@ class Formulario extends Component
     public function mount(): void
     {
         $this->fecha = now()->format('Y-m-d');
-        $this->fecha_inicio_registro = now()->format('Y-m-d');
+        $this->fecha_inicio_registro = now()->startOfMonth()->format('Y-m-d');
         $this->fecha_fin_registro = now()->format('Y-m-d');
 
         $this->cargarCatalogos();
@@ -465,17 +466,13 @@ class Formulario extends Component
                 'referencia' => $datos['referencia'],
                 'observaciones' => $datos['observaciones'],
 
-                'archivos' => [],
-                'payload' => [],
+                'archivos' => null,
             ]);
 
             $rutas_archivos = $this->guardarArchivosDelRegistro($registro->id);
 
-            $payload = $this->crearPayload($datos, $rutas_archivos);
-
             $registro->update([
                 'archivos' => $rutas_archivos,
-                'payload' => $payload,
             ]);
         });
 
@@ -501,38 +498,6 @@ class Formulario extends Component
         return $rutas_archivos;
     }
 
-    private function crearPayload(array $datos, array $rutas_archivos): array
-    {
-        return [
-            'persona' => [
-                'sujeto_id' => $datos['sujeto_id'],
-                'organizacion_politica_id' => $datos['organizacion_politica_id'],
-                'periodo_id' => $datos['periodo_id'],
-                'etapa_sujeto' => $datos['etapa_sujeto'],
-                'tipo_eleccion_id' => $datos['tipo_eleccion_id'],
-            ],
-            'medio' => [
-                'portal_internet_id' => $datos['portal_internet_id'],
-                'url_pagina' => $datos['url_pagina'],
-            ],
-            'publicacion' => [
-                'fecha' => $datos['fecha'],
-                'tamano_id' => $datos['tamano_id'],
-                'genero_id' => $datos['genero_id'],
-            ],
-            'autor' => [
-                'genero_sujeto_id' => $datos['genero_sujeto_id'],
-                'nombre_autor' => $datos['nombre_autor'],
-            ],
-            'referencia' => [
-                'referencia' => $datos['referencia'],
-            ],
-            'observaciones' => [
-                'observaciones' => $datos['observaciones'],
-            ],
-            'archivos' => $rutas_archivos,
-        ];
-    }
 
     //endregion
 
@@ -582,7 +547,7 @@ class Formulario extends Component
 
     public function limpiarFiltrosTabla(): void
     {
-        $this->fecha_inicio_registro = now()->format('Y-m-d');
+        $this->fecha_inicio_registro = now()->startOfMonth()->format('Y-m-d');
         $this->fecha_fin_registro = now()->format('Y-m-d');
         $this->filtro_tipo_eleccion_id = '';
         $this->busqueda_tabla = '';
@@ -617,6 +582,11 @@ class Formulario extends Component
     public function updatedFiltroTipoEleccionId(): void
     {
         $this->resetPage();
+    }
+
+    public function alternarFiltrosTabla(): void
+    {
+        $this->mostrar_filtros_tabla = ! $this->mostrar_filtros_tabla;
     }
 
     private function consultarRegistros()

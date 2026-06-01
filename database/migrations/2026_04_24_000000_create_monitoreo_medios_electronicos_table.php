@@ -29,7 +29,6 @@ return new class extends Migration
             $table->string('referencia')->nullable();
             $table->string('observaciones')->nullable();
             $table->json('archivos')->nullable();
-            $table->json('payload')->nullable();
             $table->timestamps();
         });
     }
