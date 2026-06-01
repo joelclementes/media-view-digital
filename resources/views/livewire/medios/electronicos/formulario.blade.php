@@ -295,45 +295,45 @@
                         Datos del registro
                     </h4>
 
-                    <dl class="space-y-3 text-sm">
+                    <dl class="space-y-1 text-sm">
                         <div>
                             <dt class="font-semibold text-gray-600">Org. política:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['organizacion'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['organizacion'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Sujeto:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['sujeto'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['sujeto'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Género del Sujeto:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['genero_sujeto'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['genero_sujeto'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Periodo:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['periodo'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['periodo'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Fecha Pub.:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['fecha'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['fecha'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Medio electrónico:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['portal'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['portal'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Tamaño Pub.:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['tamano'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['tamano'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Género:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['genero'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['genero'] ?? '' }}</dd>
                         </div>
 
                         <div>
@@ -352,12 +352,12 @@
 
                         <div>
                             <dt class="font-semibold text-gray-600">Referencia:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['referencia'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['referencia'] ?? '' }}</dd>
                         </div>
 
                         <div>
                             <dt class="font-semibold text-gray-600">Observ.:</dt>
-                            <dd class="text-gray-800">{{ $registro_cualitativo['observaciones'] ?? '' }}</dd>
+                            <dd class="text-primary-800">{{ $registro_cualitativo['observaciones'] ?? '' }}</dd>
                         </div>
                     </dl>
                 </div>
