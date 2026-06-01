@@ -12,6 +12,7 @@ use App\Models\Sujeto;
 use App\Models\TamanoPublicacion;
 use App\Models\TipoEleccion;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -19,7 +20,13 @@ class Formulario extends Component
 {
     use WithFileUploads;
 
+    //region PROPIEDADES GENERALES
+
     public string $tipo_medio = 'medios-electronicos';
+
+    //endregion
+
+    //region PROPIEDADES: SUJETO
 
     public string $busqueda_sujeto = '';
     public array $resultados_sujetos = [];
@@ -31,21 +38,19 @@ class Formulario extends Component
     public ?string $etapa_sujeto = null;
     public ?int $tipo_eleccion_id = null;
 
+    public array $etapas_sujeto = [
+        'candidatura' => 'Candidatura',
+        'precandidatura' => 'Precandidatura',
+        'candidatura_independiente' => 'Candidatura independiente',
+    ];
+
+    //endregion
+
+    //region PROPIEDADES: MEDIO ELECTRÓNICO
+
     public ?string $selector_portal = '';
     public ?int $portal_internet_id = null;
     public string $url_pagina = '';
-
-    public string $fecha = '';
-    public ?int $tamano_id = null;
-    public ?int $genero_id = null;
-
-    public ?int $genero_sujeto_id = null;
-    public string $nombre_autor = '';
-
-    public string $referencia = '';
-    public string $observaciones = '';
-
-    public array $archivos = [];
 
     public bool $mostrar_formulario_portal = false;
 
@@ -56,6 +61,38 @@ class Formulario extends Component
         'tipo' => '',
     ];
 
+    //endregion
+
+    //region PROPIEDADES: PUBLICACIÓN
+
+    public string $fecha = '';
+    public ?int $tamano_id = null;
+    public ?int $genero_id = null;
+
+    //endregion
+
+    //region PROPIEDADES: AUTOR
+
+    public ?int $genero_sujeto_id = null;
+    public string $nombre_autor = '';
+
+    //endregion
+
+    //region PROPIEDADES: REFERENCIA Y OBSERVACIONES
+
+    public string $referencia = '';
+    public string $observaciones = '';
+
+    //endregion
+
+    //region PROPIEDADES: ARCHIVOS
+
+    public array $archivos = [];
+
+    //endregion
+
+    //region PROPIEDADES: CATÁLOGOS
+
     public $partidos;
     public $periodos;
     public $tipos_eleccion;
@@ -64,11 +101,9 @@ class Formulario extends Component
     public $generos;
     public $generos_sujeto;
 
-    public array $etapas_sujeto = [
-        'candidatura' => 'Candidatura',
-        'precandidatura' => 'Precandidatura',
-        'candidatura_independiente' => 'Candidatura independiente',
-    ];
+    //endregion
+
+    //region CICLO DE VIDA
 
     public function mount(): void
     {
@@ -76,6 +111,15 @@ class Formulario extends Component
 
         $this->cargarCatalogos();
     }
+
+    public function render()
+    {
+        return view('livewire.medios.electronicos.formulario');
+    }
+
+    //endregion
+
+    //region CATÁLOGOS
 
     public function cargarCatalogos(): void
     {
@@ -92,6 +136,10 @@ class Formulario extends Component
 
         $this->generos_sujeto = GeneroSujeto::orderBy('nombre')->get();
     }
+
+    //endregion
+
+    //region SUJETO
 
     public function updatedBusquedaSujeto(): void
     {
@@ -140,6 +188,10 @@ class Formulario extends Component
             'tipo_eleccion_id',
         ]);
     }
+
+    //endregion
+
+    //region PORTALES
 
     public function updatedSelectorPortal($valor): void
     {
@@ -218,6 +270,10 @@ class Formulario extends Component
         ]);
     }
 
+    //endregion
+
+    //region ARCHIVOS
+
     public function updatedArchivos(): void
     {
         $this->validateOnly('archivos');
@@ -231,6 +287,77 @@ class Formulario extends Component
         }
     }
 
+    private function guardarImagenOptimizada($archivo, int $registro_id, int $consecutivo): string
+    {
+        $ruta_original = $archivo->getRealPath();
+        $mime = $archivo->getMimeType();
+
+        if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
+            $imagen_original = imagecreatefromjpeg($ruta_original);
+        } elseif ($mime === 'image/png') {
+            $imagen_original = imagecreatefrompng($ruta_original);
+        } else {
+            throw new \Exception('Formato de imagen no soportado.');
+        }
+
+        if (! $imagen_original) {
+            throw new \Exception('No se pudo procesar la imagen.');
+        }
+
+        $ancho_original = imagesx($imagen_original);
+        $alto_original = imagesy($imagen_original);
+
+        $ancho_maximo = 1200;
+
+        if ($ancho_original > $ancho_maximo) {
+            $nuevo_ancho = $ancho_maximo;
+            $nuevo_alto = intval(($alto_original * $nuevo_ancho) / $ancho_original);
+        } else {
+            $nuevo_ancho = $ancho_original;
+            $nuevo_alto = $alto_original;
+        }
+
+        $imagen_final = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
+
+        imagecopyresampled(
+            $imagen_final,
+            $imagen_original,
+            0,
+            0,
+            0,
+            0,
+            $nuevo_ancho,
+            $nuevo_alto,
+            $ancho_original,
+            $alto_original
+        );
+
+        $consecutivo_formateado = str_pad(
+            (string) $consecutivo,
+            3,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        $nombre_archivo = "electronicos_{$registro_id}_{$consecutivo_formateado}.jpg";
+        $ruta_relativa = "medios/electronicos/{$nombre_archivo}";
+
+        ob_start();
+        imagejpeg($imagen_final, null, 80);
+        $contenido_jpg = ob_get_clean();
+
+        Storage::disk('public')->put($ruta_relativa, $contenido_jpg);
+
+        imagedestroy($imagen_original);
+        imagedestroy($imagen_final);
+
+        return $ruta_relativa;
+    }
+
+    //endregion
+
+    //region VALIDACIÓN EN TIEMPO REAL
+
     public function updated($propiedad): void
     {
         if (array_key_exists($propiedad, $this->rules())) {
@@ -238,18 +365,72 @@ class Formulario extends Component
         }
     }
 
+    protected function rules(): array
+    {
+        return [
+            'sujeto_id' => 'required|exists:sujetos,id',
+            'organizacion_politica_id' => 'nullable|exists:partidos,id',
+            'periodo_id' => 'nullable|exists:periodos,id',
+            'etapa_sujeto' => 'nullable|in:candidatura,precandidatura,candidatura_independiente',
+            'tipo_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
+
+            'portal_internet_id' => 'nullable|exists:portales_internet,id',
+            'url_pagina' => 'required|url|max:500',
+
+            'fecha' => 'required|date',
+            'tamano_id' => 'required|exists:tamanos_publicacion,id',
+            'genero_id' => 'required|exists:generos,id',
+
+            'genero_sujeto_id' => 'required|exists:generos_sujetos,id',
+            'nombre_autor' => 'nullable|string|max:255',
+
+            'referencia' => 'nullable|string|max:255',
+            'observaciones' => 'nullable|string|max:255',
+
+            'archivos' => 'required|array|min:1',
+            'archivos.*' => 'image|max:10240|mimes:jpg,jpeg,png',
+        ];
+    }
+
+    protected function mensajes(): array
+    {
+        return [
+            'sujeto_id.required' => 'Debes seleccionar un sujeto.',
+            'sujeto_id.exists' => 'El sujeto seleccionado no existe.',
+
+            'url_pagina.required' => 'Debes capturar la URL de la publicación.',
+            'url_pagina.url' => 'La URL de la publicación no es válida.',
+
+            'fecha.required' => 'Debes capturar la fecha de publicación.',
+            'fecha.date' => 'La fecha no es válida.',
+
+            'tamano_id.required' => 'Debes seleccionar el tamaño de publicación.',
+            'genero_id.required' => 'Debes seleccionar el género periodístico.',
+
+            'genero_sujeto_id.required' => 'Debes seleccionar el género del autor.',
+
+            'referencia.max' => 'La referencia no puede exceder 255 caracteres.',
+            'observaciones.max' => 'Las observaciones no pueden exceder 255 caracteres.',
+
+            'archivos.required' => 'Debes seleccionar al menos un archivo.',
+            'archivos.array' => 'Debes seleccionar archivos válidos.',
+            'archivos.min' => 'Debes seleccionar al menos un archivo.',
+            'archivos.*.image' => 'Solo se permiten archivos de imagen.',
+            'archivos.*.mimes' => 'Solo se permiten imágenes JPG, JPEG o PNG.',
+            'archivos.*.max' => 'Cada imagen puede pesar máximo 10 MB.',
+        ];
+    }
+
+    //endregion
+
+    //region GUARDADO
+
     public function guardar(): void
     {
         $datos = $this->validate($this->rules(), $this->mensajes());
 
-        $rutas_archivos = [];
-
-        DB::transaction(function () use ($datos, &$rutas_archivos) {
-            foreach ($this->archivos as $archivo) {
-                $rutas_archivos[] = $archivo->store('medios/electronicos', 'public');
-            }
-
-            MonitoreoMedioElectronico::create([
+        DB::transaction(function () use ($datos) {
+            $registro = MonitoreoMedioElectronico::create([
                 'tipo_medio' => $this->tipo_medio,
 
                 'sujeto_id' => $datos['sujeto_id'],
@@ -271,37 +452,17 @@ class Formulario extends Component
                 'referencia' => $datos['referencia'],
                 'observaciones' => $datos['observaciones'],
 
-                'archivos' => $rutas_archivos,
+                'archivos' => [],
+                'payload' => [],
+            ]);
 
-                'payload' => [
-                    'persona' => [
-                        'sujeto_id' => $datos['sujeto_id'],
-                        'organizacion_politica_id' => $datos['organizacion_politica_id'],
-                        'periodo_id' => $datos['periodo_id'],
-                        'etapa_sujeto' => $datos['etapa_sujeto'],
-                        'tipo_eleccion_id' => $datos['tipo_eleccion_id'],
-                    ],
-                    'medio' => [
-                        'portal_internet_id' => $datos['portal_internet_id'],
-                        'url_pagina' => $datos['url_pagina'],
-                    ],
-                    'publicacion' => [
-                        'fecha' => $datos['fecha'],
-                        'tamano_id' => $datos['tamano_id'],
-                        'genero_id' => $datos['genero_id'],
-                    ],
-                    'autor' => [
-                        'genero_sujeto_id' => $datos['genero_sujeto_id'],
-                        'nombre_autor' => $datos['nombre_autor'],
-                    ],
-                    'referencia' => [
-                        'referencia' => $datos['referencia'],
-                    ],
-                    'observaciones' => [
-                        'observaciones' => $datos['observaciones'],
-                    ],
-                    'archivos' => $rutas_archivos,
-                ],
+            $rutas_archivos = $this->guardarArchivosDelRegistro($registro->id);
+
+            $payload = $this->crearPayload($datos, $rutas_archivos);
+
+            $registro->update([
+                'archivos' => $rutas_archivos,
+                'payload' => $payload,
             ]);
         });
 
@@ -309,6 +470,60 @@ class Formulario extends Component
 
         session()->flash('success', 'Registro de medio electrónico guardado correctamente.');
     }
+
+    private function guardarArchivosDelRegistro(int $registro_id): array
+    {
+        $rutas_archivos = [];
+
+        foreach ($this->archivos as $indice => $archivo) {
+            $consecutivo = $indice + 1;
+
+            $rutas_archivos[] = $this->guardarImagenOptimizada(
+                archivo: $archivo,
+                registro_id: $registro_id,
+                consecutivo: $consecutivo
+            );
+        }
+
+        return $rutas_archivos;
+    }
+
+    private function crearPayload(array $datos, array $rutas_archivos): array
+    {
+        return [
+            'persona' => [
+                'sujeto_id' => $datos['sujeto_id'],
+                'organizacion_politica_id' => $datos['organizacion_politica_id'],
+                'periodo_id' => $datos['periodo_id'],
+                'etapa_sujeto' => $datos['etapa_sujeto'],
+                'tipo_eleccion_id' => $datos['tipo_eleccion_id'],
+            ],
+            'medio' => [
+                'portal_internet_id' => $datos['portal_internet_id'],
+                'url_pagina' => $datos['url_pagina'],
+            ],
+            'publicacion' => [
+                'fecha' => $datos['fecha'],
+                'tamano_id' => $datos['tamano_id'],
+                'genero_id' => $datos['genero_id'],
+            ],
+            'autor' => [
+                'genero_sujeto_id' => $datos['genero_sujeto_id'],
+                'nombre_autor' => $datos['nombre_autor'],
+            ],
+            'referencia' => [
+                'referencia' => $datos['referencia'],
+            ],
+            'observaciones' => [
+                'observaciones' => $datos['observaciones'],
+            ],
+            'archivos' => $rutas_archivos,
+        ];
+    }
+
+    //endregion
+
+    //region LIMPIEZA
 
     public function limpiarFormulario(): void
     {
@@ -352,64 +567,5 @@ class Formulario extends Component
         $this->resetValidation();
     }
 
-    protected function rules(): array
-    {
-        return [
-            'sujeto_id' => 'required|exists:sujetos,id',
-            'organizacion_politica_id' => 'nullable|exists:partidos,id',
-            'periodo_id' => 'nullable|exists:periodos,id',
-            'etapa_sujeto' => 'nullable|in:candidatura,precandidatura,candidatura_independiente',
-            'tipo_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
-
-            'portal_internet_id' => 'nullable|exists:portales_internet,id',
-            'url_pagina' => 'required|url|max:500',
-
-            'fecha' => 'required|date',
-            'tamano_id' => 'required|exists:tamanos_publicacion,id',
-            'genero_id' => 'required|exists:generos,id',
-
-            'genero_sujeto_id' => 'required|exists:generos_sujetos,id',
-            'nombre_autor' => 'nullable|string|max:255',
-
-            'referencia' => 'nullable|string|max:255',
-            'observaciones' => 'nullable|string|max:255',
-
-            'archivos' => 'required|array|min:1',
-            'archivos.*' => 'file|max:10240|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx,mp3,mp4',
-        ];
-    }
-
-    protected function mensajes(): array
-    {
-        return [
-            'sujeto_id.required' => 'Debes seleccionar un sujeto.',
-            'sujeto_id.exists' => 'El sujeto seleccionado no existe.',
-
-            'url_pagina.required' => 'Debes capturar la URL de la publicación.',
-            'url_pagina.url' => 'La URL de la publicación no es válida.',
-
-            'fecha.required' => 'Debes capturar la fecha de publicación.',
-            'fecha.date' => 'La fecha no es válida.',
-
-            'tamano_id.required' => 'Debes seleccionar el tamaño de publicación.',
-            'genero_id.required' => 'Debes seleccionar el género periodístico.',
-
-            'genero_sujeto_id.required' => 'Debes seleccionar el género del autor.',
-
-            'referencia.max' => 'La referencia no puede exceder 255 caracteres.',
-            'observaciones.max' => 'Las observaciones no pueden exceder 255 caracteres.',
-
-            'archivos.required' => 'Debes seleccionar al menos un archivo.',
-            'archivos.array' => 'Debes seleccionar archivos válidos.',
-            'archivos.min' => 'Debes seleccionar al menos un archivo.',
-            'archivos.*.file' => 'Uno de los archivos no es válido.',
-            'archivos.*.mimes' => 'Formato de archivo no permitido.',
-            'archivos.*.max' => 'Cada archivo puede pesar máximo 10 MB.',
-        ];
-    }
-
-    public function render()
-    {
-        return view('livewire.medios.electronicos.formulario');
-    }
+    //endregion
 }

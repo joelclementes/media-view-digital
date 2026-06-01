@@ -10,11 +10,12 @@
         type="file"
         wire:model.live="archivos"
         multiple
+        accept="image/*"
         class="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
     />
 
     <p class="mt-1 text-xs text-gray-500">
-        Formatos permitidos: PDF, imágenes, Word, Excel, audio y video. Máximo 10 MB por archivo.
+        Formatos permitidos: imágenes. Máximo 10 MB por archivo.
     </p>
 
     @error('archivos')
