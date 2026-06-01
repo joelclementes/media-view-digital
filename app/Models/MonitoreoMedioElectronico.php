@@ -28,7 +28,16 @@ class MonitoreoMedioElectronico extends Model
         'referencia',
         'observaciones',
         'archivos',
-        'payload',
+        'cuali_valoracion',
+        'cuali_lenguaje_inclusivo',
+        'cuali_estereotipo',
+        'cuali_violencia_temas_id',
+        'cuali_tipos_eleccion_id',
+        'cuali_resumen',
+        'cuali_modalidad',
+        'cuali_objetividad',
+        'cuali_tipo_mensaje',
+        'cuali_formato',
     ];
 
     protected $casts = [

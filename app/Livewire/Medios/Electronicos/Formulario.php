@@ -11,6 +11,7 @@ use App\Models\PortalInternet;
 use App\Models\Sujeto;
 use App\Models\TamanoPublicacion;
 use App\Models\TipoEleccion;
+use App\Models\ViolenciaTema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -104,6 +105,30 @@ class Formulario extends Component
 
     //endregion
 
+    //region PROPIEDADES: CUALITATIVOS
+
+    public bool $mostrar_panel_cualitativo = false;
+    public ?int $registro_cualitativo_id = null;
+    public array $registro_cualitativo = [];
+    public array $imagenes_cualitativas = [];
+    public int $imagen_actual_indice = 0;
+    public bool $modal_imagen_abierto = false;
+
+    public ?string $cuali_valoracion = null;
+    public ?string $cuali_lenguaje_inclusivo = null;
+    public ?string $cuali_estereotipo = null;
+    public ?int $cuali_violencia_temas_id = null;
+    public ?int $cuali_tipos_eleccion_id = null;
+    public ?string $cuali_resumen = null;
+    public ?string $cuali_modalidad = null;
+    public ?string $cuali_objetividad = null;
+    public ?string $cuali_tipo_mensaje = null;
+    public ?string $cuali_formato = null;
+
+    public $violencia_temas;
+
+    //endregion
+
     //region PROPIEDADES: CATÁLOGOS
 
     public $partidos;
@@ -143,6 +168,7 @@ class Formulario extends Component
         $this->partidos = Partido::orderBy('nombre')->get();
         $this->periodos = Periodo::orderBy('nombre')->get();
         $this->tipos_eleccion = TipoEleccion::orderBy('nombre')->get();
+        $this->violencia_temas = ViolenciaTema::orderBy('nombre')->get();
 
         $this->portales = PortalInternet::orderBy('nombre')->get();
         $this->tamanos = TamanoPublicacion::orderBy('nombre')->get();
@@ -419,6 +445,17 @@ class Formulario extends Component
 
             'archivos' => $this->registro_editando_id ? 'nullable|array' : 'required|array|min:1',
             'archivos.*' => 'image|max:10240|mimes:jpg,jpeg,png',
+
+            'cuali_valoracion' => 'nullable|in:Positiva,Negativa,Neutral',
+            'cuali_lenguaje_inclusivo' => 'nullable|in:Si,No',
+            'cuali_estereotipo' => 'nullable|string|max:255',
+            'cuali_violencia_temas_id' => 'nullable|exists:violencia_temas,id',
+            'cuali_tipos_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
+            'cuali_resumen' => 'nullable|string',
+            'cuali_modalidad' => 'nullable|in:Politica,Electoral',
+            'cuali_objetividad' => 'nullable|string',
+            'cuali_tipo_mensaje' => 'nullable|in:A favor,Descalificativo,Crítica,Imparcial',
+            'cuali_formato' => 'nullable|in:Mensaje,De entrevista,Informativo-narrativo',
         ];
     }
 
@@ -750,5 +787,162 @@ class Formulario extends Component
             ->orderByDesc('monitoreo_medios_electronicos.id')
             ->paginate($this->cantidad_por_pagina);
     }
+    //endregion
+
+    //region CUALITATIVOS
+
+    public function abrirCualitativos(int $id): void
+    {
+        $registro = MonitoreoMedioElectronico::query()
+            ->leftJoin('sujetos', 'monitoreo_medios_electronicos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medios_electronicos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_medios_electronicos.periodo_id', '=', 'periodos.id')
+            ->leftJoin('portales_internet', 'monitoreo_medios_electronicos.portal_internet_id', '=', 'portales_internet.id')
+            ->leftJoin('tamanos_publicacion', 'monitoreo_medios_electronicos.tamano_id', '=', 'tamanos_publicacion.id')
+            ->leftJoin('generos', 'monitoreo_medios_electronicos.genero_id', '=', 'generos.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_medios_electronicos.genero_sujeto_id', '=', 'generos_sujetos.id')
+            ->where('monitoreo_medios_electronicos.id', $id)
+            ->select([
+                'monitoreo_medios_electronicos.*',
+                'sujetos.nombre as sujeto_nombre',
+                'partidos.nombre as organizacion_nombre',
+                'periodos.nombre as periodo_nombre',
+                'portales_internet.nombre as portal_nombre',
+                'tamanos_publicacion.nombre as tamano_nombre',
+                'generos.nombre as genero_nombre',
+                'generos_sujetos.nombre as genero_sujeto_nombre',
+            ])
+            ->firstOrFail();
+
+        $this->registro_cualitativo_id = $registro->id;
+
+        $this->registro_cualitativo = [
+            'organizacion' => $registro->organizacion_nombre ?? 'Sin organización',
+            'sujeto' => $registro->sujeto_nombre ?? 'Sin sujeto',
+            'genero_sujeto' => $registro->genero_sujeto_nombre ?? 'Sin género',
+            'periodo' => $registro->periodo_nombre ?? 'Sin periodo',
+            'fecha' => $registro->fecha ? $registro->fecha->format('d-M-Y') : 'Sin fecha',
+            'portal' => $registro->portal_nombre ?? 'Sin medio electrónico',
+            'tamano' => $registro->tamano_nombre ?? 'Sin tamaño',
+            'genero' => $registro->genero_nombre ?? 'Sin género',
+            'url' => $registro->url_pagina ?? '',
+            'referencia' => $registro->referencia ?? '',
+            'observaciones' => $registro->observaciones ?? '',
+        ];
+
+        $this->imagenes_cualitativas = is_array($registro->archivos)
+            ? array_values($registro->archivos)
+            : [];
+
+        $this->imagen_actual_indice = 0;
+        $this->modal_imagen_abierto = false;
+
+        $this->cuali_valoracion = $registro->cuali_valoracion;
+        $this->cuali_lenguaje_inclusivo = $registro->cuali_lenguaje_inclusivo;
+        $this->cuali_estereotipo = $registro->cuali_estereotipo;
+        $this->cuali_violencia_temas_id = $registro->cuali_violencia_temas_id;
+        $this->cuali_tipos_eleccion_id = $registro->cuali_tipos_eleccion_id;
+        $this->cuali_resumen = $registro->cuali_resumen;
+        $this->cuali_modalidad = $registro->cuali_modalidad;
+        $this->cuali_objetividad = $registro->cuali_objetividad;
+        $this->cuali_tipo_mensaje = $registro->cuali_tipo_mensaje;
+        $this->cuali_formato = $registro->cuali_formato;
+
+        $this->mostrar_panel_cualitativo = true;
+        $this->resetValidation();
+    }
+
+    public function guardarCualitativos(): void
+    {
+        if (! $this->registro_cualitativo_id) {
+            session()->flash('error', 'No hay registro seleccionado.');
+            return;
+        }
+
+        $datos = $this->validate([
+            'cuali_valoracion' => 'nullable|in:Positiva,Negativa,Neutral',
+            'cuali_lenguaje_inclusivo' => 'nullable|in:Si,No',
+            'cuali_estereotipo' => 'nullable|string|max:255',
+            'cuali_violencia_temas_id' => 'nullable|exists:violencia_temas,id',
+            'cuali_tipos_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
+            'cuali_resumen' => 'nullable|string',
+            'cuali_modalidad' => 'nullable|in:Politica,Electoral',
+            'cuali_objetividad' => 'nullable|string',
+            'cuali_tipo_mensaje' => 'nullable|in:A favor,Descalificativo,Crítica,Imparcial',
+            'cuali_formato' => 'nullable|in:Mensaje,De entrevista,Informativo-narrativo',
+        ]);
+
+        MonitoreoMedioElectronico::findOrFail($this->registro_cualitativo_id)
+            ->update($datos);
+
+        $this->cerrarCualitativos();
+
+        session()->flash('success', 'Datos cualitativos guardados correctamente.');
+    }
+
+    public function cerrarCualitativos(): void
+    {
+        $this->mostrar_panel_cualitativo = false;
+        $this->registro_cualitativo_id = null;
+        $this->registro_cualitativo = [];
+        $this->imagenes_cualitativas = [];
+        $this->imagen_actual_indice = 0;
+        $this->modal_imagen_abierto = false;
+
+        $this->reset([
+            'cuali_valoracion',
+            'cuali_lenguaje_inclusivo',
+            'cuali_estereotipo',
+            'cuali_violencia_temas_id',
+            'cuali_tipos_eleccion_id',
+            'cuali_resumen',
+            'cuali_modalidad',
+            'cuali_objetividad',
+            'cuali_tipo_mensaje',
+            'cuali_formato',
+        ]);
+
+        $this->resetValidation();
+    }
+
+    public function abrirModalImagen(int $indice = 0): void
+    {
+        if (! isset($this->imagenes_cualitativas[$indice])) {
+            return;
+        }
+
+        $this->imagen_actual_indice = $indice;
+        $this->modal_imagen_abierto = true;
+    }
+
+    public function cerrarModalImagen(): void
+    {
+        $this->modal_imagen_abierto = false;
+    }
+
+    public function imagenAnterior(): void
+    {
+        if (count($this->imagenes_cualitativas) <= 1) {
+            return;
+        }
+
+        $this->imagen_actual_indice =
+            $this->imagen_actual_indice === 0
+            ? count($this->imagenes_cualitativas) - 1
+            : $this->imagen_actual_indice - 1;
+    }
+
+    public function imagenSiguiente(): void
+    {
+        if (count($this->imagenes_cualitativas) <= 1) {
+            return;
+        }
+
+        $this->imagen_actual_indice =
+            $this->imagen_actual_indice === count($this->imagenes_cualitativas) - 1
+            ? 0
+            : $this->imagen_actual_indice + 1;
+    }
+
     //endregion
 }
