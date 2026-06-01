@@ -35,6 +35,10 @@ class Formulario extends Component
     protected $paginationTheme = 'tailwind';
     public bool $mostrar_filtros_tabla = false;
 
+    public bool $mostrar_modal_eliminar = false;
+    public ?int $registro_eliminar_id = null;
+    public string $registro_eliminar_referencia = '';
+
     //endregion
 
     //region PROPIEDADES: SUJETO
@@ -944,5 +948,65 @@ class Formulario extends Component
             : $this->imagen_actual_indice + 1;
     }
 
+    //endregion
+
+    //region ELIMINAR
+
+    public function confirmarEliminacion(int $id): void
+    {
+        $registro = MonitoreoMedioElectronico::findOrFail($id);
+
+        $this->registro_eliminar_id = $registro->id;
+
+        $this->registro_eliminar_referencia =
+            $registro->referencia
+            ?: 'Registro #' . $registro->id;
+
+        $this->mostrar_modal_eliminar = true;
+    }
+
+    public function cancelarEliminacion(): void
+    {
+        $this->mostrar_modal_eliminar = false;
+        $this->registro_eliminar_id = null;
+        $this->registro_eliminar_referencia = '';
+    }
+
+    public function eliminar(): void
+    {
+        if (! $this->registro_eliminar_id) {
+            return;
+        }
+
+        $registro = MonitoreoMedioElectronico::findOrFail(
+            $this->registro_eliminar_id
+        );
+
+        DB::transaction(function () use ($registro) {
+
+            $archivos = is_array($registro->archivos)
+                ? $registro->archivos
+                : [];
+
+            foreach ($archivos as $ruta) {
+
+                if (
+                    $ruta &&
+                    Storage::disk('public')->exists($ruta)
+                ) {
+                    Storage::disk('public')->delete($ruta);
+                }
+            }
+
+            $registro->delete();
+        });
+
+        $this->cancelarEliminacion();
+
+        session()->flash(
+            'success',
+            'Registro eliminado correctamente.'
+        );
+    }
     //endregion
 }
