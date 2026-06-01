@@ -29,6 +29,17 @@ return new class extends Migration
             $table->string('referencia')->nullable();
             $table->string('observaciones')->nullable();
             $table->json('archivos')->nullable();
+
+            $table->string('cuali_valoracion')->comment('Positiva/Negativa/Neutral');
+            $table->string('cuali_lenguaje_inclusivo')->comment('Si,No');
+            $table->string('cuali_estereotipo')->comment('NA/Personas indígenas/Creencias religiosas de las personas/Personas afroamericanas... ');
+            $table->foreignId('cuali_violencia_temas_id')->constrained('violencia_temas')->comment('"Igualdad de género"; relación con violencia_temas');
+            $table->foreignId('cuali_tipos_eleccion_id')->constrained('tipos_eleccion')->comment('"Candidatura"; relación con tipos_eleccion');
+            $table->text('cuali_resumen');
+            $table->string('cuali_modalidad')->comment('Politica/Electoral');
+            $table->text('cuali_objetividad');
+            $table->string('cuali_tipo_mensaje')->comment('A favor/Descalificativo/Crítica/Imparcial');
+            $table->string('cuali_formato')->comment('Mensaje/De entrevista/Informativo-narrativo');
             $table->timestamps();
         });
     }
