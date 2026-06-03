@@ -23,7 +23,7 @@ class MonitoreoMedioElectronico extends Model
         'fecha',
         'tamano_id',
         'genero_id',
-        'genero_sujeto_id',
+        'genero_autor_id',
         'nombre_autor',
         'referencia',
         'observaciones',

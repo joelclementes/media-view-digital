@@ -88,7 +88,7 @@ class Formulario extends Component
 
     //region PROPIEDADES: AUTOR
 
-    public ?int $genero_sujeto_id = null;
+    public ?int $genero_autor_id = null;
     public string $nombre_autor = '';
 
     //endregion
@@ -441,7 +441,7 @@ class Formulario extends Component
             'tamano_id' => 'required|exists:tamanos_publicacion,id',
             'genero_id' => 'required|exists:generos,id',
 
-            'genero_sujeto_id' => 'required|exists:generos_sujetos,id',
+            'genero_autor_id' => 'required|exists:generos_sujetos,id',
             'nombre_autor' => 'nullable|string|max:255',
 
             'referencia' => 'nullable|string|max:255',
@@ -478,7 +478,7 @@ class Formulario extends Component
             'tamano_id.required' => 'Debes seleccionar el tamaño de publicación.',
             'genero_id.required' => 'Debes seleccionar el género periodístico.',
 
-            'genero_sujeto_id.required' => 'Debes seleccionar el género del autor.',
+            'genero_autor_id.required' => 'Debes seleccionar el género del autor.',
 
             'referencia.max' => 'La referencia no puede exceder 255 caracteres.',
             'observaciones.max' => 'Las observaciones no pueden exceder 255 caracteres.',
@@ -521,7 +521,7 @@ class Formulario extends Component
         $this->tamano_id = $registro->tamano_id;
         $this->genero_id = $registro->genero_id;
 
-        $this->genero_sujeto_id = $registro->genero_sujeto_id;
+        $this->genero_autor_id = $registro->genero_autor_id;
         $this->nombre_autor = $registro->nombre_autor ?? '';
 
         $this->referencia = $registro->referencia ?? '';
@@ -576,7 +576,7 @@ class Formulario extends Component
                     'tamano_id' => $datos['tamano_id'],
                     'genero_id' => $datos['genero_id'],
 
-                    'genero_sujeto_id' => $datos['genero_sujeto_id'],
+                    'genero_autor_id' => $datos['genero_autor_id'],
                     'nombre_autor' => $datos['nombre_autor'],
 
                     'referencia' => $datos['referencia'],
@@ -604,7 +604,7 @@ class Formulario extends Component
                 'tamano_id' => $datos['tamano_id'],
                 'genero_id' => $datos['genero_id'],
 
-                'genero_sujeto_id' => $datos['genero_sujeto_id'],
+                'genero_autor_id' => $datos['genero_autor_id'],
                 'nombre_autor' => $datos['nombre_autor'],
 
                 'referencia' => $datos['referencia'],
@@ -631,7 +631,7 @@ class Formulario extends Component
             'fecha' => $this->fecha,
             'tamano_id' => $this->tamano_id,
             'genero_id' => $this->genero_id,
-            'genero_sujeto_id' => $this->genero_sujeto_id,
+            'genero_autor_id' => $this->genero_autor_id,
             'nombre_autor' => $this->nombre_autor,
             'referencia' => $this->referencia,
             'observaciones' => $this->observaciones,
@@ -688,7 +688,7 @@ class Formulario extends Component
             'tamano_id',
             'genero_id',
 
-            'genero_sujeto_id',
+            'genero_autor_id',
             'nombre_autor',
 
             'referencia',
@@ -821,7 +821,7 @@ class Formulario extends Component
             ->leftJoin('portales_internet', 'monitoreo_medios_electronicos.portal_internet_id', '=', 'portales_internet.id')
             ->leftJoin('tamanos_publicacion', 'monitoreo_medios_electronicos.tamano_id', '=', 'tamanos_publicacion.id')
             ->leftJoin('generos', 'monitoreo_medios_electronicos.genero_id', '=', 'generos.id')
-            ->leftJoin('generos_sujetos', 'monitoreo_medios_electronicos.genero_sujeto_id', '=', 'generos_sujetos.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_medios_electronicos.genero_autor_id', '=', 'generos_sujetos.id')
             ->where('monitoreo_medios_electronicos.id', $id)
             ->select([
                 'monitoreo_medios_electronicos.*',
@@ -1004,7 +1004,7 @@ class Formulario extends Component
         $this->tamano_id = ! empty($datos['tamano_id']) ? (int) $datos['tamano_id'] : null;
         $this->genero_id = ! empty($datos['genero_id']) ? (int) $datos['genero_id'] : null;
 
-        $this->genero_sujeto_id = ! empty($datos['genero_sujeto_id']) ? (int) $datos['genero_sujeto_id'] : null;
+        $this->genero_autor_id = ! empty($datos['genero_autor_id']) ? (int) $datos['genero_autor_id'] : null;
         $this->nombre_autor = $datos['nombre_autor'] ?? '';
 
         $this->referencia = $datos['referencia'] ?? '';

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->date('fecha');
             $table->foreignId('tamano_id')->constrained('tamanos_publicacion');
             $table->foreignId('genero_id')->constrained('generos');
-            $table->foreignId('genero_sujeto_id')->constrained('generos_sujetos');
+            $table->foreignId('genero_autor_id')->constrained('generos_sujetos');
             $table->string('nombre_autor')->nullable();
             $table->string('referencia')->nullable();
             $table->string('observaciones')->nullable();

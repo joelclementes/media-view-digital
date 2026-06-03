@@ -5,11 +5,11 @@
 
     <div class="grid grid-cols-1 gap-4">
         <div>
-            <x-label for="genero_sujeto_id" value="Género del autor" />
+            <x-label for="genero_autor_id" value="Género del autor" />
 
             <select
-                id="genero_sujeto_id"
-                wire:model.live="genero_sujeto_id"
+                id="genero_autor_id"
+                wire:model.live="genero_autor_id"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
                 <option value="">Seleccionar género</option>
@@ -18,7 +18,7 @@
                 @endforeach
             </select>
 
-            @error('genero_sujeto_id')
+            @error('genero_autor_id')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
