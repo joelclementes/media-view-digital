@@ -620,6 +620,23 @@ class Formulario extends Component
             ]);
         });
 
+        $this->dispatch('electronicos-registro-guardado', datos: [
+            'sujeto_id' => $this->sujeto_id,
+            'organizacion_politica_id' => $this->organizacion_politica_id,
+            'periodo_id' => $this->periodo_id,
+            'etapa_sujeto' => $this->etapa_sujeto,
+            'tipo_eleccion_id' => $this->tipo_eleccion_id,
+            'portal_internet_id' => $this->portal_internet_id,
+            'url_pagina' => $this->url_pagina,
+            'fecha' => $this->fecha,
+            'tamano_id' => $this->tamano_id,
+            'genero_id' => $this->genero_id,
+            'genero_sujeto_id' => $this->genero_sujeto_id,
+            'nombre_autor' => $this->nombre_autor,
+            'referencia' => $this->referencia,
+            'observaciones' => $this->observaciones,
+        ]);
+
         $this->limpiarFormulario();
 
         session()->flash(
@@ -879,6 +896,19 @@ class Formulario extends Component
         MonitoreoMedioElectronico::findOrFail($this->registro_cualitativo_id)
             ->update($datos);
 
+        $this->dispatch('electronicos-cualitativos-guardados', datos: [
+            'cuali_valoracion' => $this->cuali_valoracion,
+            'cuali_lenguaje_inclusivo' => $this->cuali_lenguaje_inclusivo,
+            'cuali_estereotipo' => $this->cuali_estereotipo,
+            'cuali_violencia_temas_id' => $this->cuali_violencia_temas_id,
+            'cuali_tipos_eleccion_id' => $this->cuali_tipos_eleccion_id,
+            'cuali_resumen' => $this->cuali_resumen,
+            'cuali_modalidad' => $this->cuali_modalidad,
+            'cuali_objetividad' => $this->cuali_objetividad,
+            'cuali_tipo_mensaje' => $this->cuali_tipo_mensaje,
+            'cuali_formato' => $this->cuali_formato,
+        ]);
+
         $this->cerrarCualitativos();
 
         session()->flash('success', 'Datos cualitativos guardados correctamente.');
@@ -946,6 +976,66 @@ class Formulario extends Component
             $this->imagen_actual_indice === count($this->imagenes_cualitativas) - 1
             ? 0
             : $this->imagen_actual_indice + 1;
+    }
+
+    //endregion
+
+    //region RECUPERAR INFO ANTERIOR
+
+    public function recuperarInfoAnterior(array $datos): void
+    {
+        $this->sujeto_id = ! empty($datos['sujeto_id']) ? (int) $datos['sujeto_id'] : null;
+
+        $sujeto = $this->sujeto_id ? Sujeto::find($this->sujeto_id) : null;
+
+        $this->sujeto_seleccionado = $sujeto;
+        $this->busqueda_sujeto = $sujeto?->nombre ?? '';
+
+        $this->organizacion_politica_id = ! empty($datos['organizacion_politica_id']) ? (int) $datos['organizacion_politica_id'] : null;
+        $this->periodo_id = ! empty($datos['periodo_id']) ? (int) $datos['periodo_id'] : null;
+        $this->etapa_sujeto = $datos['etapa_sujeto'] ?? null;
+        $this->tipo_eleccion_id = ! empty($datos['tipo_eleccion_id']) ? (int) $datos['tipo_eleccion_id'] : null;
+
+        $this->portal_internet_id = ! empty($datos['portal_internet_id']) ? (int) $datos['portal_internet_id'] : null;
+        $this->selector_portal = $this->portal_internet_id ? (string) $this->portal_internet_id : '';
+        $this->url_pagina = $datos['url_pagina'] ?? '';
+
+        $this->fecha = $datos['fecha'] ?? now()->format('Y-m-d');
+        $this->tamano_id = ! empty($datos['tamano_id']) ? (int) $datos['tamano_id'] : null;
+        $this->genero_id = ! empty($datos['genero_id']) ? (int) $datos['genero_id'] : null;
+
+        $this->genero_sujeto_id = ! empty($datos['genero_sujeto_id']) ? (int) $datos['genero_sujeto_id'] : null;
+        $this->nombre_autor = $datos['nombre_autor'] ?? '';
+
+        $this->referencia = $datos['referencia'] ?? '';
+        $this->observaciones = $datos['observaciones'] ?? '';
+
+        $this->archivos = [];
+        $this->archivos_existentes = [];
+        $this->archivos_eliminados = [];
+        $this->registro_editando_id = null;
+
+        $this->resetValidation();
+
+        session()->flash('success', 'Información anterior recuperada. Debes seleccionar nuevamente las imágenes.');
+    }
+
+    public function recuperarDatosCualitativos(array $datos): void
+    {
+        $this->cuali_valoracion = $datos['cuali_valoracion'] ?? null;
+        $this->cuali_lenguaje_inclusivo = $datos['cuali_lenguaje_inclusivo'] ?? null;
+        $this->cuali_estereotipo = $datos['cuali_estereotipo'] ?? null;
+        $this->cuali_violencia_temas_id = ! empty($datos['cuali_violencia_temas_id']) ? (int) $datos['cuali_violencia_temas_id'] : null;
+        $this->cuali_tipos_eleccion_id = ! empty($datos['cuali_tipos_eleccion_id']) ? (int) $datos['cuali_tipos_eleccion_id'] : null;
+        $this->cuali_resumen = $datos['cuali_resumen'] ?? null;
+        $this->cuali_modalidad = $datos['cuali_modalidad'] ?? null;
+        $this->cuali_objetividad = $datos['cuali_objetividad'] ?? null;
+        $this->cuali_tipo_mensaje = $datos['cuali_tipo_mensaje'] ?? null;
+        $this->cuali_formato = $datos['cuali_formato'] ?? null;
+
+        $this->resetValidation();
+
+        session()->flash('success', 'Datos cualitativos recuperados.');
     }
 
     //endregion

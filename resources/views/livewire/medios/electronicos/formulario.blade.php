@@ -13,6 +13,14 @@
 
     @if (!$mostrar_panel_cualitativo)
         <div class="bg-white overflow-hidden shadow-md sm:rounded-md p-4">
+
+            <div class="mb-4 flex justify-start">
+                <button type="button" onclick="recuperarInfoAnteriorMedioElectronico()"
+                    class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
+                    Recuperar info anterior
+                </button>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @include('livewire.medios.electronicos.partials.persona')
                 @include('livewire.medios.electronicos.partials.medio')
@@ -481,6 +489,13 @@
                     Formulario cualitativo
                 </h4>
 
+            <div class="flex justify-start">
+                <button type="button" onclick="recuperarDatosCualitativosMedioElectronico()"
+                    class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
+                    Recuperar datos cualitativos
+                </button>
+            </div>
+
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <x-label for="cuali_valoracion" value="Valoración" />
@@ -655,3 +670,62 @@
         </div>
     @endif
 </div>
+
+@script
+<script>
+    const ELECTRONICOS_INFO_KEY = 'media_view_digital_electronicos_info_anterior';
+    const ELECTRONICOS_CUALITATIVOS_KEY = 'media_view_digital_electronicos_datos_cualitativos';
+
+    $wire.on('electronicos-registro-guardado', (event) => {
+        const datos = event.datos ?? event[0]?.datos ?? null;
+
+        if (!datos) {
+            return;
+        }
+
+        localStorage.setItem(ELECTRONICOS_INFO_KEY, JSON.stringify(datos));
+    });
+
+    $wire.on('electronicos-cualitativos-guardados', (event) => {
+        const datos = event.datos ?? event[0]?.datos ?? null;
+
+        if (!datos) {
+            return;
+        }
+
+        localStorage.setItem(ELECTRONICOS_CUALITATIVOS_KEY, JSON.stringify(datos));
+    });
+
+    window.recuperarInfoAnteriorMedioElectronico = function () {
+        const datosGuardados = localStorage.getItem(ELECTRONICOS_INFO_KEY);
+
+        if (!datosGuardados) {
+            alert('No hay información anterior guardada en este navegador.');
+            return;
+        }
+
+        try {
+            const datos = JSON.parse(datosGuardados);
+            $wire.recuperarInfoAnterior(datos);
+        } catch (error) {
+            alert('No se pudo recuperar la información anterior.');
+        }
+    };
+
+    window.recuperarDatosCualitativosMedioElectronico = function () {
+        const datosGuardados = localStorage.getItem(ELECTRONICOS_CUALITATIVOS_KEY);
+
+        if (!datosGuardados) {
+            alert('No hay datos cualitativos guardados en este navegador.');
+            return;
+        }
+
+        try {
+            const datos = JSON.parse(datosGuardados);
+            $wire.recuperarDatosCualitativos(datos);
+        } catch (error) {
+            alert('No se pudieron recuperar los datos cualitativos.');
+        }
+    };
+</script>
+@endscript
