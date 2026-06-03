@@ -5,8 +5,21 @@
 
     <x-label for="archivos" value="Seleccionar archivo(s)" />
 
-    <input id="archivos" type="file" wire:model.live="archivos" multiple accept="image/*"
-        class="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100" />
+    {{-- <input id="archivos" type="file" wire:model.live="archivos" multiple accept="image/*"
+        class="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100" /> --}}
+
+    <div>
+        <input id="archivos" type="file" wire:model.live="archivos" multiple accept="image/*" class="hidden" />
+
+        <label for="archivos"
+            class="inline-flex cursor-pointer items-center rounded-md bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-100">
+            Seleccionar imágenes
+        </label>
+
+        <span class="ml-3 text-sm text-gray-500">
+            JPG, JPEG o PNG
+        </span>
+    </div>
 
     <p class="mt-1 text-xs text-gray-500">
         Formatos permitidos: imágenes. Máximo 10 MB por archivo.
