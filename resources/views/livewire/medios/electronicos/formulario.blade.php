@@ -239,10 +239,11 @@
                                             <x-lucide-file-diff class="h-5 w-5" />
                                         </button>
 
-                                        <button type="button" title="Testigo"
+                                        <a href="{{ route('m-electronicos-testigo', $registro->id) }}"
+                                            target="_blank" title="Testigo"
                                             class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
                                             <x-lucide-file-type class="h-5 w-5" />
-                                        </button>
+                                        </a>
 
                                         <button type="button" title="Editar"
                                             wire:click="editar({{ $registro->id }})"
@@ -489,12 +490,12 @@
                     Formulario cualitativo
                 </h4>
 
-            <div class="flex justify-start">
-                <button type="button" onclick="recuperarDatosCualitativosMedioElectronico()"
-                    class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
-                    Recuperar datos cualitativos
-                </button>
-            </div>
+                <div class="flex justify-start">
+                    <button type="button" onclick="recuperarDatosCualitativosMedioElectronico()"
+                        class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
+                        Recuperar datos cualitativos
+                    </button>
+                </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
@@ -612,10 +613,22 @@
                         <x-input-error for="cuali_resumen" class="mt-1" />
                     </div>
 
-                    <div class="md:col-span-2">
+                    {{-- <div class="md:col-span-2">
                         <x-label for="cuali_objetividad" value="Objetividad" />
                         <textarea id="cuali_objetividad" wire:model="cuali_objetividad" rows="4"
                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                        <x-input-error for="cuali_objetividad" class="mt-1" />
+                    </div> --}}
+                    <div class="md:col-span-2">
+                        <x-label for="cuali_objetividad" value="Objetividad" />
+
+                        <textarea id="cuali_objetividad" wire:model.live="cuali_objetividad" rows="4" maxlength="330"
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+
+                        <div class="mt-1 text-right text-xs text-gray-500">
+                            {{ mb_strlen($cuali_objetividad ?? '') }}/330
+                        </div>
+
                         <x-input-error for="cuali_objetividad" class="mt-1" />
                     </div>
                 </div>
@@ -672,60 +685,60 @@
 </div>
 
 @script
-<script>
-    const ELECTRONICOS_INFO_KEY = 'media_view_digital_electronicos_info_anterior';
-    const ELECTRONICOS_CUALITATIVOS_KEY = 'media_view_digital_electronicos_datos_cualitativos';
+    <script>
+        const ELECTRONICOS_INFO_KEY = 'media_view_digital_electronicos_info_anterior';
+        const ELECTRONICOS_CUALITATIVOS_KEY = 'media_view_digital_electronicos_datos_cualitativos';
 
-    $wire.on('electronicos-registro-guardado', (event) => {
-        const datos = event.datos ?? event[0]?.datos ?? null;
+        $wire.on('electronicos-registro-guardado', (event) => {
+            const datos = event.datos ?? event[0]?.datos ?? null;
 
-        if (!datos) {
-            return;
-        }
+            if (!datos) {
+                return;
+            }
 
-        localStorage.setItem(ELECTRONICOS_INFO_KEY, JSON.stringify(datos));
-    });
+            localStorage.setItem(ELECTRONICOS_INFO_KEY, JSON.stringify(datos));
+        });
 
-    $wire.on('electronicos-cualitativos-guardados', (event) => {
-        const datos = event.datos ?? event[0]?.datos ?? null;
+        $wire.on('electronicos-cualitativos-guardados', (event) => {
+            const datos = event.datos ?? event[0]?.datos ?? null;
 
-        if (!datos) {
-            return;
-        }
+            if (!datos) {
+                return;
+            }
 
-        localStorage.setItem(ELECTRONICOS_CUALITATIVOS_KEY, JSON.stringify(datos));
-    });
+            localStorage.setItem(ELECTRONICOS_CUALITATIVOS_KEY, JSON.stringify(datos));
+        });
 
-    window.recuperarInfoAnteriorMedioElectronico = function () {
-        const datosGuardados = localStorage.getItem(ELECTRONICOS_INFO_KEY);
+        window.recuperarInfoAnteriorMedioElectronico = function() {
+            const datosGuardados = localStorage.getItem(ELECTRONICOS_INFO_KEY);
 
-        if (!datosGuardados) {
-            alert('No hay información anterior guardada en este navegador.');
-            return;
-        }
+            if (!datosGuardados) {
+                alert('No hay información anterior guardada en este navegador.');
+                return;
+            }
 
-        try {
-            const datos = JSON.parse(datosGuardados);
-            $wire.recuperarInfoAnterior(datos);
-        } catch (error) {
-            alert('No se pudo recuperar la información anterior.');
-        }
-    };
+            try {
+                const datos = JSON.parse(datosGuardados);
+                $wire.recuperarInfoAnterior(datos);
+            } catch (error) {
+                alert('No se pudo recuperar la información anterior.');
+            }
+        };
 
-    window.recuperarDatosCualitativosMedioElectronico = function () {
-        const datosGuardados = localStorage.getItem(ELECTRONICOS_CUALITATIVOS_KEY);
+        window.recuperarDatosCualitativosMedioElectronico = function() {
+            const datosGuardados = localStorage.getItem(ELECTRONICOS_CUALITATIVOS_KEY);
 
-        if (!datosGuardados) {
-            alert('No hay datos cualitativos guardados en este navegador.');
-            return;
-        }
+            if (!datosGuardados) {
+                alert('No hay datos cualitativos guardados en este navegador.');
+                return;
+            }
 
-        try {
-            const datos = JSON.parse(datosGuardados);
-            $wire.recuperarDatosCualitativos(datos);
-        } catch (error) {
-            alert('No se pudieron recuperar los datos cualitativos.');
-        }
-    };
-</script>
+            try {
+                const datos = JSON.parse(datosGuardados);
+                $wire.recuperarDatosCualitativos(datos);
+            } catch (error) {
+                alert('No se pudieron recuperar los datos cualitativos.');
+            }
+        };
+    </script>
 @endscript
