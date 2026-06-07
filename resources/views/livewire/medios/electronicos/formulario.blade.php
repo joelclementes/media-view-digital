@@ -22,22 +22,22 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @include('livewire.medios.electronicos.partials.persona')
+                @include('livewire.medios.shared.persona')
                 @include('livewire.medios.electronicos.partials.medio')
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @include('livewire.medios.electronicos.partials.publicacion')
-                @include('livewire.medios.electronicos.partials.autor')
+                @include('livewire.medios.shared.autor')
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @include('livewire.medios.electronicos.partials.referencia')
-                @include('livewire.medios.electronicos.partials.observaciones')
+                @include('livewire.medios.shared.referencia')
+                @include('livewire.medios.shared.observaciones')
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @include('livewire.medios.electronicos.partials.archivos')
+                @include('livewire.medios.shared.archivos')
             </div>
 
             <div class="mt-6 flex justify-end gap-3">
