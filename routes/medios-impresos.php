@@ -3,7 +3,7 @@
 use App\Http\Controllers\MediosImpresosController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('can:registrar_medios_impresos')->group(function () {
+Route::middleware('can:ver_medios_impresos')->group(function () {
     Route::get('/medios-impresos', [MediosImpresosController::class, 'index'])
         ->name('m-impresos-index');
 

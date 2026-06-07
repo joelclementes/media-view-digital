@@ -1,162 +1,174 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 p-6 lg:p-8">
-    <a href="{{ route('m-electronicos-index') }}"
-        class="block max-w-sm rounded-md
+    @can('ver_medios_electronicos')
+        <a href="{{ route('m-electronicos-index') }}"
+            class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
 
-        <div
-            class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
                hover:shadow-lg hover:shadow-secondary-400">
 
-            <div class="flex justify-center pt-6">
-                <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-electronicos-2.svg') }}"
-                    alt="">
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-electronicos-2.svg') }}"
+                        alt="">
+                </div>
+
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Medios electrónicos
+                    </h5>
+                </div>
+
             </div>
+        </a>
+    @endcan
 
-            <div class="p-6 text-center">
-                <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                    Medios electrónicos
-                </h5>
-            </div>
-
-        </div>
-    </a>
-
-    <a href="{{ route('m-impresos-index') }}"
-        class="block max-w-sm rounded-md
+    @can('ver_medios_impresos')
+        <a href="{{ route('m-impresos-index') }}"
+            class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
 
-        <div
-            class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
                hover:shadow-lg hover:shadow-secondary-400">
 
-            <div class="flex justify-center pt-6">
-                <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-impresos-2.svg') }}"
-                    alt="">
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-impresos-2.svg') }}"
+                        alt="">
+                </div>
+
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Medios impresos
+                    </h5>
+                </div>
+
             </div>
+        </a>
+    @endcan
 
-            <div class="p-6 text-center">
-                <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                    Medios impresos
-                </h5>
-            </div>
-
-        </div>
-    </a>
-
-    <a href="#"
-        class="block max-w-sm rounded-md
+    @can('ver_radio')
+        <a href="#"
+            class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
 
-        <div
-            class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
                hover:shadow-lg hover:shadow-secondary-400">
 
-            <div class="flex justify-center pt-6">
-                <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-propaganda-movil-2.svg') }}"
-                    alt="">
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-radio-2.svg') }}" alt="">
+                </div>
+
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Radio
+                    </h5>
+                </div>
             </div>
+        </a>
+    @endcan
 
-            <div class="p-6 text-center">
-                <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                    Propaganda móvil
-                </h5>
-            </div>
-
-        </div>
-    </a>
-
-    <a href="#"
-        class="block max-w-sm rounded-md
+    @can('ver_television')
+        <a href="#"
+            class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
 
-        <div
-            class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
                hover:shadow-lg hover:shadow-secondary-400">
 
-            <div class="flex justify-center pt-6">
-                <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-radio-2.svg') }}" alt="">
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-television.svg') }}"
+                        alt="">
+                </div>
+
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Televisión
+                    </h5>
+                </div>
+
             </div>
+        </a>
+    @endcan
 
-            <div class="p-6 text-center">
-                <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                    Radio
-                </h5>
-            </div>
-
-        </div>
-    </a>
-
-    <a href="#"
-        class="block max-w-sm rounded-md
+    @can('ver_soportes_promocionales')
+        <a href="#"
+            class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
 
-        <div
-            class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
                hover:shadow-lg hover:shadow-secondary-400">
 
-            <div class="flex justify-center pt-6">
-                <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-soportes-promocionales.svg') }}"
-                    alt="">
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-soportes-promocionales.svg') }}"
+                        alt="">
+                </div>
+
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Soportes promocionales
+                    </h5>
+                </div>
+
             </div>
+        </a>
+    @endcan
 
-            <div class="p-6 text-center">
-                <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                    Soportes promocionales
-                </h5>
-            </div>
-
-        </div>
-    </a>
-
-    <a href="#"
-        class="block max-w-sm rounded-md
+    @can('ver_moviles')
+        <a href="#"
+            class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
 
-        <div
-            class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
                hover:shadow-lg hover:shadow-secondary-400">
 
-            <div class="flex justify-center pt-6">
-                <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-television.svg') }}"
-                    alt="">
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-propaganda-movil-2.svg') }}"
+                        alt="">
+                </div>
+
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Propaganda móvil
+                    </h5>
+                </div>
+
             </div>
+        </a>
+    @endcan
 
-            <div class="p-6 text-center">
-                <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                    Televisión
-                </h5>
-            </div>
-
-        </div>
-    </a>
-
-    <a href="#"
-        class="block max-w-sm rounded-md
+    @can('ver_cine')
+        <a href="#"
+            class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
 
-        <div
-            class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
                hover:shadow-lg hover:shadow-secondary-400">
 
-            <div class="flex justify-center pt-6">
-                <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-cine.svg') }}"
-                    alt="">
-            </div>
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/m-cine.svg') }}" alt="">
+                </div>
 
-            <div class="p-6 text-center">
-                <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                    Cine
-                </h5>
-            </div>
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Cine
+                    </h5>
+                </div>
 
-        </div>
-    </a>
+            </div>
+        </a>
+    @endcan
 
 </div>

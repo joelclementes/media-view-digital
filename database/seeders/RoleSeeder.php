@@ -15,28 +15,31 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         //
+        $rolSuperUsuario = Role::create(['name' => 'Super Usuario']);
         $rolAdministrador = Role::create(['name' => 'Administrador']);
-        $rolUsuario = Role::create(['name' => 'Usuario']);
+        $rolCapturista = Role::create(['name' => 'Capturista']);
         $rolConsultor = Role::create(['name' => 'Consultor']);
 
 
-        Permission::create(['name' => 'configurar_sistema'])->syncRoles([$rolAdministrador]);
-        Permission::create(['name' => 'administrar_catalogos'])->syncRoles([$rolAdministrador]);
-        Permission::create(['name' => 'borrar_registros'])->syncRoles([$rolAdministrador]);
+        Permission::create(['name' => 'administrar_catalogos'])->syncRoles([$rolSuperUsuario,$rolAdministrador]);
 
-        Permission::create(['name' => 'subir_reportes'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'ver_reportesr'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'registrar_medios_alternos'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'registrar_medios_electronicos'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'registrar_medios_impresos'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'registrar_moviles'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'registrar_radio'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'registrar_television'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'registrar_cine'])->syncRoles([$rolAdministrador, $rolUsuario]);
+        Permission::create(['name' => 'subir_reportes'])->syncRoles([$rolSuperUsuario,$rolAdministrador]);
+        Permission::create(['name' => 'ver_reportes'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolConsultor]);
+        Permission::create(['name' => 'ver_soportes_promocionales'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
+        Permission::create(['name' => 'ver_medios_electronicos'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
+        Permission::create(['name' => 'ver_medios_impresos'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
+        Permission::create(['name' => 'ver_moviles'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
+        Permission::create(['name' => 'ver_radio'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
+        Permission::create(['name' => 'ver_television'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
+        Permission::create(['name' => 'ver_cine'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
 
-        Permission::create(['name' => 'crear_medio'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'editar_medio'])->syncRoles([$rolAdministrador, $rolUsuario]);
-        Permission::create(['name' => 'eliminar_medio'])->syncRoles([$rolAdministrador]);
-        Permission::create(['name' => 'crear_testigo'])->syncRoles([$rolAdministrador, $rolUsuario, $rolConsultor]);
+        Permission::create(['name' => 'administrar_roles_permisos'])->syncRoles([$rolSuperUsuario]);
+        Permission::create(['name' => 'administrar_usuarios'])->syncRoles([$rolSuperUsuario,$rolAdministrador]);
+
+        Permission::create(['name' => 'crear_medio'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista]);
+        Permission::create(['name' => 'crear_datos_cualitativos'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista]);
+        Permission::create(['name' => 'crear_testigo'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
+        Permission::create(['name' => 'editar_medio'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista]);
+        Permission::create(['name' => 'eliminar_medio'])->syncRoles([$rolSuperUsuario,$rolAdministrador]);
     }
 }
