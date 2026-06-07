@@ -132,13 +132,6 @@
         <div class="space-y-6">
             <div class="flex items-center justify-between">
 
-                <div class="flex justify-start mb-5">
-                    <button type="button" onclick="recuperarDatosCualitativosMedioImpreso()"
-                        class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
-                        Recuperar datos cualitativos
-                    </button>
-                </div>
-
                 <div>
                     <h3 class="text-xl font-semibold text-gray-800">Captura de datos cualitativos</h3>
                     <p class="text-sm text-gray-500">Registro #{{ $registro_cualitativo_id }}</p>
@@ -230,8 +223,8 @@
                         @endphp
                         <button type="button" wire:click="abrirModalImagen(0)"
                             class="block w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-                            <img src="{{ asset('storage/' . $imagenes_cualitativas[0]) }}"
-                                alt="Imagen del registro" class="h-[360px] w-full object-contain">
+                            <img src="{{ asset('storage/' . $imagenes_cualitativas[0]) }}" alt="Imagen del registro"
+                                class="h-[360px] w-full object-contain">
                         </button>
 
                         <p class="mt-3 text-center text-sm text-gray-500">
@@ -248,6 +241,13 @@
             </div>
 
             <div class="rounded-lg bg-white p-5 shadow-md">
+
+                <div class="flex justify-start mb-5">
+                    <button type="button" onclick="recuperarDatosCualitativosMedioImpreso()"
+                        class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
+                        Recuperar datos cualitativos
+                    </button>
+                </div>
                 <h4 class="mb-5 text-lg font-semibold text-gray-800">Formulario cualitativo</h4>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -338,8 +338,16 @@
 
                     <div>
                         <x-label for="cuali_resumen" value="Resumen" />
-                        <textarea id="cuali_resumen" wire:model="cuali_resumen" rows="4"
-                            class="w-full rounded-md border-gray-300 shadow-sm"></textarea>
+
+                        <textarea id="cuali_resumen" wire:model.live.debounce.500ms="cuali_resumen" maxlength="255" rows="4"
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+
+                        <div class="mt-1 flex justify-between text-xs text-gray-500">
+                            <span>Máximo 255 caracteres.</span>
+                            <span>{{ strlen($cuali_resumen ?? '') }}/255</span>
+                        </div>
+
+                        <x-input-error for="cuali_resumen" class="mt-1" />
                     </div>
                 </div>
 

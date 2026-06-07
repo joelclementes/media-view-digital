@@ -455,9 +455,9 @@ class Formulario extends Component
             'cuali_estereotipo' => 'nullable|string|max:255',
             'cuali_violencia_temas_id' => 'nullable|exists:violencia_temas,id',
             'cuali_tipos_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
-            'cuali_resumen' => 'nullable|string',
+            'cuali_resumen' => 'nullable|string|max:255',
             'cuali_modalidad' => 'nullable|in:Politica,Electoral',
-            'cuali_objetividad' => 'nullable|string',
+            'cuali_objetividad' => 'nullable|string|max:255',
             'cuali_tipo_mensaje' => 'nullable|in:A favor,Descalificativo,Crítica,Imparcial',
             'cuali_formato' => 'nullable|in:Mensaje,De entrevista,Informativo-narrativo',
         ];
@@ -886,9 +886,9 @@ class Formulario extends Component
             'cuali_estereotipo' => 'nullable|string|max:255',
             'cuali_violencia_temas_id' => 'nullable|exists:violencia_temas,id',
             'cuali_tipos_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
-            'cuali_resumen' => 'nullable|string',
+            'cuali_resumen' => 'nullable|string|max:255',
             'cuali_modalidad' => 'nullable|in:Politica,Electoral',
-            'cuali_objetividad' => 'nullable|string',
+            'cuali_objetividad' => 'nullable|string|max:255',
             'cuali_tipo_mensaje' => 'nullable|in:A favor,Descalificativo,Crítica,Imparcial',
             'cuali_formato' => 'nullable|in:Mensaje,De entrevista,Informativo-narrativo',
         ]);

@@ -606,27 +606,29 @@
                         <x-input-error for="cuali_formato" class="mt-1" />
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div class="">
                         <x-label for="cuali_resumen" value="Resumen" />
-                        <textarea id="cuali_resumen" wire:model="cuali_resumen" rows="4"
+
+                        <textarea id="cuali_resumen" wire:model.live.debounce.500ms="cuali_resumen" maxlength="255" rows="4"
                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+
+                        <div class="mt-1 flex justify-between text-xs text-gray-500">
+                            <span>Máximo 255 caracteres.</span>
+                            <span>{{ strlen($cuali_resumen ?? '') }}/255</span>
+                        </div>
+
                         <x-input-error for="cuali_resumen" class="mt-1" />
                     </div>
 
-                    {{-- <div class="md:col-span-2">
-                        <x-label for="cuali_objetividad" value="Objetividad" />
-                        <textarea id="cuali_objetividad" wire:model="cuali_objetividad" rows="4"
-                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
-                        <x-input-error for="cuali_objetividad" class="mt-1" />
-                    </div> --}}
-                    <div class="md:col-span-2">
+                    <div class="">
                         <x-label for="cuali_objetividad" value="Objetividad" />
 
-                        <textarea id="cuali_objetividad" wire:model.live="cuali_objetividad" rows="4" maxlength="330"
+                        <textarea id="cuali_objetividad" wire:model.live.debounce.500ms="cuali_objetividad" maxlength="255" rows="4"
                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
 
-                        <div class="mt-1 text-right text-xs text-gray-500">
-                            {{ mb_strlen($cuali_objetividad ?? '') }}/330
+                        <div class="mt-1 flex justify-between text-xs text-gray-500">
+                            <span>Máximo 255 caracteres.</span>
+                            <span>{{ strlen($cuali_objetividad ?? '') }}/255</span>
                         </div>
 
                         <x-input-error for="cuali_objetividad" class="mt-1" />
