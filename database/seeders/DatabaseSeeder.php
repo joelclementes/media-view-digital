@@ -30,5 +30,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SujetosSeeder::class);
         $this->call(TiposEleccionSeeder::class);
         $this->call(PortalesInternetSeeder::class);
+        $this->call(PrensaSeeder::class);
     }
 }

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('monitoreo_medios_electronicos', function (Blueprint $table) {
-                        $table->id();
+        Schema::create('monitoreo_medio_impresos', function (Blueprint $table) {
+            $table->id();
             $table->string('tipo_medio')->default('medios-impresos');
 
             // Campos comunes en todos los medios
@@ -22,12 +22,14 @@ return new class extends Migration
             $table->string('etapa_sujeto')->nullable();
             $table->foreignId('tipo_eleccion_id')->nullable()->constrained('tipos_eleccion');
             
-            $table->foreignId('portal_internet_id')->nullable()->constrained('portales_internet');
-            $table->text('url_pagina');
+            $table->foreignId('medio_prensa_id')->nullable()->constrained('portales_prensa');
             
-            $table->date('fecha');
-            $table->foreignId('tamano_id')->constrained('tamanos_publicacion');
-            $table->foreignId('genero_id')->constrained('generos');
+            $table->date('publicacion_fecha');
+            $table->string('publicacion_lugar')->comment('Superior/Inferior/Centro/Derecha/Izquierda');
+            $table->foreignId('publicacion_tamano_id')->constrained('tamanos_publicacion');
+            $table->foreignId('publicacion_genero_id')->constrained('generos');
+            $table->string('publicacion_seccion');
+            $table->string('publicacion_pagina');
 
             $table->foreignId('genero_autor_id')->constrained('generos_sujetos');
             $table->string('nombre_autor')->nullable();
@@ -39,34 +41,47 @@ return new class extends Migration
             $table->json('archivos')->nullable();
 
 
-            // valores directo en código (select)
+            // valores directo en código (select).
+            // Los valores descritos en ->comment()
             $table->string('cuali_valoracion')->nullable()->comment('Positiva/Negativa/Neutral');
-
+            
             // valores directo en código (radiobutton)
             $table->string('cuali_lenguaje_inclusivo')->nullable()->comment('Si,No');
-
+            
             // valores directo en código (select)
+            // Los valores descritos en ->comment()
             $table->string('cuali_estereotipo')->nullable()->comment('NA/Personas indígenas/Creencias religiosas de las personas/Personas afroamericanas/Personas de la diversidad sexual o de género/Personas jóvenes/Personas mayores/Personas con discapacidad/Personas que viven con VIH/Víctimas del delito');
-
+            
             // valores directo en código (select)
             $table->foreignId('cuali_violencia_temas_id')->nullable()->constrained('violencia_temas')->comment('"Igualdad de género"; relación con violencia_temas');
-
+            
             // datos obtenidos de la tabla tipos_eleccion (select)
             $table->foreignId('cuali_tipos_eleccion_id')->nullable()->constrained('tipos_eleccion')->comment('"Candidatura"; relación con tipos_eleccion');
-
+            
             // textarea
             $table->text('cuali_resumen')->nullable();
-
+            
             // valores directo en código (select)
+            // Los valores descritos en ->comment()
+            $table->string('cuali_criterio_evaluacion')->nullable()->comment('Fotogafía B&N/Fotografía color/Caricatura/Emblema/Gráficos');
+            
+            // valores directo en código (select)
+            // Los valores descritos en ->comment()
             $table->string('cuali_modalidad')->nullable()->comment('Politica/Electoral');
-
-            //textarea
-            $table->text('cuali_objetividad')->nullable();
-
+            
+            //input
+            $table->string('cuali_periodicidad')->nullable();
+            
+            // input numérico
+            $table->integer('cuali_tiraje')->nullable();
+            
             // valores directo en código (select)
-            $table->string('cuali_tipo_mensaje')->nullable()->comment('A favor/Descalificativo/Crítica/Imparcial');
-            // valores directo en código (select)
-            $table->string('cuali_formato')->nullable()->comment('Mensaje/De entrevista/Informativo-narrativo');
+            // Los valores descritos en ->comment()
+            $table->string('cuali_circulacion')->nullable()->comment('Nacional/Regional/Local');
+            
+            // datos obtenidos de la tabla distritos (select)
+            $table->foreignId('cuali_distritos_id')->nullable()->constrained('distritos')->comment('"Distrito"; relación con distritos');
+
             $table->timestamps();
         });
     }
@@ -76,6 +91,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('monitoreo_medios_electronicos');
+        Schema::dropIfExists('monitoreo_medio_impresos');
     }
 };
