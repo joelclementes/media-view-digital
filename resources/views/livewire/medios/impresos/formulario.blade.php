@@ -48,15 +48,116 @@
 
         <div class="mt-8 bg-white overflow-hidden shadow-md sm:rounded-md">
             <div class="border-b border-gray-200 p-4">
-                <h3 class="text-lg font-semibold text-gray-800">Registros capturados</h3>
-                <p class="text-sm text-gray-500">Consulta, filtra y revisa los registros de medios impresos.</p>
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Registros capturados
+                        </h3>
 
-                <div class="mt-4">
-                    <x-label for="busqueda_tabla" value="Buscar registro" />
-                    <x-input id="busqueda_tabla" type="text" wire:model.live.debounce.500ms="busqueda_tabla"
-                        placeholder="Buscar por sujeto, organización, medio, referencia, sección o página..."
-                        class="w-full" />
+                        <p class="text-sm text-gray-500">
+                            Consulta, filtra y revisa los registros de medios impresos.
+                        </p>
+
+                        <p class="mt-2 text-sm text-gray-600">
+                            Se encontraron
+                            <span class="font-semibold text-gray-800">
+                                {{ $registros->total() }}
+                            </span>
+                            registros.
+                        </p>
+                    </div>
+
+                    <div class="w-full lg:max-w-xl">
+                        <x-label for="busqueda_tabla" value="Buscar registro" />
+
+                        <x-input id="busqueda_tabla" type="text" wire:model.live.debounce.500ms="busqueda_tabla"
+                            placeholder="Buscar por Id, sujeto, organización, medio, referencia, sección o página..."
+                            class="w-full" />
+                    </div>
                 </div>
+
+                <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <button type="button" wire:click="alternarFiltrosTabla"
+                        class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                        <span>
+                            {{ $mostrar_filtros_tabla ? 'Ocultar filtros' : 'Mostrar filtros' }}
+                        </span>
+
+                        <svg class="ml-2 h-4 w-4 transition-transform {{ $mostrar_filtros_tabla ? 'rotate-180' : '' }}"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+
+                    <div class="text-sm text-gray-500">
+                        <span wire:loading.remove
+                            wire:target="fecha_inicio_registro,fecha_fin_registro,filtro_tipo_eleccion_id,busqueda_tabla,cantidad_por_pagina">
+                            Mostrando {{ $registros->firstItem() ?? 0 }} - {{ $registros->lastItem() ?? 0 }}
+                            de {{ $registros->total() }} registros.
+                        </span>
+
+                        <span wire:loading
+                            wire:target="fecha_inicio_registro,fecha_fin_registro,filtro_tipo_eleccion_id,busqueda_tabla,cantidad_por_pagina"
+                            class="text-blue-600">
+                            Actualizando resultados...
+                        </span>
+                    </div>
+                </div>
+
+                @if ($mostrar_filtros_tabla)
+                    <div class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+                            <div>
+                                <x-label for="fecha_inicio_registro" value="Fecha inicial" />
+
+                                <x-input id="fecha_inicio_registro" type="date"
+                                    wire:model.live="fecha_inicio_registro" class="w-full" />
+                            </div>
+
+                            <div>
+                                <x-label for="fecha_fin_registro" value="Fecha final" />
+
+                                <x-input id="fecha_fin_registro" type="date" wire:model.live="fecha_fin_registro"
+                                    class="w-full" />
+                            </div>
+
+                            <div>
+                                <x-label for="filtro_tipo_eleccion_id" value="Candidatura" />
+
+                                <select id="filtro_tipo_eleccion_id" wire:model.live="filtro_tipo_eleccion_id"
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Todas</option>
+
+                                    @foreach ($tipos_eleccion as $tipo)
+                                        <option value="{{ $tipo->id }}">
+                                            {{ $tipo->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <x-label for="cantidad_por_pagina" value="Mostrar" />
+
+                                <select id="cantidad_por_pagina" wire:model.live="cantidad_por_pagina"
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="10">10 registros</option>
+                                    <option value="25">25 registros</option>
+                                    <option value="50">50 registros</option>
+                                    <option value="100">100 registros</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex justify-end">
+                            <button type="button" wire:click="limpiarFiltrosTabla"
+                                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                                Limpiar filtros
+                            </button>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <div class="overflow-x-auto">
@@ -98,7 +199,8 @@
                                             <x-lucide-file-type class="h-5 w-5" />
                                         </a>
 
-                                        <button type="button" title="Editar" wire:click="editar({{ $registro->id }})"
+                                        <button type="button" title="Editar"
+                                            wire:click="editar({{ $registro->id }})"
                                             class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
                                             <x-lucide-pencil class="h-5 w-5" />
                                         </button>

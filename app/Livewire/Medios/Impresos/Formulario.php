@@ -541,6 +541,31 @@ class Formulario extends Component
         session()->flash('success', 'Registro eliminado correctamente.');
     }
 
+    public function updatedFechaInicioRegistro(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFechaFinRegistro(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedBusquedaTabla(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedCantidadPorPagina(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFiltroTipoEleccionId(): void
+    {
+        $this->resetPage();
+    }
+
     public function alternarFiltrosTabla(): void
     {
         $this->mostrar_filtros_tabla = ! $this->mostrar_filtros_tabla;
