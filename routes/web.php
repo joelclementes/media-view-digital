@@ -18,5 +18,6 @@ Route::middleware([
     })->name('dashboard');
 
     require __DIR__ . '/medios-electronicos.php';
+    require __DIR__ . '/medios-impresos.php';
 
 });
