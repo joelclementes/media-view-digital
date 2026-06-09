@@ -10,4 +10,7 @@ Route::middleware('can:ver_medios_electronicos')->group(function () {
 
     Route::get('/medios-electronicos/{registro}/testigo', [MediosElectronicosController::class, 'testigo'])
         ->name('m-electronicos-testigo');
+
+    Route::get('/medios-electronicos/{registro}', [MediosElectronicosController::class, 'show'])
+        ->name('m-electronicos-show');
 });

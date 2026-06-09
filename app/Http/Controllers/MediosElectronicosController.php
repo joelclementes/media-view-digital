@@ -58,4 +58,38 @@ class MediosElectronicosController extends Controller
             'm_elect_' . $registro->id . '_' . now()->format('Ymd') . '.pdf'
         );
     }
+
+
+    public function show(int $registro)
+    {
+        $registro = MonitoreoMedioElectronico::query()
+            ->leftJoin('sujetos', 'monitoreo_medios_electronicos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medios_electronicos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_medios_electronicos.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_medios_electronicos.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('portales_internet', 'monitoreo_medios_electronicos.portal_internet_id', '=', 'portales_internet.id')
+            ->leftJoin('tamanos_publicacion', 'monitoreo_medios_electronicos.tamano_id', '=', 'tamanos_publicacion.id')
+            ->leftJoin('generos', 'monitoreo_medios_electronicos.genero_id', '=', 'generos.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_medios_electronicos.genero_autor_id', '=', 'generos_sujetos.id')
+            ->leftJoin('violencia_temas', 'monitoreo_medios_electronicos.cuali_violencia_temas_id', '=', 'violencia_temas.id')
+            ->leftJoin('tipos_eleccion as cuali_tipos_eleccion', 'monitoreo_medios_electronicos.cuali_tipos_eleccion_id', '=', 'cuali_tipos_eleccion.id')
+            ->where('monitoreo_medios_electronicos.id', $registro)
+            ->where('monitoreo_medios_electronicos.tipo_medio', 'medios-electronicos')
+            ->select([
+                'monitoreo_medios_electronicos.*',
+                'sujetos.nombre as sujeto_nombre',
+                'partidos.nombre as organizacion_nombre',
+                'periodos.nombre as periodo_nombre',
+                'tipos_eleccion.nombre as tipo_eleccion_nombre',
+                'portales_internet.nombre as portal_nombre',
+                'tamanos_publicacion.nombre as tamano_nombre',
+                'generos.nombre as genero_nombre',
+                'generos_sujetos.nombre as genero_autor_nombre',
+                'violencia_temas.nombre as violencia_tema_nombre',
+                'cuali_tipos_eleccion.nombre as cuali_tipo_eleccion_nombre',
+            ])
+            ->firstOrFail();
+
+        return view('medios-electronicos.show', compact('registro'));
+    }
 }

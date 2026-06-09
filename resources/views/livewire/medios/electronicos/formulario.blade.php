@@ -13,52 +13,55 @@
 
     @if (!$mostrar_panel_cualitativo)
         <div class="bg-white overflow-hidden shadow-md sm:rounded-md p-4">
+            @can('crear_medio')
+                <div class="mb-4 flex justify-start">
+                    <button type="button" onclick="recuperarInfoAnteriorMedioElectronico()"
+                        class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
+                        Recuperar info anterior
+                    </button>
+                </div>
 
-            <div class="mb-4 flex justify-start">
-                <button type="button" onclick="recuperarInfoAnteriorMedioElectronico()"
-                    class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
-                    Recuperar info anterior
-                </button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @include('livewire.medios.shared.persona')
+                    @include('livewire.medios.electronicos.partials.medio')
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @include('livewire.medios.electronicos.partials.publicacion')
+                    @include('livewire.medios.shared.autor')
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @include('livewire.medios.shared.referencia')
+                    @include('livewire.medios.shared.observaciones')
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @include('livewire.medios.shared.archivos')
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" wire:click="limpiarFormulario"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                        Limpiar
+                    </button>
+
+                    <x-button type="button" wire:click="guardar" wire:loading.attr="disabled"
+                        wire:target="guardar,archivos">
+
+                        <span wire:loading.remove wire:target="guardar">
+                            {{ $registro_editando_id ? 'Actualizar registro' : 'Guardar registro' }}
+                        </span>
+
+                        <span wire:loading wire:target="guardar">
+                            {{ $registro_editando_id ? 'Actualizando...' : 'Guardando...' }}
+                        </span>
+                    </x-button>
+
+                </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @include('livewire.medios.shared.persona')
-                @include('livewire.medios.electronicos.partials.medio')
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @include('livewire.medios.electronicos.partials.publicacion')
-                @include('livewire.medios.shared.autor')
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @include('livewire.medios.shared.referencia')
-                @include('livewire.medios.shared.observaciones')
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @include('livewire.medios.shared.archivos')
-            </div>
-
-            <div class="mt-6 flex justify-end gap-3">
-                <button type="button" wire:click="limpiarFormulario"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                    Limpiar
-                </button>
-
-                <x-button type="button" wire:click="guardar" wire:loading.attr="disabled"
-                    wire:target="guardar,archivos">
-
-                    <span wire:loading.remove wire:target="guardar">
-                        {{ $registro_editando_id ? 'Actualizar registro' : 'Guardar registro' }}
-                    </span>
-
-                    <span wire:loading wire:target="guardar">
-                        {{ $registro_editando_id ? 'Actualizando...' : 'Guardando...' }}
-                    </span>
-                </x-button>
-            </div>
-        </div>
+        @endcan
         <div class="mt-8 bg-white overflow-hidden shadow-md sm:rounded-md">
             <div class="border-b border-gray-200 p-4">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -233,11 +236,13 @@
 
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-center gap-2 text-primary-600">
-                                        <button type="button" title="Cualitativos"
-                                            wire:click="abrirCualitativos({{ $registro->id }})"
-                                            class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
-                                            <x-lucide-file-diff class="h-5 w-5" />
-                                        </button>
+                                        @can('crear_medio')
+                                            <button type="button" title="Cualitativos"
+                                                wire:click="abrirCualitativos({{ $registro->id }})"
+                                                class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
+                                                <x-lucide-file-diff class="h-5 w-5" />
+                                            </button>
+                                        @endcan
 
                                         <a href="{{ route('m-electronicos-testigo', $registro->id) }}"
                                             target="_blank" title="Testigo"
@@ -245,11 +250,18 @@
                                             <x-lucide-file-type class="h-5 w-5" />
                                         </a>
 
-                                        <button type="button" title="Editar"
-                                            wire:click="editar({{ $registro->id }})"
-                                            class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
-                                            <x-lucide-pencil class="h-5 w-5" />
-                                        </button>
+                                        @can('editar_medio')
+                                            <button type="button" title="Editar"
+                                                wire:click="editar({{ $registro->id }})"
+                                                class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
+                                                <x-lucide-pencil class="h-5 w-5" />
+                                            </button>
+                                        @else
+                                            <a href="{{ route('m-electronicos-show', $registro->id) }}" title="Ver"
+                                                class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
+                                                <x-lucide-eye class="h-5 w-5" />
+                                            </a>
+                                        @endcan
 
                                         @can('eliminar_medio')
                                             <button type="button" title="Eliminar"
@@ -643,15 +655,17 @@
                         Cancelar
                     </button>
 
-                    <x-button type="button" wire:click="guardarCualitativos" wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="guardarCualitativos">
-                            Guardar cualitativos
-                        </span>
+                    @can('crear_datos_cualitativos')
+                        <x-button type="button" wire:click="guardarCualitativos" wire:loading.attr="disabled">
+                            <span wire:loading.remove wire:target="guardarCualitativos">
+                                Guardar cualitativos
+                            </span>
 
-                        <span wire:loading wire:target="guardarCualitativos">
-                            Guardando...
-                        </span>
-                    </x-button>
+                            <span wire:loading wire:target="guardarCualitativos">
+                                Guardando...
+                            </span>
+                        </x-button>
+                    @endcan
                 </div>
             </div>
 

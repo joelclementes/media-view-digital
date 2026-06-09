@@ -13,6 +13,41 @@ class MediosImpresosController extends Controller
         return view('medios-impresos.index');
     }
 
+    public function show(int $registro)
+    {
+        $registro = MonitoreoMedioImpreso::query()
+            ->leftJoin('sujetos', 'monitoreo_medio_impresos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medio_impresos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_medio_impresos.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_medio_impresos.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('portales_prensa', 'monitoreo_medio_impresos.medio_prensa_id', '=', 'portales_prensa.id')
+            ->leftJoin('tamanos_publicacion', 'monitoreo_medio_impresos.publicacion_tamano_id', '=', 'tamanos_publicacion.id')
+            ->leftJoin('generos', 'monitoreo_medio_impresos.publicacion_genero_id', '=', 'generos.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_medio_impresos.genero_autor_id', '=', 'generos_sujetos.id')
+            ->leftJoin('violencia_temas', 'monitoreo_medio_impresos.cuali_violencia_temas_id', '=', 'violencia_temas.id')
+            ->leftJoin('tipos_eleccion as cuali_tipos_eleccion', 'monitoreo_medio_impresos.cuali_tipos_eleccion_id', '=', 'cuali_tipos_eleccion.id')
+            ->leftJoin('distritos', 'monitoreo_medio_impresos.cuali_distritos_id', '=', 'distritos.id')
+            ->where('monitoreo_medio_impresos.id', $registro)
+            ->where('monitoreo_medio_impresos.tipo_medio', 'medios-impresos')
+            ->select([
+                'monitoreo_medio_impresos.*',
+                'sujetos.nombre as sujeto_nombre',
+                'partidos.nombre as organizacion_nombre',
+                'periodos.nombre as periodo_nombre',
+                'tipos_eleccion.nombre as tipo_eleccion_nombre',
+                'portales_prensa.nombre as medio_prensa_nombre',
+                'tamanos_publicacion.nombre as tamano_nombre',
+                'generos.nombre as genero_nombre',
+                'generos_sujetos.nombre as genero_autor_nombre',
+                'violencia_temas.nombre as violencia_tema_nombre',
+                'cuali_tipos_eleccion.nombre as cuali_tipo_eleccion_nombre',
+                'distritos.nombre as distrito_nombre',
+            ])
+            ->firstOrFail();
+
+        return view('medios-impresos.show', compact('registro'));
+    }
+
     public function testigo(MonitoreoMedioImpreso $registro)
     {
         abort_unless($registro->tipo_medio === 'medios-impresos', 404);

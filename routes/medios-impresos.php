@@ -9,4 +9,7 @@ Route::middleware('can:ver_medios_impresos')->group(function () {
 
     Route::get('/medios-impresos/{registro}/testigo', [MediosImpresosController::class, 'testigo'])
         ->name('m-impresos-testigo');
+
+    Route::get('/medios-impresos/{registro}', [MediosImpresosController::class, 'show'])
+        ->name('m-impresos-show');
 });
