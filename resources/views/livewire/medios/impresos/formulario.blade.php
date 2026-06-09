@@ -205,11 +205,13 @@
                                             <x-lucide-pencil class="h-5 w-5" />
                                         </button>
 
-                                        <button type="button" title="Eliminar"
-                                            wire:click="confirmarEliminacion({{ $registro->id }})"
-                                            class="rounded-md p-1.5 text-red-600 hover:bg-red-50 hover:text-red-800">
-                                            <x-lucide-trash-2 class="h-5 w-5" />
-                                        </button>
+                                        @can('eliminar_medio')
+                                            <button type="button" title="Eliminar"
+                                                wire:click="confirmarEliminacion({{ $registro->id }})"
+                                                class="rounded-md p-1.5 text-red-600 hover:bg-red-50 hover:text-red-800">
+                                                <x-lucide-trash-2 class="h-5 w-5" />
+                                            </button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>
@@ -528,7 +530,7 @@
             const datosGuardados = localStorage.getItem(IMPRESOS_INFO_KEY);
 
             if (!datosGuardados) {
-                alert('No hay información anterior guardada en este navegador.');
+                alert('No hay información anterior guardada.');
                 return;
             }
 
@@ -544,7 +546,7 @@
             const datosGuardados = localStorage.getItem(IMPRESOS_CUALITATIVOS_KEY);
 
             if (!datosGuardados) {
-                alert('No hay datos cualitativos guardados en este navegador.');
+                alert('No hay datos cualitativos anteriores guardados.');
                 return;
             }
 
