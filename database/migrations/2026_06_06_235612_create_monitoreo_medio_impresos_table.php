@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('monitoreo_medio_impresos', function (Blueprint $table) {
+        Schema::create('monitoreo_medios_impresos', function (Blueprint $table) {
             $table->id();
             $table->string('tipo_medio')->default('medios-impresos');
 
@@ -91,6 +91,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('monitoreo_medio_impresos');
+        Schema::dropIfExists('monitoreo_medios_impresos');
     }
 };

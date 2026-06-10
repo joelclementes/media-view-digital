@@ -399,16 +399,16 @@ class Formulario extends Component
     public function abrirCualitativos(int $id): void
     {
         $registro = MonitoreoMedioImpreso::query()
-            ->leftJoin('sujetos', 'monitoreo_medio_impresos.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medio_impresos.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'monitoreo_medio_impresos.periodo_id', '=', 'periodos.id')
-            ->leftJoin('portales_prensa', 'monitoreo_medio_impresos.medio_prensa_id', '=', 'portales_prensa.id')
-            ->leftJoin('tamanos_publicacion', 'monitoreo_medio_impresos.publicacion_tamano_id', '=', 'tamanos_publicacion.id')
-            ->leftJoin('generos', 'monitoreo_medio_impresos.publicacion_genero_id', '=', 'generos.id')
-            ->leftJoin('generos_sujetos', 'monitoreo_medio_impresos.genero_autor_id', '=', 'generos_sujetos.id')
-            ->where('monitoreo_medio_impresos.id', $id)
+            ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_medios_impresos.periodo_id', '=', 'periodos.id')
+            ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
+            ->leftJoin('tamanos_publicacion', 'monitoreo_medios_impresos.publicacion_tamano_id', '=', 'tamanos_publicacion.id')
+            ->leftJoin('generos', 'monitoreo_medios_impresos.publicacion_genero_id', '=', 'generos.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_medios_impresos.genero_autor_id', '=', 'generos_sujetos.id')
+            ->where('monitoreo_medios_impresos.id', $id)
             ->select([
-                'monitoreo_medio_impresos.*',
+                'monitoreo_medios_impresos.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -584,39 +584,39 @@ class Formulario extends Component
     private function consultarRegistros()
     {
         return MonitoreoMedioImpreso::query()
-            ->leftJoin('sujetos', 'monitoreo_medio_impresos.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medio_impresos.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('portales_prensa', 'monitoreo_medio_impresos.medio_prensa_id', '=', 'portales_prensa.id')
+            ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
             ->select([
-                'monitoreo_medio_impresos.id',
-                'monitoreo_medio_impresos.referencia',
-                'monitoreo_medio_impresos.publicacion_fecha',
-                'monitoreo_medio_impresos.publicacion_seccion',
-                'monitoreo_medio_impresos.publicacion_pagina',
-                'monitoreo_medio_impresos.archivos',
-                'monitoreo_medio_impresos.created_at',
+                'monitoreo_medios_impresos.id',
+                'monitoreo_medios_impresos.referencia',
+                'monitoreo_medios_impresos.publicacion_fecha',
+                'monitoreo_medios_impresos.publicacion_seccion',
+                'monitoreo_medios_impresos.publicacion_pagina',
+                'monitoreo_medios_impresos.archivos',
+                'monitoreo_medios_impresos.created_at',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'portales_prensa.nombre as medio_prensa_nombre',
             ])
-            ->where('monitoreo_medio_impresos.tipo_medio', $this->tipo_medio)
-            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_medio_impresos.created_at', '>=', $this->fecha_inicio_registro))
-            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_medio_impresos.created_at', '<=', $this->fecha_fin_registro))
-            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_medio_impresos.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
+            ->where('monitoreo_medios_impresos.tipo_medio', $this->tipo_medio)
+            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_medios_impresos.created_at', '>=', $this->fecha_inicio_registro))
+            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_medios_impresos.created_at', '<=', $this->fecha_fin_registro))
+            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_medios_impresos.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
             ->when($this->busqueda_tabla, function ($query) {
                 $busqueda = '%' . trim($this->busqueda_tabla) . '%';
 
                 $query->where(function ($q) use ($busqueda) {
-                    $q->where('monitoreo_medio_impresos.referencia', 'like', $busqueda)
-                        ->orWhere('monitoreo_medio_impresos.observaciones', 'like', $busqueda)
-                        ->orWhere('monitoreo_medio_impresos.publicacion_seccion', 'like', $busqueda)
-                        ->orWhere('monitoreo_medio_impresos.publicacion_pagina', 'like', $busqueda)
+                    $q->where('monitoreo_medios_impresos.referencia', 'like', $busqueda)
+                        ->orWhere('monitoreo_medios_impresos.observaciones', 'like', $busqueda)
+                        ->orWhere('monitoreo_medios_impresos.publicacion_seccion', 'like', $busqueda)
+                        ->orWhere('monitoreo_medios_impresos.publicacion_pagina', 'like', $busqueda)
                         ->orWhere('sujetos.nombre', 'like', $busqueda)
                         ->orWhere('partidos.nombre', 'like', $busqueda)
                         ->orWhere('portales_prensa.nombre', 'like', $busqueda);
                 });
             })
-            ->orderByDesc('monitoreo_medio_impresos.id')
+            ->orderByDesc('monitoreo_medios_impresos.id')
             ->paginate($this->cantidad_por_pagina);
     }
 

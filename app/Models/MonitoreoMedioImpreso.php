@@ -9,7 +9,7 @@ class MonitoreoMedioImpreso extends Model
 {
     use HasFactory;
 
-    protected $table = 'monitoreo_medio_impresos';
+    protected $table = 'monitoreo_medios_impresos';
 
     protected $fillable = [
         'tipo_medio',

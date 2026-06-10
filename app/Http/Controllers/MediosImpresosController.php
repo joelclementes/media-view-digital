@@ -16,21 +16,21 @@ class MediosImpresosController extends Controller
     public function show(int $registro)
     {
         $registro = MonitoreoMedioImpreso::query()
-            ->leftJoin('sujetos', 'monitoreo_medio_impresos.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medio_impresos.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'monitoreo_medio_impresos.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'monitoreo_medio_impresos.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('portales_prensa', 'monitoreo_medio_impresos.medio_prensa_id', '=', 'portales_prensa.id')
-            ->leftJoin('tamanos_publicacion', 'monitoreo_medio_impresos.publicacion_tamano_id', '=', 'tamanos_publicacion.id')
-            ->leftJoin('generos', 'monitoreo_medio_impresos.publicacion_genero_id', '=', 'generos.id')
-            ->leftJoin('generos_sujetos', 'monitoreo_medio_impresos.genero_autor_id', '=', 'generos_sujetos.id')
-            ->leftJoin('violencia_temas', 'monitoreo_medio_impresos.cuali_violencia_temas_id', '=', 'violencia_temas.id')
-            ->leftJoin('tipos_eleccion as cuali_tipos_eleccion', 'monitoreo_medio_impresos.cuali_tipos_eleccion_id', '=', 'cuali_tipos_eleccion.id')
-            ->leftJoin('distritos', 'monitoreo_medio_impresos.cuali_distritos_id', '=', 'distritos.id')
-            ->where('monitoreo_medio_impresos.id', $registro)
-            ->where('monitoreo_medio_impresos.tipo_medio', 'medios-impresos')
+            ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_medios_impresos.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_medios_impresos.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
+            ->leftJoin('tamanos_publicacion', 'monitoreo_medios_impresos.publicacion_tamano_id', '=', 'tamanos_publicacion.id')
+            ->leftJoin('generos', 'monitoreo_medios_impresos.publicacion_genero_id', '=', 'generos.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_medios_impresos.genero_autor_id', '=', 'generos_sujetos.id')
+            ->leftJoin('violencia_temas', 'monitoreo_medios_impresos.cuali_violencia_temas_id', '=', 'violencia_temas.id')
+            ->leftJoin('tipos_eleccion as cuali_tipos_eleccion', 'monitoreo_medios_impresos.cuali_tipos_eleccion_id', '=', 'cuali_tipos_eleccion.id')
+            ->leftJoin('distritos', 'monitoreo_medios_impresos.cuali_distritos_id', '=', 'distritos.id')
+            ->where('monitoreo_medios_impresos.id', $registro)
+            ->where('monitoreo_medios_impresos.tipo_medio', 'medios-impresos')
             ->select([
-                'monitoreo_medio_impresos.*',
+                'monitoreo_medios_impresos.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -53,16 +53,16 @@ class MediosImpresosController extends Controller
         abort_unless($registro->tipo_medio === 'medios-impresos', 404);
 
         $datos = MonitoreoMedioImpreso::query()
-            ->leftJoin('sujetos', 'monitoreo_medio_impresos.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medio_impresos.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'monitoreo_medio_impresos.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'monitoreo_medio_impresos.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('portales_prensa', 'monitoreo_medio_impresos.medio_prensa_id', '=', 'portales_prensa.id')
-            ->leftJoin('tamanos_publicacion', 'monitoreo_medio_impresos.publicacion_tamano_id', '=', 'tamanos_publicacion.id')
-            ->leftJoin('generos', 'monitoreo_medio_impresos.publicacion_genero_id', '=', 'generos.id')
-            ->where('monitoreo_medio_impresos.id', $registro->id)
+            ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_medios_impresos.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_medios_impresos.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
+            ->leftJoin('tamanos_publicacion', 'monitoreo_medios_impresos.publicacion_tamano_id', '=', 'tamanos_publicacion.id')
+            ->leftJoin('generos', 'monitoreo_medios_impresos.publicacion_genero_id', '=', 'generos.id')
+            ->where('monitoreo_medios_impresos.id', $registro->id)
             ->select([
-                'monitoreo_medio_impresos.*',
+                'monitoreo_medios_impresos.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
