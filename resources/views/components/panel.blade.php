@@ -50,7 +50,7 @@
     @endcan
 
     @can('ver_radio')
-        <a href="#"
+        <a href="{{ route('m-radio-index') }}"
             class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
