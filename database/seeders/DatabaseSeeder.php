@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PartidosSeeder::class);
         $this->call(DistritosSeeder::class);
         $this->call(MunicipiosSeeder::class);
-        // $this->call(LocalidadesSeeder::class);
+        $this->call(LocalidadesSeeder::class);
         $this->call(PeriodosSeeder::class);
         $this->call(TamanoPublicacionSeeder::class);
         $this->call(TipoPublicidadSeeder::class);
