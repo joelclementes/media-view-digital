@@ -21,6 +21,28 @@ return new class extends Migration
             $table->string('etapa_sujeto')->nullable();
             $table->foreignId('tipo_eleccion_id')->nullable()->constrained('tipos_eleccion');
 
+            $table->string('medio_nombre')->nullable();
+            $table->string('medio_siglas')->nullable();
+            $table->string('medio_banda')->nullable();
+            $table->string('medio_grupo_radiofonico')->nullable();
+            $table->foreignId('medio_municipio_id')->nullable()->constrained('municipios');
+            $table->string('medio_cobertura')->nullable()->comment('Select -> Nacional/Regional/Local');
+
+            $table->date('publicacion_fecha')->nullable();
+            $table->time('publicacion_hora')->nullable();
+            $table->integer('publicacion_tiempo')->nullable()->comment('Tiempo en segundos');
+            $table->string('publicacion_tipo')->nullable()->comment('Select -> Nota informativa/Nota periodística/Entrevista/Reportaje');
+            $table->string('publicacion_ubicacion')->nullable()->comment('Select -> Al inicio/En el desarrollo/Al final');
+            $table->string('publicacion_modalidad')->nullable()->comment('Select -> Política/Electoral');
+
+            $table->foreignId('genero_autor_id')->constrained('generos_sujetos');
+            $table->string('nombre_autor')->nullable();
+
+            $table->string('observaciones')->nullable();
+
+            $table->json('archivos')->nullable();
+
+
             $table->timestamps();
         });
     }
