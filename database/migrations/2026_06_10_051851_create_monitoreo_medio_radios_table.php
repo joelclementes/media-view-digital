@@ -42,6 +42,27 @@ return new class extends Migration
 
             $table->json('archivos')->nullable();
 
+            // Los valores descritos en ->comment()
+            $table->string('cuali_valoracion')->nullable()->comment('Select -> Positiva/Negativa/Neutral');
+
+            // valores directo en código (radiobutton)
+            $table->string('cuali_lenguaje_inclusivo')->nullable()->comment('Radiobuttons -> Si,No');
+
+            // Los valores descritos en ->comment()
+            $table->string('cuali_estereotipo')->nullable()->comment('Select -> NA/Personas indígenas/Creencias religiosas de las personas/Personas afroamericanas/Personas de la diversidad sexual o de género/Personas jóvenes/Personas mayores/Personas con discapacidad/Personas que viven con VIH/Víctimas del delito');
+
+            // valores directo en código (select)
+            $table->foreignId('cuali_violencia_temas_id')->nullable()->constrained('violencia_temas')->comment('"Igualdad de género"; relación con violencia_temas');
+
+            // datos obtenidos de la tabla tipos_eleccion (select)
+            $table->foreignId('cuali_tipos_eleccion_id')->nullable()->constrained('tipos_eleccion')->comment('"Candidatura"; relación con tipos_eleccion');
+
+            // textarea
+            $table->text('cuali_resumen')->nullable();
+
+            // Los valores descritos en ->comment()
+            $table->string('cuali_criterio_evaluacion')->nullable()->comment('Select -> Presentación directa/Cita y voz/Cita y audio/Solo cita/Voz de las y los ciudadanos');
+
 
             $table->timestamps();
         });
