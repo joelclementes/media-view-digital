@@ -187,11 +187,13 @@
                                 <td class="px-4 py-3">{{ $registro->medio_prensa_nombre ?? 'Sin medio' }}</td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-center gap-2 text-primary-600">
-                                        <button type="button" title="Cualitativos"
-                                            wire:click="abrirCualitativos({{ $registro->id }})"
-                                            class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
-                                            <x-lucide-file-diff class="h-5 w-5" />
-                                        </button>
+                                        @can('crear_medio')
+                                            <button type="button" title="Cualitativos"
+                                                wire:click="abrirCualitativos({{ $registro->id }})"
+                                                class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
+                                                <x-lucide-file-diff class="h-5 w-5" />
+                                            </button>
+                                        @endcan
 
                                         <a href="{{ route('m-impresos-testigo', $registro->id) }}" target="_blank"
                                             title="Testigo"
