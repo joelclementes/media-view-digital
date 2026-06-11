@@ -21,6 +21,7 @@ Route::middleware([
     require __DIR__ . '/medios-impresos.php';
     require __DIR__ . '/medios-radio.php';
     require __DIR__ . '/medios-soportes-promocionales.php';
+    require __DIR__ . '/medios-propaganda-movil.php';
     require __DIR__ . '/usuarios.php';
     require __DIR__ . '/roles-permisos.php';
 });
