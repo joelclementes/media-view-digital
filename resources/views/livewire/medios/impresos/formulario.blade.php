@@ -254,84 +254,55 @@
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div class="rounded-lg bg-white p-5 shadow-md">
-                    <h4 class="mb-4 text-lg font-semibold text-gray-800">
-                        Datos del registro
-                    </h4>
+            {{-- <div class="grid grid-cols-1 gap-6 lg:grid-cols-2"> --}}
+            <div class="rounded-lg bg-white p-5 shadow-md">
+                <h4 class="mb-4 text-lg font-semibold text-gray-800">
+                    Datos del registro
+                </h4>
 
-                    <dl class="space-y-1 text-sm">
-                        <div>
-                            <dt class="font-semibold text-gray-600">Org. política:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['organizacion'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Sujeto:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['sujeto'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Género del Sujeto:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['genero_sujeto'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Periodo:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['periodo'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Fecha Pub.:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['fecha'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Medio impreso:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['medio'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Tamaño Pub.:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['tamano'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Género:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['genero'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Sección:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['seccion'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Página:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['pagina'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Referencia:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['referencia'] ?? '' }}</dd>
-                        </div>
-
-                        <div>
-                            <dt class="font-semibold text-gray-600">Observ.:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['observaciones'] ?? '' }}</dd>
-                        </div>
-                    </dl>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Org.
+                            Política:</span>{{ $registro_cualitativo['organizacion'] ?? '' }}</div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Sujeto</span>{{ $registro_cualitativo['sujeto'] ?? '' }}
+                    </div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Género del
+                            sujeto:</span>{{ $registro_cualitativo['genero_sujeto'] ?? '' }}</div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Periodo:</span>{{ $registro_cualitativo['periodo'] ?? '' }}
+                    </div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Fecha de
+                            publicación:</span>{{ $registro_cualitativo['fecha'] ?? '' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Medio
+                            impreso:</span>{{ $registro_cualitativo['medio'] ?? '' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tamaño
+                            pub.:</span>{{ $registro_cualitativo['tamano'] ?? '' }}</div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Género:</span>{{ $registro_cualitativo['genero'] ?? '' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Sección:</span>{{ $registro_cualitativo['seccion'] ?? '' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Página:</span>{{ $registro_cualitativo['pagina'] ?? '' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Referencia:</span>{{ $registro_cualitativo['referencia'] ?? '' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Observ.:</span>{{ $registro_cualitativo['observaciones'] ?? '' }}
+                    </div>
                 </div>
 
-                <div class="rounded-lg bg-white p-5 shadow-md">
-                    <h4 class="mb-4 text-lg font-semibold text-gray-800">
-                        Imágenes relacionadas
-                    </h4>
 
-                    @if (count($imagenes_cualitativas) > 0)
-                        @php
-                            // dd($imagenes_cualitativas);
-                        @endphp
+            </div>
+
+            <div class="rounded-lg bg-white p-5 shadow-md">
+                <h4 class="mb-4 text-lg font-semibold text-gray-800">
+                    Imágenes del registro
+                </h4>
+
+                {{-- @if (count($imagenes_cualitativas) > 0)
                         <button type="button" wire:click="abrirModalImagen(0)"
                             class="block w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
                             <img src="{{ asset('storage/' . $imagenes_cualitativas[0]) }}" alt="Imagen del registro"
@@ -347,9 +318,23 @@
                             class="flex h-[360px] items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-500">
                             Este registro no tiene imágenes.
                         </div>
-                    @endif
-                </div>
+                    @endif --}}
+                @if (count($imagenes_cualitativas) > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        @foreach ($imagenes_cualitativas as $imagen)
+                            <a href="{{ asset('storage/' . $imagen) }}" target="_blank"
+                                class="block overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                                <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del soporte"
+                                    class="h-48 w-full object-cover">
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">Este registro no
+                        tiene imágenes cargadas.</p>
+                @endif
             </div>
+            {{-- </div> --}}
 
             <div class="rounded-lg bg-white p-5 shadow-md">
 

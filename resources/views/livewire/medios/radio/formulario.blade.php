@@ -261,13 +261,25 @@
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {{-- <div class="grid grid-cols-1 gap-6 lg:grid-cols-2"> --}}
                 <div class="rounded-lg bg-white p-5 shadow-md">
                     <h4 class="mb-4 text-lg font-semibold text-gray-800">
                         Datos del registro
                     </h4>
-
-                    <dl class="space-y-1 text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Fecha de publicación:</span>{{ !empty($registro_cualitativo['publicacion_fecha']) ? \Carbon\Carbon::parse($registro_cualitativo['publicacion_fecha'])->format('d/m/Y') : 'Sin fecha' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Medio radio:</span>{{ $registro_cualitativo['medio_nombre'] ?? 'Sin medio' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Locutor:</span>{{ $registro_cualitativo['nombre_autor'] ?? 'Sin autor' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tipo de publicación:</span>{{ $registro_cualitativo['publicacion_tipo'] ?? 'Sin tipo' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Ubicación:</span>{{ $registro_cualitativo['publicacion_ubicacion'] ?? 'Sin ubicación' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Cobertura</span>{{ $registro_cualitativo['medio_cobertura'] ?? 'Sin cobertura' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Actor</span>{{ $registro_cualitativo['sujeto_nombre'] ?? 'Sin sujeto' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Género:</span>{{ $registro_cualitativo['sujeto_genero'] ?? 'Sin sujeto' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Org. Política:</span>{{ $registro_cualitativo['organizacion_nombre'] ?? 'Sin organización' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Etapa del sujeto:</span>{{ $registro_cualitativo['etapa_sujeto'] ?? 'Sin especificar' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tiempo:</span>@if (!empty($registro_cualitativo['publicacion_tiempo'])){{ gmdate('H:i:s', (int) $registro_cualitativo['publicacion_tiempo']) }} @else Sin tiempo @endif</div>
+                </div>
+                    {{-- <dl class="space-y-1 text-sm">
                         <div>
                             <dt class="font-semibold text-gray-600">Fecha de publicación:</dt>
                             <dd class="text-primary-800">
@@ -337,61 +349,7 @@
                                 @endif
                             </dd>
                         </div>
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Periodo:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['periodo_nombre'] ?? 'Sin periodo' }}</dd>
-                        </div> --}}
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Tipo de elección:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['tipo_eleccion_nombre'] ?? 'Sin especificar' }}</dd>
-                        </div> --}}
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Siglas:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['medio_siglas'] ?? 'Sin siglas' }}
-                            </dd>
-                        </div> --}}
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Banda:</dt>
-                            <dd class="text-primary-800">{{ $registro_cualitativo['medio_banda'] ?? 'Sin banda' }}
-                            </dd>
-                        </div> --}}
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Grupo radiofónico:</dt>
-                            <dd class="text-primary-800">
-                                {{ $registro_cualitativo['medio_grupo_radiofonico'] ?? 'Sin grupo' }}</dd>
-                        </div> --}}
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Municipio del medio:</dt>
-                            <dd class="text-primary-800">
-                                {{ $registro_cualitativo['municipio_nombre'] ?? 'Sin municipio' }}</dd>
-                        </div> --}}
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Hora:</dt>
-                            <dd class="text-primary-800">
-                                {{ !empty($registro_cualitativo['publicacion_hora']) ? \Carbon\Carbon::parse($registro_cualitativo['publicacion_hora'])->format('H:i') : 'Sin hora' }}
-                            </dd>
-                        </div> --}}
-
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Modalidad:</dt>
-                            <dd class="text-primary-800">
-                                {{ $registro_cualitativo['publicacion_modalidad'] ?? 'Sin modalidad' }}</dd>
-                        </div> --}}
-
-                        {{-- <div>
-                            <dt class="font-semibold text-gray-600">Observ.:</dt>
-                            <dd class="text-primary-800">
-                                {{ $registro_cualitativo['observaciones'] ?? 'Sin observaciones' }}</dd>
-                        </div> --}}
-                    </dl>
+                    </dl> --}}
                 </div>
 
                 <div class="rounded-lg bg-white p-5 shadow-md">
@@ -418,7 +376,7 @@
                         </div>
                     @endif
                 </div>
-            </div>
+            {{-- </div> --}}
 
             <div class="rounded-lg bg-white p-5 shadow-md">
                 <div class="mb-5 flex justify-start">

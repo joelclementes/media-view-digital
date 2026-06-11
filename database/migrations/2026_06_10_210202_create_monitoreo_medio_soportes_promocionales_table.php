@@ -11,23 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('monitoreo_medio_soportes_promocionales', function (Blueprint $table) {
+        Schema::create('soportes_promocionales', function (Blueprint $table) {
             $table->id();
             $table->string('tipo_medio')->default('medios-soportes-promocionales');
             // Campos comunes en todos los medios
             $table->foreignId('sujeto_id')->constrained('sujetos');
-            $table->foreignId('organizacion_politica_id')->nullable()->constrained('partidos');
+            $table->foreignId('organizacion_id')->nullable()->constrained('partidos')->comment('id de la organización política');
             $table->foreignId('periodo_id')->nullable()->constrained('periodos');
             $table->string('etapa_sujeto')->nullable();
             $table->foreignId('tipo_eleccion_id')->nullable()->constrained('tipos_eleccion');
 
-            $table->foreignId('medio_distrito_id')->nullable()->constrained('distritos');
-            $table->foreignId('medio_municipio_id')->nullable()->constrained('municipios');
-            $table->foreignId('medio_localidad_id')->nullable()->constrained('localidades');
-            $table->decimal('medio_latitud', 18, 15)->nullable();
-            $table->decimal('medio_longitud', 18, 15)->nullable();
-            $table->string('medio_vialidad')->nullable();
-            $table->string('medio_seccion')->nullable();
+            $table->foreignId('distrito_id')->nullable()->constrained('distritos');
+            $table->foreignId('municipio_id')->nullable()->constrained('municipios');
+            $table->foreignId('localidad_id')->nullable()->constrained('localidades');
+            $table->decimal('latitud', 18, 15)->nullable();
+            $table->decimal('longitud', 18, 15)->nullable();
+            $table->string('vialidad')->nullable();
+            $table->string('seccion')->nullable();
 
             $table->string('publicacion_medidas')->nullable();
             $table->foreignId('publicacion_tipo_id')->nullable()->constrained('tipo_publicidad');
@@ -57,6 +57,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('monitoreo_medio_soportes_promocionales');
+        Schema::dropIfExists('soportes_promocionales');
     }
 };
