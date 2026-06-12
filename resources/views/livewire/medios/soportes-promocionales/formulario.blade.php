@@ -6,8 +6,8 @@
     @endif
 
     @if (!$mostrar_panel_cualitativo)
+    @can('crear_medio')
         <div class="bg-white overflow-hidden shadow-md sm:rounded-md p-4">
-            @can('crear_medio')
                 <div class="mb-4 flex justify-start">
                     <button type="button" onclick="recuperarInfoAnteriorSoportesPromocionales()"
                         class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
@@ -44,8 +44,8 @@
                         <span wire:loading wire:target="guardar">Guardando...</span>
                     </button>
                 </div>
+            </div>
             @endcan
-        </div>
 
         <div class="mt-6 overflow-hidden rounded-lg bg-white shadow-md">
             <div class="border-b border-gray-200 p-4">

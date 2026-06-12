@@ -6,7 +6,7 @@
           hover:-translate-y-1">
 
             <div
-                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-secondary-300
                hover:shadow-lg hover:shadow-secondary-400">
 
                 <div class="flex justify-center pt-6">
@@ -30,7 +30,31 @@
           hover:-translate-y-1">
 
             <div
-                class="border border-accent-500 border-default rounded-md shadow-xs bg-primary-200
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-secondary-300
+               hover:shadow-lg hover:shadow-secondary-400">
+
+                <div class="flex justify-center pt-6">
+                    <img class="rounded-t-base w-auto h-24" src="{{ asset('assets/images/reportes-ver1.svg') }}"
+                        alt="">
+                </div>
+
+                <div class="p-6 text-center">
+                    <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
+                        Reportes (PDFs)
+                    </h5>
+                </div>
+
+            </div>
+        </a>
+    @endcan
+    @can('ver_reportes')
+        <a href="#"
+            class="block max-w-sm rounded-md
+          transition duration-300 ease-in-out
+          hover:-translate-y-1">
+
+            <div
+                class="border border-accent-500 border-default rounded-md shadow-xs bg-secondary-300
                hover:shadow-lg hover:shadow-secondary-400">
 
                 <div class="flex justify-center pt-6">
@@ -40,12 +64,15 @@
 
                 <div class="p-6 text-center">
                     <h5 class="mt-3 mb-6 text-1xl font-semibold tracking-tight text-heading">
-                        Reportes
+                        Reportes (Estadísticas)
                     </h5>
                 </div>
 
             </div>
         </a>
+    @endcan
+    @can('ver_reportes')
+        <hr class="col-span-full">
     @endcan
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 p-6 lg:p-8">

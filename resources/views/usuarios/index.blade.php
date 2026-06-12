@@ -233,7 +233,7 @@
 
                         <div>
                             <label class="block text-sm font-medium mb-1">Usuario / correo</label>
-                            <input type="text" name="email" value="{{ old('email', $user->email) }}"
+                            <input type="text" name="email" value="{{ old('text', $user->email) }}"
                                 class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
                         </div>
 
