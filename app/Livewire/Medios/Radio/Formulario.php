@@ -370,15 +370,15 @@ class Formulario extends Component
     public function abrirCualitativos(int $id): void
     {
         $registro = MonitoreoMedioRadio::query()
-            ->leftJoin('sujetos', 'monitoreo_medios_radio.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('sujetos', 'monitoreo_radio.sujeto_id', '=', 'sujetos.id')
             ->leftJoin('generos_sujetos', 'sujetos.genero_id', '=', 'generos_sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medios_radio.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'monitoreo_medios_radio.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'monitoreo_medios_radio.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('municipios', 'monitoreo_medios_radio.medio_municipio_id', '=', 'municipios.id')
-            ->where('monitoreo_medios_radio.id', $id)
+            ->leftJoin('partidos', 'monitoreo_radio.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_radio.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_radio.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('municipios', 'monitoreo_radio.medio_municipio_id', '=', 'municipios.id')
+            ->where('monitoreo_radio.id', $id)
             ->select([
-                'monitoreo_medios_radio.*',
+                'monitoreo_radio.*',
                 'sujetos.nombre as sujeto_nombre',
                 'generos_sujetos.nombre as sujeto_genero',
                 'partidos.nombre as organizacion_nombre',
@@ -480,41 +480,41 @@ class Formulario extends Component
     private function consultarRegistros()
     {
         return MonitoreoMedioRadio::query()
-            ->leftJoin('sujetos', 'monitoreo_medios_radio.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medios_radio.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('municipios', 'monitoreo_medios_radio.medio_municipio_id', '=', 'municipios.id')
+            ->leftJoin('sujetos', 'monitoreo_radio.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_radio.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('municipios', 'monitoreo_radio.medio_municipio_id', '=', 'municipios.id')
             ->select([
-                'monitoreo_medios_radio.id',
-                'monitoreo_medios_radio.medio_nombre',
-                'monitoreo_medios_radio.medio_siglas',
-                'monitoreo_medios_radio.publicacion_fecha',
-                'monitoreo_medios_radio.publicacion_hora',
-                'monitoreo_medios_radio.publicacion_tipo',
-                'monitoreo_medios_radio.archivos',
-                'monitoreo_medios_radio.created_at',
+                'monitoreo_radio.id',
+                'monitoreo_radio.medio_nombre',
+                'monitoreo_radio.medio_siglas',
+                'monitoreo_radio.publicacion_fecha',
+                'monitoreo_radio.publicacion_hora',
+                'monitoreo_radio.publicacion_tipo',
+                'monitoreo_radio.archivos',
+                'monitoreo_radio.created_at',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'municipios.nombre as municipio_nombre',
             ])
-            ->where('monitoreo_medios_radio.tipo_medio', $this->tipo_medio)
-            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_medios_radio.created_at', '>=', $this->fecha_inicio_registro))
-            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_medios_radio.created_at', '<=', $this->fecha_fin_registro))
-            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_medios_radio.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
+            ->where('monitoreo_radio.tipo_medio', $this->tipo_medio)
+            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_radio.created_at', '>=', $this->fecha_inicio_registro))
+            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_radio.created_at', '<=', $this->fecha_fin_registro))
+            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_radio.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
             ->when($this->busqueda_tabla, function ($query) {
                 $busqueda = '%' . trim($this->busqueda_tabla) . '%';
 
                 $query->where(function ($q) use ($busqueda) {
-                    $q->where('monitoreo_medios_radio.id', 'like', $busqueda)
-                        ->orWhere('monitoreo_medios_radio.observaciones', 'like', $busqueda)
-                        ->orWhere('monitoreo_medios_radio.medio_nombre', 'like', $busqueda)
-                        ->orWhere('monitoreo_medios_radio.medio_siglas', 'like', $busqueda)
-                        ->orWhere('monitoreo_medios_radio.publicacion_tipo', 'like', $busqueda)
+                    $q->where('monitoreo_radio.id', 'like', $busqueda)
+                        ->orWhere('monitoreo_radio.observaciones', 'like', $busqueda)
+                        ->orWhere('monitoreo_radio.medio_nombre', 'like', $busqueda)
+                        ->orWhere('monitoreo_radio.medio_siglas', 'like', $busqueda)
+                        ->orWhere('monitoreo_radio.publicacion_tipo', 'like', $busqueda)
                         ->orWhere('sujetos.nombre', 'like', $busqueda)
                         ->orWhere('partidos.nombre', 'like', $busqueda)
                         ->orWhere('municipios.nombre', 'like', $busqueda);
                 });
             })
-            ->orderByDesc('monitoreo_medios_radio.id')
+            ->orderByDesc('monitoreo_radio.id')
             ->paginate($this->cantidad_por_pagina);
     }
 

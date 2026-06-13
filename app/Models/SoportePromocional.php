@@ -9,7 +9,7 @@ class SoportePromocional extends Model
 {
     use HasFactory;
 
-    protected $table = 'soportes_promocionales';
+    protected $table = 'monit_soportes_promocionales';
 
     protected $fillable = [
         'tipo_medio',

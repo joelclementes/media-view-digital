@@ -528,17 +528,37 @@ class Formulario extends Component
 
     public function eliminar(): void
     {
-        $registro = MonitoreoMedioImpreso::findOrFail($this->registro_eliminar_id);
-
-        foreach (($registro->archivos ?? []) as $ruta) {
-            Storage::disk('public')->delete($ruta);
+        if (! $this->registro_eliminar_id) {
+            return;
         }
 
-        $registro->delete();
+        $registro = MonitoreoMedioImpreso::findOrFail(
+            $this->registro_eliminar_id
+        );
+
+        DB::transaction(function () use ($registro) {
+            $archivos = is_array($registro->archivos)
+                ? $registro->archivos
+                : [];
+
+            foreach ($archivos as $ruta) {
+                if (
+                    $ruta &&
+                    Storage::disk('public')->exists($ruta)
+                ) {
+                    Storage::disk('public')->delete($ruta);
+                }
+            }
+
+            $registro->delete();
+        });
 
         $this->cancelarEliminacion();
 
-        session()->flash('success', 'Registro eliminado correctamente.');
+        session()->flash(
+            'success',
+            'Registro eliminado correctamente.'
+        );
     }
 
     public function updatedFechaInicioRegistro(): void

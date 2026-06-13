@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('propaganda_movil', function (Blueprint $table) {
+        Schema::create('monitoreo_propaganda_movil', function (Blueprint $table) {
             $table->id();
             $table->string('tipo_medio')->default('medios-soportes-promocionales');
             // Campos comunes en todos los medios
@@ -64,6 +64,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('propaganda_movil');
+        Schema::dropIfExists('monitoreo_propaganda_movil');
     }
 };

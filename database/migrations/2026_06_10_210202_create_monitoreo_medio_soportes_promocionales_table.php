@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('soportes_promocionales', function (Blueprint $table) {
+        Schema::create('monit_soportes_promocionales', function (Blueprint $table) {
             $table->id();
             $table->string('tipo_medio')->default('medios-soportes-promocionales');
             // Campos comunes en todos los medios
@@ -57,6 +57,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('soportes_promocionales');
+        Schema::dropIfExists('monit_soportes_promocionales');
     }
 };

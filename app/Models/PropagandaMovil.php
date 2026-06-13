@@ -9,7 +9,7 @@ class PropagandaMovil extends Model
 {
     use HasFactory;
 
-    protected $table = 'propaganda_movil';
+    protected $table = 'monitoreo_propaganda_movil';
 
     protected $fillable = [
         'tipo_medio',

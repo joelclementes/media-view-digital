@@ -9,7 +9,7 @@ class MonitoreoMedioRadio extends Model
 {
     use HasFactory;
 
-    protected $table = 'monitoreo_medios_radio';
+    protected $table = 'monitoreo_radio';
 
     protected $fillable = [
         'tipo_medio',

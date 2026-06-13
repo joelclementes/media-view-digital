@@ -15,18 +15,18 @@ class MediosRadioController extends Controller
     public function show(int $registro)
     {
         $registro = MonitoreoMedioRadio::query()
-            ->leftJoin('sujetos', 'monitoreo_medios_radio.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medios_radio.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'monitoreo_medios_radio.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'monitoreo_medios_radio.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('municipios', 'monitoreo_medios_radio.medio_municipio_id', '=', 'municipios.id')
-            ->leftJoin('generos_sujetos', 'monitoreo_medios_radio.genero_autor_id', '=', 'generos_sujetos.id')
-            ->leftJoin('violencia_temas', 'monitoreo_medios_radio.cuali_violencia_temas_id', '=', 'violencia_temas.id')
-            ->leftJoin('tipos_eleccion as cuali_tipos_eleccion', 'monitoreo_medios_radio.cuali_tipos_eleccion_id', '=', 'cuali_tipos_eleccion.id')
-            ->where('monitoreo_medios_radio.id', $registro)
-            ->where('monitoreo_medios_radio.tipo_medio', 'medios-radio')
+            ->leftJoin('sujetos', 'monitoreo_radio.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_radio.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_radio.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_radio.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('municipios', 'monitoreo_radio.medio_municipio_id', '=', 'municipios.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_radio.genero_autor_id', '=', 'generos_sujetos.id')
+            ->leftJoin('violencia_temas', 'monitoreo_radio.cuali_violencia_temas_id', '=', 'violencia_temas.id')
+            ->leftJoin('tipos_eleccion as cuali_tipos_eleccion', 'monitoreo_radio.cuali_tipos_eleccion_id', '=', 'cuali_tipos_eleccion.id')
+            ->where('monitoreo_radio.id', $registro)
+            ->where('monitoreo_radio.tipo_medio', 'medios-radio')
             ->select([
-                'monitoreo_medios_radio.*',
+                'monitoreo_radio.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -46,15 +46,15 @@ class MediosRadioController extends Controller
         abort_unless($registro->tipo_medio === 'medios-radio', 404);
 
         $datos = MonitoreoMedioRadio::query()
-            ->leftJoin('sujetos', 'monitoreo_medios_radio.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medios_radio.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'monitoreo_medios_radio.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'monitoreo_medios_radio.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('municipios', 'monitoreo_medios_radio.medio_municipio_id', '=', 'municipios.id')
-            ->leftJoin('generos_sujetos', 'monitoreo_medios_radio.genero_autor_id', '=', 'generos_sujetos.id')
-            ->where('monitoreo_medios_radio.id', $registro->id)
+            ->leftJoin('sujetos', 'monitoreo_radio.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_radio.organizacion_politica_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_radio.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_radio.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('municipios', 'monitoreo_radio.medio_municipio_id', '=', 'municipios.id')
+            ->leftJoin('generos_sujetos', 'monitoreo_radio.genero_autor_id', '=', 'generos_sujetos.id')
+            ->where('monitoreo_radio.id', $registro->id)
             ->select([
-                'monitoreo_medios_radio.*',
+                'monitoreo_radio.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',

@@ -11,21 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('monitoreo_radio', function (Blueprint $table) {
+        Schema::create('monitoreo_television', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo_medio')->default('medios-radio');
+            $table->string('tipo_medio')->default('medios-soportes-promocionales');
             // Campos comunes en todos los medios
             $table->foreignId('sujeto_id')->constrained('sujetos');
-            $table->foreignId('organizacion_politica_id')->nullable()->constrained('partidos');
+            $table->foreignId('organizacion_id')->nullable()->constrained('partidos')->comment('id de la organización política');
             $table->foreignId('periodo_id')->nullable()->constrained('periodos');
             $table->string('etapa_sujeto')->nullable();
             $table->foreignId('tipo_eleccion_id')->nullable()->constrained('tipos_eleccion');
 
             $table->string('medio_nombre')->nullable();
-            $table->string('medio_siglas')->nullable();
-            $table->string('medio_banda')->nullable();
-            $table->string('medio_grupo_radiofonico')->nullable();
+            $table->string('medio_tipo_senal')->nullable()->comment('Select -> Abierta/Restringida/Tv por cable');
             $table->foreignId('medio_municipio_id')->nullable()->constrained('municipios');
+            $table->foreignId('medio_plaza_id')->nullable()->constrained('municipios');
             $table->string('medio_cobertura')->nullable()->comment('Select -> Nacional/Regional/Local');
 
             $table->date('publicacion_fecha')->nullable();
@@ -41,6 +40,7 @@ return new class extends Migration
             $table->string('observaciones')->nullable();
 
             $table->json('archivos')->nullable();
+
 
             // Los valores descritos en ->comment()
             $table->string('cuali_valoracion')->nullable()->comment('Select -> Positiva/Negativa/Neutral');
@@ -63,7 +63,6 @@ return new class extends Migration
             // Los valores descritos en ->comment()
             $table->string('cuali_criterio_evaluacion')->nullable()->comment('Select -> Presentación directa/Cita y voz/Cita y audio/Solo cita/Voz de las y los ciudadanos');
 
-
             $table->timestamps();
         });
     }
@@ -73,6 +72,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('monitoreo_radio');
+        Schema::dropIfExists('monitoreo_television');
     }
 };

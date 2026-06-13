@@ -241,6 +241,62 @@
         </div>
     @endif
 
+    @if ($mostrar_modal_eliminar)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+            <div class="w-full max-w-md rounded-xl bg-white shadow-2xl">
+                <div class="border-b px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                            <x-lucide-trash-2 class="h-6 w-6 text-red-600" />
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                Eliminar registro
+                            </h3>
+
+                            <p class="text-sm text-gray-500">
+                                Esta acción no se puede deshacer.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-5">
+                    <p class="text-sm text-gray-700">
+                        Se eliminará el registro:
+                    </p>
+
+                    <div class="mt-3 rounded-lg bg-gray-50 p-3 text-sm font-medium text-gray-800">
+                        {{ $registro_eliminar_referencia }}
+                    </div>
+
+                    <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                        También se eliminarán permanentemente todas las imágenes asociadas en el storage.
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 border-t px-6 py-4">
+                    <button type="button" wire:click="cancelarEliminacion"
+                        class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                        Cancelar
+                    </button>
+
+                    <button type="button" wire:click="eliminar" wire:loading.attr="disabled" wire:target="eliminar"
+                        class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+                        <span wire:loading.remove wire:target="eliminar">
+                            Eliminar definitivamente
+                        </span>
+
+                        <span wire:loading wire:target="eliminar">
+                            Eliminando...
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if ($mostrar_panel_cualitativo)
         <div class="space-y-6">
             <div class="flex items-center justify-between">

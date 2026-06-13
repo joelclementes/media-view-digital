@@ -16,19 +16,19 @@ class MediosPropagandaMovilController extends Controller
     public function show(int $registro)
     {
         $registro = PropagandaMovil::query()
-            ->leftJoin('sujetos', 'propaganda_movil.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'propaganda_movil.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'propaganda_movil.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'propaganda_movil.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('distritos', 'propaganda_movil.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'propaganda_movil.municipio_id', '=', 'municipios.id')
-            ->leftJoin('localidades', 'propaganda_movil.localidad_id', '=', 'localidades.id')
-            ->leftJoin('tipo_publicidad', 'propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
-            ->leftJoin('violencia_temas', 'propaganda_movil.cuali_violencia_temas_id', '=', 'violencia_temas.id')
-            ->where('propaganda_movil.id', $registro)
-            ->where('propaganda_movil.tipo_medio', 'medios-propaganda-movil')
+            ->leftJoin('sujetos', 'monitoreo_propaganda_movil.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_propaganda_movil.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_propaganda_movil.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_propaganda_movil.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('distritos', 'monitoreo_propaganda_movil.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monitoreo_propaganda_movil.municipio_id', '=', 'municipios.id')
+            ->leftJoin('localidades', 'monitoreo_propaganda_movil.localidad_id', '=', 'localidades.id')
+            ->leftJoin('tipo_publicidad', 'monitoreo_propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->leftJoin('violencia_temas', 'monitoreo_propaganda_movil.cuali_violencia_temas_id', '=', 'violencia_temas.id')
+            ->where('monitoreo_propaganda_movil.id', $registro)
+            ->where('monitoreo_propaganda_movil.tipo_medio', 'medios-propaganda-movil')
             ->select([
-                'propaganda_movil.*',
+                'monitoreo_propaganda_movil.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -49,17 +49,17 @@ class MediosPropagandaMovilController extends Controller
         abort_unless($registro->tipo_medio === 'medios-propaganda-movil', 404);
 
         $datos = PropagandaMovil::query()
-            ->leftJoin('sujetos', 'propaganda_movil.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'propaganda_movil.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'propaganda_movil.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'propaganda_movil.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('distritos', 'propaganda_movil.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'propaganda_movil.municipio_id', '=', 'municipios.id')
-            ->leftJoin('localidades', 'propaganda_movil.localidad_id', '=', 'localidades.id')
-            ->leftJoin('tipo_publicidad', 'propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
-            ->where('propaganda_movil.id', $registro->id)
+            ->leftJoin('sujetos', 'monitoreo_propaganda_movil.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_propaganda_movil.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_propaganda_movil.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_propaganda_movil.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('distritos', 'monitoreo_propaganda_movil.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monitoreo_propaganda_movil.municipio_id', '=', 'municipios.id')
+            ->leftJoin('localidades', 'monitoreo_propaganda_movil.localidad_id', '=', 'localidades.id')
+            ->leftJoin('tipo_publicidad', 'monitoreo_propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->where('monitoreo_propaganda_movil.id', $registro->id)
             ->select([
-                'propaganda_movil.*',
+                'monitoreo_propaganda_movil.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -86,7 +86,7 @@ class MediosPropagandaMovilController extends Controller
         ])->setPaper('letter', 'portrait');
 
         return $pdf->stream(
-            'm_propaganda_movil_' . $registro->id . '_' . now()->format('Ymd') . '.pdf'
+            'monitoreo_m_propaganda_movil_' . $registro->id . '_' . now()->format('Ymd') . '.pdf'
         );
     }
 }

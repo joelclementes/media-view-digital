@@ -423,17 +423,17 @@ class Formulario extends Component
     public function abrirCualitativos(int $id): void
     {
         $registro = SoportePromocional::query()
-            ->leftJoin('sujetos', 'soportes_promocionales.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'soportes_promocionales.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'soportes_promocionales.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'soportes_promocionales.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('distritos', 'soportes_promocionales.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'soportes_promocionales.municipio_id', '=', 'municipios.id')
-            ->leftJoin('localidades', 'soportes_promocionales.localidad_id', '=', 'localidades.id')
-            ->leftJoin('tipo_publicidad', 'soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
-            ->where('soportes_promocionales.id', $id)
+            ->leftJoin('sujetos', 'monit_soportes_promocionales.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monit_soportes_promocionales.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monit_soportes_promocionales.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monit_soportes_promocionales.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('distritos', 'monit_soportes_promocionales.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monit_soportes_promocionales.municipio_id', '=', 'municipios.id')
+            ->leftJoin('localidades', 'monit_soportes_promocionales.localidad_id', '=', 'localidades.id')
+            ->leftJoin('tipo_publicidad', 'monit_soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->where('monit_soportes_promocionales.id', $id)
             ->select([
-                'soportes_promocionales.*',
+                'monit_soportes_promocionales.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -552,41 +552,41 @@ class Formulario extends Component
     private function consultarRegistros()
     {
         return SoportePromocional::query()
-            ->leftJoin('sujetos', 'soportes_promocionales.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'soportes_promocionales.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('distritos', 'soportes_promocionales.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'soportes_promocionales.municipio_id', '=', 'municipios.id')
-            ->leftJoin('tipo_publicidad', 'soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->leftJoin('sujetos', 'monit_soportes_promocionales.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monit_soportes_promocionales.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('distritos', 'monit_soportes_promocionales.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monit_soportes_promocionales.municipio_id', '=', 'municipios.id')
+            ->leftJoin('tipo_publicidad', 'monit_soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
             ->select([
-                'soportes_promocionales.id',
-                'soportes_promocionales.referencia',
-                'soportes_promocionales.publicacion_medidas',
-                'soportes_promocionales.publicacion_version',
-                'soportes_promocionales.publicacion_cantidad',
-                'soportes_promocionales.publicacion_numero_fotos',
-                'soportes_promocionales.archivos',
-                'soportes_promocionales.created_at',
+                'monit_soportes_promocionales.id',
+                'monit_soportes_promocionales.referencia',
+                'monit_soportes_promocionales.publicacion_medidas',
+                'monit_soportes_promocionales.publicacion_version',
+                'monit_soportes_promocionales.publicacion_cantidad',
+                'monit_soportes_promocionales.publicacion_numero_fotos',
+                'monit_soportes_promocionales.archivos',
+                'monit_soportes_promocionales.created_at',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'distritos.nombre as distrito_nombre',
                 'municipios.nombre as municipio_nombre',
                 'tipo_publicidad.nombre as tipo_publicidad_nombre',
             ])
-            ->where('soportes_promocionales.tipo_medio', $this->tipo_medio)
-            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('soportes_promocionales.created_at', '>=', $this->fecha_inicio_registro))
-            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('soportes_promocionales.created_at', '<=', $this->fecha_fin_registro))
-            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('soportes_promocionales.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
+            ->where('monit_soportes_promocionales.tipo_medio', $this->tipo_medio)
+            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monit_soportes_promocionales.created_at', '>=', $this->fecha_inicio_registro))
+            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monit_soportes_promocionales.created_at', '<=', $this->fecha_fin_registro))
+            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monit_soportes_promocionales.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
             ->when($this->busqueda_tabla, function ($query) {
                 $busqueda = '%' . trim($this->busqueda_tabla) . '%';
 
                 $query->where(function ($q) use ($busqueda) {
-                    $q->where('soportes_promocionales.id', 'like', $busqueda)
-                        ->orWhere('soportes_promocionales.referencia', 'like', $busqueda)
-                        ->orWhere('soportes_promocionales.referencia_domiciliaria', 'like', $busqueda)
-                        ->orWhere('soportes_promocionales.vialidad', 'like', $busqueda)
-                        ->orWhere('soportes_promocionales.seccion', 'like', $busqueda)
-                        ->orWhere('soportes_promocionales.publicacion_medidas', 'like', $busqueda)
-                        ->orWhere('soportes_promocionales.publicacion_version', 'like', $busqueda)
+                    $q->where('monit_soportes_promocionales.id', 'like', $busqueda)
+                        ->orWhere('monit_soportes_promocionales.referencia', 'like', $busqueda)
+                        ->orWhere('monit_soportes_promocionales.referencia_domiciliaria', 'like', $busqueda)
+                        ->orWhere('monit_soportes_promocionales.vialidad', 'like', $busqueda)
+                        ->orWhere('monit_soportes_promocionales.seccion', 'like', $busqueda)
+                        ->orWhere('monit_soportes_promocionales.publicacion_medidas', 'like', $busqueda)
+                        ->orWhere('monit_soportes_promocionales.publicacion_version', 'like', $busqueda)
                         ->orWhere('sujetos.nombre', 'like', $busqueda)
                         ->orWhere('partidos.nombre', 'like', $busqueda)
                         ->orWhere('distritos.nombre', 'like', $busqueda)
@@ -594,7 +594,7 @@ class Formulario extends Component
                         ->orWhere('tipo_publicidad.nombre', 'like', $busqueda);
                 });
             })
-            ->orderByDesc('soportes_promocionales.id')
+            ->orderByDesc('monit_soportes_promocionales.id')
             ->paginate($this->cantidad_por_pagina);
     }
 

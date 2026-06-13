@@ -16,19 +16,19 @@ class MediosSoportesPromocionalesController extends Controller
     public function show(int $registro)
     {
         $registro = SoportePromocional::query()
-            ->leftJoin('sujetos', 'soportes_promocionales.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'soportes_promocionales.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'soportes_promocionales.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'soportes_promocionales.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('distritos', 'soportes_promocionales.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'soportes_promocionales.municipio_id', '=', 'municipios.id')
-            ->leftJoin('localidades', 'soportes_promocionales.localidad_id', '=', 'localidades.id')
-            ->leftJoin('tipo_publicidad', 'soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
-            ->leftJoin('violencia_temas', 'soportes_promocionales.cuali_violencia_temas_id', '=', 'violencia_temas.id')
-            ->where('soportes_promocionales.id', $registro)
-            ->where('soportes_promocionales.tipo_medio', 'medios-soportes-promocionales')
+            ->leftJoin('sujetos', 'monit_soportes_promocionales.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monit_soportes_promocionales.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monit_soportes_promocionales.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monit_soportes_promocionales.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('distritos', 'monit_soportes_promocionales.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monit_soportes_promocionales.municipio_id', '=', 'municipios.id')
+            ->leftJoin('localidades', 'monit_soportes_promocionales.localidad_id', '=', 'localidades.id')
+            ->leftJoin('tipo_publicidad', 'monit_soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->leftJoin('violencia_temas', 'monit_soportes_promocionales.cuali_violencia_temas_id', '=', 'violencia_temas.id')
+            ->where('monit_soportes_promocionales.id', $registro)
+            ->where('monit_soportes_promocionales.tipo_medio', 'medios-soportes-promocionales')
             ->select([
-                'soportes_promocionales.*',
+                'monit_soportes_promocionales.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -49,17 +49,17 @@ class MediosSoportesPromocionalesController extends Controller
         abort_unless($registro->tipo_medio === 'medios-soportes-promocionales', 404);
 
         $datos = SoportePromocional::query()
-            ->leftJoin('sujetos', 'soportes_promocionales.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'soportes_promocionales.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'soportes_promocionales.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'soportes_promocionales.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('distritos', 'soportes_promocionales.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'soportes_promocionales.municipio_id', '=', 'municipios.id')
-            ->leftJoin('localidades', 'soportes_promocionales.localidad_id', '=', 'localidades.id')
-            ->leftJoin('tipo_publicidad', 'soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
-            ->where('soportes_promocionales.id', $registro->id)
+            ->leftJoin('sujetos', 'monit_soportes_promocionales.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monit_soportes_promocionales.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monit_soportes_promocionales.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monit_soportes_promocionales.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('distritos', 'monit_soportes_promocionales.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monit_soportes_promocionales.municipio_id', '=', 'municipios.id')
+            ->leftJoin('localidades', 'monit_soportes_promocionales.localidad_id', '=', 'localidades.id')
+            ->leftJoin('tipo_publicidad', 'monit_soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->where('monit_soportes_promocionales.id', $registro->id)
             ->select([
-                'soportes_promocionales.*',
+                'monit_soportes_promocionales.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',

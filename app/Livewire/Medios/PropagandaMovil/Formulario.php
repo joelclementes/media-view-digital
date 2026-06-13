@@ -400,17 +400,17 @@ class Formulario extends Component
     public function abrirCualitativos(int $id): void
     {
         $registro = PropagandaMovil::query()
-            ->leftJoin('sujetos', 'propaganda_movil.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'propaganda_movil.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('periodos', 'propaganda_movil.periodo_id', '=', 'periodos.id')
-            ->leftJoin('tipos_eleccion', 'propaganda_movil.tipo_eleccion_id', '=', 'tipos_eleccion.id')
-            ->leftJoin('distritos', 'propaganda_movil.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'propaganda_movil.municipio_id', '=', 'municipios.id')
-            ->leftJoin('localidades', 'propaganda_movil.localidad_id', '=', 'localidades.id')
-            ->leftJoin('tipo_publicidad', 'propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
-            ->where('propaganda_movil.id', $id)
+            ->leftJoin('sujetos', 'monitoreo_propaganda_movil.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_propaganda_movil.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('periodos', 'monitoreo_propaganda_movil.periodo_id', '=', 'periodos.id')
+            ->leftJoin('tipos_eleccion', 'monitoreo_propaganda_movil.tipo_eleccion_id', '=', 'tipos_eleccion.id')
+            ->leftJoin('distritos', 'monitoreo_propaganda_movil.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monitoreo_propaganda_movil.municipio_id', '=', 'municipios.id')
+            ->leftJoin('localidades', 'monitoreo_propaganda_movil.localidad_id', '=', 'localidades.id')
+            ->leftJoin('tipo_publicidad', 'monitoreo_propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->where('monitoreo_propaganda_movil.id', $id)
             ->select([
-                'propaganda_movil.*',
+                'monitoreo_propaganda_movil.*',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'periodos.nombre as periodo_nombre',
@@ -514,46 +514,46 @@ class Formulario extends Component
     private function consultarRegistros()
     {
         return PropagandaMovil::query()
-            ->leftJoin('sujetos', 'propaganda_movil.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'propaganda_movil.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('distritos', 'propaganda_movil.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'propaganda_movil.municipio_id', '=', 'municipios.id')
-            ->leftJoin('tipo_publicidad', 'propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->leftJoin('sujetos', 'monitoreo_propaganda_movil.sujeto_id', '=', 'sujetos.id')
+            ->leftJoin('partidos', 'monitoreo_propaganda_movil.organizacion_id', '=', 'partidos.id')
+            ->leftJoin('distritos', 'monitoreo_propaganda_movil.distrito_id', '=', 'distritos.id')
+            ->leftJoin('municipios', 'monitoreo_propaganda_movil.municipio_id', '=', 'municipios.id')
+            ->leftJoin('tipo_publicidad', 'monitoreo_propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
             ->select([
-                'propaganda_movil.id',
-                'propaganda_movil.razon_social',
-                'propaganda_movil.unidad',
-                'propaganda_movil.numero',
-                'propaganda_movil.placa',
-                'propaganda_movil.referencia',
-                'propaganda_movil.publicacion_medidas',
-                'propaganda_movil.publicacion_version',
-                'propaganda_movil.archivos',
-                'propaganda_movil.created_at',
+                'monitoreo_propaganda_movil.id',
+                'monitoreo_propaganda_movil.razon_social',
+                'monitoreo_propaganda_movil.unidad',
+                'monitoreo_propaganda_movil.numero',
+                'monitoreo_propaganda_movil.placa',
+                'monitoreo_propaganda_movil.referencia',
+                'monitoreo_propaganda_movil.publicacion_medidas',
+                'monitoreo_propaganda_movil.publicacion_version',
+                'monitoreo_propaganda_movil.archivos',
+                'monitoreo_propaganda_movil.created_at',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'distritos.nombre as distrito_nombre',
                 'municipios.nombre as municipio_nombre',
                 'tipo_publicidad.nombre as tipo_publicidad_nombre',
             ])
-            ->where('propaganda_movil.tipo_medio', $this->tipo_medio)
-            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('propaganda_movil.created_at', '>=', $this->fecha_inicio_registro))
-            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('propaganda_movil.created_at', '<=', $this->fecha_fin_registro))
-            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('propaganda_movil.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
+            ->where('monitoreo_propaganda_movil.tipo_medio', $this->tipo_medio)
+            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_propaganda_movil.created_at', '>=', $this->fecha_inicio_registro))
+            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_propaganda_movil.created_at', '<=', $this->fecha_fin_registro))
+            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_propaganda_movil.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
             ->when($this->busqueda_tabla, function ($query) {
                 $busqueda = '%' . trim($this->busqueda_tabla) . '%';
                 $query->where(function ($q) use ($busqueda) {
-                    $q->where('propaganda_movil.id', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.razon_social', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.unidad', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.numero', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.placa', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.referencia', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.referencia_domiciliaria', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.vialidad', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.seccion', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.publicacion_medidas', 'like', $busqueda)
-                        ->orWhere('propaganda_movil.publicacion_version', 'like', $busqueda)
+                    $q->where('monitoreo_propaganda_movil.id', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.razon_social', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.unidad', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.numero', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.placa', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.referencia', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.referencia_domiciliaria', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.vialidad', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.seccion', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.publicacion_medidas', 'like', $busqueda)
+                        ->orWhere('monitoreo_propaganda_movil.publicacion_version', 'like', $busqueda)
                         ->orWhere('sujetos.nombre', 'like', $busqueda)
                         ->orWhere('partidos.nombre', 'like', $busqueda)
                         ->orWhere('distritos.nombre', 'like', $busqueda)
@@ -561,7 +561,7 @@ class Formulario extends Component
                         ->orWhere('tipo_publicidad.nombre', 'like', $busqueda);
                 });
             })
-            ->orderByDesc('propaganda_movil.id')
+            ->orderByDesc('monitoreo_propaganda_movil.id')
             ->paginate($this->cantidad_por_pagina);
     }
 
