@@ -150,7 +150,7 @@
     @endcan
 
     @can('ver_television')
-        <a href="#"
+        <a href="{{ route('m-television-index') }}"
             class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">
