@@ -225,7 +225,7 @@
     @endcan
 
     @can('ver_cine')
-        <a href="#"
+        <a href="{{ route('m-cine-index') }}"
             class="block max-w-sm rounded-md
           transition duration-300 ease-in-out
           hover:-translate-y-1">

@@ -448,7 +448,7 @@ class Formulario extends Component
             'observaciones' => 'nullable|string|max:255',
 
             'archivos' => $this->registro_editando_id ? 'nullable|array' : 'required|array|min:1',
-            'archivos.*' => 'image|max:10240|mimes:jpg,jpeg,png',
+            'archivos.*' => 'required|file|image|max:10240|mimes:jpg,jpeg,png',
 
             'cuali_valoracion' => 'nullable|in:Positiva,Negativa,Neutral',
             'cuali_lenguaje_inclusivo' => 'nullable|in:Si,No',
