@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('monitoreo_medios_electronicos', function (Blueprint $table) {
                         $table->id();
-            $table->string('tipo_medio')->default('medios-impresos');
+            $table->string('tipo_medio')->default('medios-electronicos');
 
             // Campos comunes en todos los medios
             $table->foreignId('sujeto_id')->constrained('sujetos');

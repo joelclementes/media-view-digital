@@ -31,5 +31,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TiposEleccionSeeder::class);
         $this->call(PortalesInternetSeeder::class);
         $this->call(PrensaSeeder::class);
+        $this->call(CinesSeeder::class);
     }
 }

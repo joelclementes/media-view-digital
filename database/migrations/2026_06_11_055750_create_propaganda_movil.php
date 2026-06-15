@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('monitoreo_propaganda_movil', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo_medio')->default('medios-soportes-promocionales');
+            $table->string('tipo_medio')->default('medios-propaganda-movil');
             // Campos comunes en todos los medios
             $table->foreignId('sujeto_id')->constrained('sujetos');
             $table->foreignId('organizacion_id')->nullable()->constrained('partidos')->comment('id de la organización política');

@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('monitoreo_television', function (Blueprint $table) {
+        Schema::create('monitoreo_cine', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo_medio')->default('medios-television');
+
+            $table->string('tipo_medio')->default('medios-cine');
             // Campos comunes en todos los medios
             $table->foreignId('sujeto_id')->constrained('sujetos');
             $table->foreignId('organizacion_id')->nullable()->constrained('partidos')->comment('id de la organización política');
@@ -21,26 +22,19 @@ return new class extends Migration
             $table->string('etapa_sujeto')->nullable();
             $table->foreignId('tipo_eleccion_id')->nullable()->constrained('tipos_eleccion');
 
-            $table->string('medio_nombre')->nullable();
-            $table->string('medio_tipo_senal')->nullable()->comment('Select -> Abierta/Restringida/Tv por cable');
+            $table->foreignId('medio_cine_id')->nullable()->constrained('cines');
+            $table->foreignId('medio_distrito_id')->nullable()->constrained('distritos');
             $table->foreignId('medio_municipio_id')->nullable()->constrained('municipios');
-            $table->foreignId('medio_plaza_id')->nullable()->constrained('municipios');
-            $table->string('medio_cobertura')->nullable()->comment('Select -> Nacional/Regional/Local');
+            $table->foreignId('medio_localidad_id')->nullable()->constrained('localidades');
+            $table->string('medio_sala')->nullable();
 
             $table->date('publicacion_fecha')->nullable();
             $table->time('publicacion_hora')->nullable();
             $table->integer('publicacion_tiempo')->nullable()->comment('Duración de la publicación. Tiempo en segundos');
-            $table->string('publicacion_tipo')->nullable()->comment('Select -> Nota informativa/Nota periodística/Entrevista/Reportaje');
-            $table->string('publicacion_ubicacion')->nullable()->comment('Select -> Al inicio/En el desarrollo/Al final');
-            $table->string('publicacion_modalidad')->nullable()->comment('Select -> Política/Electoral');
 
-            $table->foreignId('genero_autor_id')->constrained('generos_sujetos');
-            $table->string('nombre_autor')->nullable();
-
-            $table->string('observaciones')->nullable();
-
+            $table->string('referencia')->nullable();
+            $table->text('observaciones')->nullable();
             $table->json('archivos')->nullable();
-
 
             // Los valores descritos en ->comment()
             $table->string('cuali_valoracion')->nullable()->comment('Select -> Positiva/Negativa/Neutral');
@@ -54,14 +48,12 @@ return new class extends Migration
             // valores directo en código (select)
             $table->foreignId('cuali_violencia_temas_id')->nullable()->constrained('violencia_temas')->comment('"Igualdad de género"; relación con violencia_temas');
 
-            // datos obtenidos de la tabla tipos_eleccion (select)
-            $table->foreignId('cuali_tipos_eleccion_id')->nullable()->constrained('tipos_eleccion')->comment('"Candidatura"; relación con tipos_eleccion');
-
             // textarea
             $table->text('cuali_resumen')->nullable();
 
             // Los valores descritos en ->comment()
             $table->string('cuali_criterio_evaluacion')->nullable()->comment('Select -> Presentación directa/Cita y voz/Cita y audio/Solo cita/Voz de las y los ciudadanos');
+
 
             $table->timestamps();
         });
@@ -72,6 +64,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('monitoreo_television');
+        Schema::dropIfExists('monitoreo_cine');
     }
 };
