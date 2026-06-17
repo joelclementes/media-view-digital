@@ -458,6 +458,21 @@ class Formulario extends Component
         session()->flash('success', 'Registro eliminado correctamente.');
     }
 
+    public function updatedArchivos()
+    {
+        $this->resetValidation([
+            'archivos',
+            'archivos.*',
+        ]);
+
+        if (empty($this->archivos)) {
+            return;
+        }
+
+        $this->validateOnly('archivos');
+        $this->validateOnly('archivos.*');
+    }
+
     public function updatedFechaInicioRegistro(): void
     {
         $this->resetPage();

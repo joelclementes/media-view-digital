@@ -1,10 +1,55 @@
-<div class="mb-6 p-5 border rounded-lg bg-white shadow-sm">
+<div
+    class="mb-6 p-5 border rounded-lg bg-white shadow-sm"
+    x-data="{
+        errorArchivo: '',
+        validarArchivo(event) {
+            this.errorArchivo = '';
+
+            const archivos = Array.from(event.target.files || []);
+            const permitidos = ['mp4', 'mov', 'avi', 'wmv', 'mkv'];
+            const maxBytes = 50 * 1024 * 1024;
+
+            for (const archivo of archivos) {
+                const extension = archivo.name.split('.').pop().toLowerCase();
+
+                if (!permitidos.includes(extension)) {
+                    this.errorArchivo = 'Formato no permitido. Solo se aceptan videos MP4, MOV, AVI, WMV o MKV.';
+                    event.target.value = '';
+                    return;
+                }
+
+                if (archivo.size > maxBytes) {
+                    this.errorArchivo = 'El archivo supera el límite permitido de 50 MB.';
+                    event.target.value = '';
+                    return;
+                }
+
+                if (archivo.type && !archivo.type.startsWith('video/')) {
+                    this.errorArchivo = 'El archivo seleccionado no fue reconocido como video válido.';
+                    event.target.value = '';
+                    return;
+                }
+            }
+        }
+    }"
+    x-on:livewire-upload-error="
+        errorArchivo = 'No se pudo subir temporalmente el video. El archivo puede tener una codificación incompatible. Convierte el video a MP4 con video H.264 y audio AAC, y vuelve a intentarlo.'
+    "
+>
     <h3 class="text-lg font-semibold mb-4 text-gray-800">Archivo / video</h3>
 
     <x-label for="archivos" value="Seleccionar archivo(s)" />
 
     <div>
-        <input id="archivos" type="file" wire:model.live="archivos" multiple accept="video/mp4,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-matroska,.mp4,.mov,.avi,.wmv,.mkv" class="hidden" />
+        <input
+            id="archivos"
+            type="file"
+            wire:model.live="archivos"
+            multiple
+            accept="video/mp4,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-matroska,.mp4,.mov,.avi,.wmv,.mkv"
+            class="hidden"
+            x-on:change="validarArchivo($event)"
+        />
 
         <label for="archivos"
             class="inline-flex cursor-pointer items-center rounded-md bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-100">
@@ -14,7 +59,11 @@
         <span class="ml-3 text-sm text-gray-500">MP4, MOV, AVI, WMV, MKV</span>
     </div>
 
-    <p class="mt-1 text-xs text-gray-500">Formatos permitidos: MP4, MOV, AVI, WMV, MKV. Máximo 50 MB por archivo.</p>
+    <p class="mt-1 text-xs text-gray-500">
+        Formatos permitidos: MP4, MOV, AVI, WMV, MKV. Máximo 50 MB por archivo.
+    </p>
+
+    <p x-show="errorArchivo" x-text="errorArchivo" class="mt-1 text-sm text-red-600"></p>
 
     <x-input-error for="archivos" class="mt-1" />
     <x-input-error for="archivos.*" class="mt-1" />
