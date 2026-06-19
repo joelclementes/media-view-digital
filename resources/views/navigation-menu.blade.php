@@ -21,6 +21,9 @@
                     <x-nav-link href="{{ route('usuarios.index') }}" :active="request()->routeIs('usuarios.*')">
                         Usuarios
                     </x-nav-link>
+                    <x-nav-link href="{{ route('asignar-portales') }}" :active="request()->routeIs('asignar-portales')">
+                        {{ __('Asignar portales') }}
+                    </x-nav-link>
                 @endcan
 
                 @can('administrar_roles_permisos')
@@ -169,6 +172,9 @@
             @can('administrar_usuarios')
                 <x-responsive-nav-link href="{{ route('usuarios.index') }}" :active="request()->routeIs('usuarios.*')">
                     Usuarios
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('asignar-portales') }}" :active="request()->routeIs('asignar-portales')">
+                    {{ __('Asignar portales') }}
                 </x-responsive-nav-link>
             @endcan
 

@@ -15,6 +15,9 @@ class SujetosSeeder extends Seeder
     {
         $sujetos = [
             [
+                'nombre' => 'N/A',
+            ],
+            [
                 'nombre' => 'ALBERTO GARCÍA ROMO',
                 'genero_id' => 1,
                 'municipio_id' => 173,

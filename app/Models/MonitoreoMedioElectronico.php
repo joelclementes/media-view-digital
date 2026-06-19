@@ -28,6 +28,7 @@ class MonitoreoMedioElectronico extends Model
         'referencia',
         'observaciones',
         'archivos',
+        'validado',
         'cuali_valoracion',
         'cuali_lenguaje_inclusivo',
         'cuali_estereotipo',

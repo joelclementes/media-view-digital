@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('sujetos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->unsignedBigInteger('genero_id');
-            $table->unsignedBigInteger('municipio_id');
-            $table->unsignedBigInteger('partido_id');
+            $table->unsignedBigInteger('genero_id')->nullable();
+            $table->unsignedBigInteger('municipio_id')->nullable();
+            $table->unsignedBigInteger('partido_id')->nullable();
             $table->timestamps();
 
             $table->foreign('genero_id')->references('id')->on('generos_sujetos');

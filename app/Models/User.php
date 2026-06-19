@@ -11,6 +11,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -68,4 +69,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function portalesAsignados(): BelongsToMany
+{
+    return $this->belongsToMany(
+        \App\Models\PortalInternet::class,
+        'capturista_portal_internet',
+        'user_id',
+        'portal_internet_id'
+    )->withTimestamps();
+}
 }

@@ -2,19 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class PortalInternet extends Model
 {
-    use HasFactory;
-
     protected $table = 'portales_internet';
 
     protected $fillable = [
         'nombre',
         'url',
         'ciudad',
-        'tipo'
+        'tipo',
     ];
+
+    public function capturistas(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'capturista_portal_internet',
+            'portal_internet_id',
+            'user_id'
+        )->withTimestamps();
+    }
 }

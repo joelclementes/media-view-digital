@@ -38,6 +38,8 @@ return new class extends Migration
 
             $table->json('archivos')->nullable();
 
+            $table->boolean('validado')->default(false);
+
 
             // valores directo en código (select)
             $table->string('cuali_valoracion')->nullable()->comment('Positiva/Negativa/Neutral');

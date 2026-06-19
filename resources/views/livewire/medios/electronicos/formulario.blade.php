@@ -177,7 +177,7 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <table class="min-w-full divide-y divide-gray-200 text-sm" id="tabla-medios">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="w-20 px-4 py-3 text-left font-semibold text-gray-700">Id</th>
@@ -198,36 +198,42 @@
                             @endphp
 
                             <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 font-medium text-gray-800">
+
+                                @php
+                                    $textoColor = !$registro->validado ? 'text-amber-600' : 'text-gray-700';
+                                    $textoColorId = !$registro->validado ? 'text-amber-600' : 'text-gray-800';
+                                @endphp
+
+                                <td class="px-4 py-3 font-medium {{ $textoColorId }}">
                                     #{{ $registro->id }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-700">
+                                <td class="px-4 py-3 {{ $textoColorId }}">
                                     <div class="max-w-[220px] truncate"
                                         title="{{ $registro->organizacion_nombre ?? 'Sin organización' }}">
                                         {{ $registro->organizacion_nombre ?? 'Sin organización' }}
                                     </div>
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-700">
+                                <td class="px-4 py-3 {{ $textoColorId }}">
                                     <div class="max-w-[260px] truncate"
                                         title="{{ $registro->referencia ?: 'Sin referencia' }}">
                                         {{ $registro->referencia ?: 'Sin referencia' }}
                                     </div>
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-700">
+                                <td class="px-4 py-3 {{ $textoColorId }}">
                                     <div class="max-w-[220px] truncate"
                                         title="{{ $registro->sujeto_nombre ?? 'Sin sujeto' }}">
                                         {{ $registro->sujeto_nombre ?? 'Sin sujeto' }}
                                     </div>
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-700 whitespace-nowrap">
+                                <td class="px-4 py-3 {{ $textoColorId }} whitespace-nowrap">
                                     {{ $registro->fecha ? \Carbon\Carbon::parse($registro->fecha)->format('d/m/Y') : 'Sin fecha' }}
                                 </td>
 
-                                <td class="px-4 py-3 text-gray-700">
+                                <td class="px-4 py-3 {{ $textoColorId }}">
                                     <div class="max-w-[220px] truncate"
                                         title="{{ $registro->portal_nombre ?? 'Sin portal' }}">
                                         {{ $registro->portal_nombre ?? 'Sin portal' }}
@@ -256,6 +262,11 @@
                                                 class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
                                                 <x-lucide-pencil class="h-5 w-5" />
                                             </button>
+                                            <button type="button" title="Validar"
+                                                wire:click="validarRegistro({{ $registro->id }})"
+                                                class="rounded-md p-1.5 text-green-600 hover:bg-green-50 hover:text-green-800">
+                                                <x-lucide-thumbs-up class="h-5 w-5" />
+                                            </button>
                                         @else
                                             <a href="{{ route('m-electronicos-show', $registro->id) }}" title="Ver"
                                                 class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
@@ -264,6 +275,11 @@
                                         @endcan
 
                                         @can('eliminar_medio')
+                                            <button type="button" title="Invalidar"
+                                                wire:click="invalidarRegistro({{ $registro->id }})"
+                                                class="rounded-md p-1.5 text-amber-600 hover:bg-amber-50 hover:text-amber-800">
+                                                <x-lucide-thumbs-down class="h-5 w-5" />
+                                            </button>
                                             <button type="button" title="Eliminar"
                                                 wire:click="confirmarEliminacion({{ $registro->id }})"
                                                 class="rounded-md p-1.5 text-red-600 hover:bg-red-50 hover:text-red-800">
