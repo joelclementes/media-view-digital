@@ -234,6 +234,7 @@ class Formulario extends Component
                 : MonitoreoMedioTelevision::create(array_merge($datos, [
                     'tipo_medio' => $this->tipo_medio,
                     'archivos' => null,
+                    'usuario1_id' => auth()->id(),
                 ]));
 
             foreach ($this->archivos_eliminados as $ruta) {
@@ -253,6 +254,7 @@ class Formulario extends Component
             $registro->update(array_merge($datos, [
                 'tipo_medio' => $this->tipo_medio,
                 'archivos' => $rutas_archivos,
+                'usuario1_id' => auth()->id(),
             ]));
         });
 
@@ -416,7 +418,10 @@ class Formulario extends Component
             'cuali_criterio_evaluacion' => 'nullable|in:' . implode(',', $this->criterios_evaluacion),
         ]);
 
-        MonitoreoMedioTelevision::findOrFail($this->registro_cualitativo_id)->update($datos);
+        // MonitoreoMedioTelevision::findOrFail($this->registro_cualitativo_id)->update($datos);
+        MonitoreoMedioTelevision::findOrFail($this->registro_cualitativo_id)->update(array_merge($datos, [
+            'usuario2_id' => auth()->id(),
+        ]));
         $this->dispatch('television-cualitativos-guardados', datos: $datos);
         $this->cerrarCualitativos();
         session()->flash('success', 'Datos cualitativos guardados correctamente.');
@@ -458,11 +463,26 @@ class Formulario extends Component
         session()->flash('success', 'Registro eliminado correctamente.');
     }
 
-    public function updatedFechaInicioRegistro(): void { $this->resetPage(); }
-    public function updatedFechaFinRegistro(): void { $this->resetPage(); }
-    public function updatedBusquedaTabla(): void { $this->resetPage(); }
-    public function updatedCantidadPorPagina(): void { $this->resetPage(); }
-    public function updatedFiltroTipoEleccionId(): void { $this->resetPage(); }
+    public function updatedFechaInicioRegistro(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedFechaFinRegistro(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedBusquedaTabla(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedCantidadPorPagina(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedFiltroTipoEleccionId(): void
+    {
+        $this->resetPage();
+    }
 
     public function alternarFiltrosTabla(): void
     {
@@ -479,6 +499,48 @@ class Formulario extends Component
         $this->resetPage();
     }
 
+    // private function consultarRegistros()
+    // {
+    //     return MonitoreoMedioTelevision::query()
+    //         ->leftJoin('sujetos', 'monitoreo_television.sujeto_id', '=', 'sujetos.id')
+    //         ->leftJoin('partidos', 'monitoreo_television.organizacion_id', '=', 'partidos.id')
+    //         ->leftJoin('municipios', 'monitoreo_television.medio_municipio_id', '=', 'municipios.id')
+    //         ->leftJoin('municipios as plazas', 'monitoreo_television.medio_plaza_id', '=', 'plazas.id')
+    //         ->select([
+    //             'monitoreo_television.id',
+    //             'monitoreo_television.medio_nombre',
+    //             'monitoreo_television.medio_tipo_senal',
+    //             'monitoreo_television.publicacion_fecha',
+    //             'monitoreo_television.publicacion_hora',
+    //             'monitoreo_television.publicacion_tipo',
+    //             'monitoreo_television.archivos',
+    //             'monitoreo_television.created_at',
+    //             'sujetos.nombre as sujeto_nombre',
+    //             'partidos.nombre as organizacion_nombre',
+    //             'municipios.nombre as municipio_nombre',
+    //             'plazas.nombre as plaza_nombre',
+    //         ])
+    //         ->where('monitoreo_television.tipo_medio', $this->tipo_medio)
+    //         ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_television.created_at', '>=', $this->fecha_inicio_registro))
+    //         ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_television.created_at', '<=', $this->fecha_fin_registro))
+    //         ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_television.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
+    //         ->when($this->busqueda_tabla, function ($query) {
+    //             $busqueda = '%' . trim($this->busqueda_tabla) . '%';
+
+    //             $query->where(function ($q) use ($busqueda) {
+    //                 $q->where('monitoreo_television.id', 'like', $busqueda)
+    //                     ->orWhere('monitoreo_television.observaciones', 'like', $busqueda)
+    //                     ->orWhere('monitoreo_television.medio_nombre', 'like', $busqueda)
+    //                     ->orWhere('monitoreo_television.medio_tipo_senal', 'like', $busqueda)
+    //                     ->orWhere('monitoreo_television.publicacion_tipo', 'like', $busqueda)
+    //                     ->orWhere('sujetos.nombre', 'like', $busqueda)
+    //                     ->orWhere('partidos.nombre', 'like', $busqueda)
+    //                     ->orWhere('municipios.nombre', 'like', $busqueda);
+    //             });
+    //         })
+    //         ->orderByDesc('monitoreo_television.id')
+    //         ->paginate($this->cantidad_por_pagina);
+    // }
     private function consultarRegistros()
     {
         return MonitoreoMedioTelevision::query()
@@ -486,6 +548,7 @@ class Formulario extends Component
             ->leftJoin('partidos', 'monitoreo_television.organizacion_id', '=', 'partidos.id')
             ->leftJoin('municipios', 'monitoreo_television.medio_municipio_id', '=', 'municipios.id')
             ->leftJoin('municipios as plazas', 'monitoreo_television.medio_plaza_id', '=', 'plazas.id')
+            ->leftJoin('users as capturistas', 'monitoreo_television.usuario1_id', '=', 'capturistas.id')
             ->select([
                 'monitoreo_television.id',
                 'monitoreo_television.medio_nombre',
@@ -495,12 +558,17 @@ class Formulario extends Component
                 'monitoreo_television.publicacion_tipo',
                 'monitoreo_television.archivos',
                 'monitoreo_television.created_at',
+                'monitoreo_television.usuario1_id',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'municipios.nombre as municipio_nombre',
                 'plazas.nombre as plaza_nombre',
+                'capturistas.name as capturista_nombre',
             ])
             ->where('monitoreo_television.tipo_medio', $this->tipo_medio)
+            ->when(! $this->usuarioPuedeVerTodosLosRegistros(), function ($query) {
+                $query->where('monitoreo_television.usuario1_id', auth()->id());
+            })
             ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_television.created_at', '>=', $this->fecha_inicio_registro))
             ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_television.created_at', '<=', $this->fecha_fin_registro))
             ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_television.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
@@ -515,7 +583,8 @@ class Formulario extends Component
                         ->orWhere('monitoreo_television.publicacion_tipo', 'like', $busqueda)
                         ->orWhere('sujetos.nombre', 'like', $busqueda)
                         ->orWhere('partidos.nombre', 'like', $busqueda)
-                        ->orWhere('municipios.nombre', 'like', $busqueda);
+                        ->orWhere('municipios.nombre', 'like', $busqueda)
+                        ->orWhere('capturistas.name', 'like', $busqueda);
                 });
             })
             ->orderByDesc('monitoreo_television.id')
@@ -590,5 +659,17 @@ class Formulario extends Component
             'nombre_autor' => $this->nombre_autor,
             'observaciones' => $this->observaciones,
         ];
+    }
+
+    private function usuarioPuedeVerTodosLosRegistros(): bool
+    {
+        $usuario = auth()->user();
+
+        return $usuario
+            && (
+                $usuario->hasRole('Administrador')
+                || $usuario->hasRole('Super Usuario')
+                || $usuario->hasRole('Consultor')
+            );
     }
 }

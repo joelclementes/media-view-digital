@@ -146,6 +146,11 @@
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Medio</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Tipo</th>
+                            @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">
+                                    Capturó
+                                </th>
+                            @endif
                             <th class="px-4 py-3 text-center font-semibold text-gray-700">Acciones</th>
                         </tr>
                     </thead>
@@ -171,6 +176,9 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">{{ $registro->publicacion_tipo ?: 'Sin tipo' }}</td>
+                                @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                    <td class="px-4 py-3">{{ $registro->capturista?->name ?? 'Sin capturista' }}</td>
+                                @endif
                                 <td class="px-4 py-3">
                                     <div class="flex flex-wrap justify-center gap-2">
                                         @can('crear_medio')
@@ -488,21 +496,21 @@
                         <x-label for="cuali_resumen" value="Resumen" />
                         {{-- <textarea id="cuali_resumen" wire:model.live.debounce.500ms="cuali_resumen" rows="4"
                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea> --}}
-                            
-                            <textarea id="cuali_resumen" wire:model.live.debounce.500ms="cuali_resumen" maxlength="255" rows="4"
+
+                        <textarea id="cuali_resumen" wire:model.live.debounce.500ms="cuali_resumen" maxlength="255" rows="4"
                             placeholder="Observaciones del registro, si aplica"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"></textarea>
-                            <x-input-error for="cuali_resumen" class="mt-1" />
+                        <x-input-error for="cuali_resumen" class="mt-1" />
 
-                                <div class="text-end mt-1">
-        <small class="text-muted">
-            {{ strlen($cuali_resumen ?? '') }}/255 caracteres
-        </small>
-    </div>
+                        <div class="text-end mt-1">
+                            <small class="text-muted">
+                                {{ strlen($cuali_resumen ?? '') }}/255 caracteres
+                            </small>
+                        </div>
 
-    @error('cuali_resumen')
-        <small class="text-danger">{{ $message }}</small>
-    @enderror
+                        @error('cuali_resumen')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
 
                 </div>

@@ -170,7 +170,7 @@
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Sujeto</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Medio impreso</th>
-                            @if (!auth()->user()->hasRole('Consultor'))
+                            @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">
                                     Capturó
                                 </th>
@@ -190,7 +190,7 @@
                                     {{ $registro->publicacion_fecha ? \Carbon\Carbon::parse($registro->publicacion_fecha)->format('d/m/Y') : 'Sin fecha' }}
                                 </td>
                                 <td class="px-4 py-3">{{ $registro->medio_prensa_nombre ?? 'Sin medio' }}</td>
-                                @if (!auth()->user()->hasRole('Consultor'))
+                                @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
                                     <td class="px-4 py-3">{{ $registro->capturista?->name ?? 'Sin capturista' }}</td>
                                 @endif
                                 <td class="px-4 py-3">

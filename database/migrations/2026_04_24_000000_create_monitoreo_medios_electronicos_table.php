@@ -40,7 +40,7 @@ return new class extends Migration
 
             $table->boolean('validado')->default(false);
 
-            $table->foreignId('usuario1_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cuantitativos');
+            $table->foreignId('usuario1_id')->nullable()->constrained('users')->nullOnDelete()->comment('Usuario quien edite los datos cuantitativos');
 
             // valores directo en código (select)
             $table->string('cuali_valoracion')->nullable()->comment('Positiva/Negativa/Neutral');
@@ -71,7 +71,7 @@ return new class extends Migration
             // valores directo en código (select)
             $table->string('cuali_formato')->nullable()->comment('Mensaje/De entrevista/Informativo-narrativo');
 
-            $table->foreignId('usuario2_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cualitativos');
+            $table->foreignId('usuario2_id')->nullable()->constrained('users')->nullOnDelete()->comment('Usuario quien edite los datos cualitativos');
 
             $table->timestamps();
         });
