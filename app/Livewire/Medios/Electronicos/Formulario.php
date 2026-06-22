@@ -169,42 +169,12 @@ class Formulario extends Component
 
     //region CATÁLOGOS
 
-
-    // public function cargarCatalogos(): void
-    // {
-    //     $this->partidos = Partido::orderBy('nombre')->get();
-    //     $this->periodos = Periodo::orderBy('nombre')->get();
-    //     $this->tipos_eleccion = TipoEleccion::orderBy('nombre')->get();
-    //     $this->violencia_temas = ViolenciaTema::orderBy('nombre')->get();
-
-    //     $this->portales = PortalInternet::orderBy('nombre')->get();
-    //     $this->tamanos = TamanoPublicacion::orderBy('nombre')->get();
-
-    //     $this->generos = Genero::porMedio('electronico')
-    //         ->orderBy('nombre')
-    //         ->get();
-
-    //     $this->generos_sujeto = GeneroSujeto::orderBy('nombre')->get();
-    // }
-
     public function cargarCatalogos(): void
     {
         $this->partidos = Partido::orderBy('nombre')->get();
         $this->periodos = Periodo::orderBy('nombre')->get();
         $this->tipos_eleccion = TipoEleccion::orderBy('nombre')->get();
         $this->violencia_temas = ViolenciaTema::orderBy('nombre')->get();
-
-        // $userId = Auth::id();
-
-        // $this->portales = PortalInternet::query()
-        //     ->where('tipo', 'Portal')
-        //     ->whereIn('id', function ($query) use ($userId) {
-        //         $query->select('portal_internet_id')
-        //             ->from('capturista_portal_internet')
-        //             ->where('user_id', $userId);
-        //     })
-        //     ->orderBy('nombre')
-        //     ->get();
 
         $userId = Auth::id();
 
@@ -479,16 +449,9 @@ class Formulario extends Component
             'etapa_sujeto' => 'nullable|in:candidatura,precandidatura,candidatura_independiente',
             'tipo_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
 
-            // 'portal_internet_id' => 'nullable|exists:portales_internet,id',
             'portal_internet_id' => [
                 'required',
-                Rule::exists('portales_internet', 'id')
-                    ->where('tipo', 'Portal')
-                    ->whereIn('id', function ($query) {
-                        $query->select('portal_internet_id')
-                            ->from('capturista_portal_internet')
-                            ->where('user_id', Auth::id());
-                    }),
+                $this->reglaPortalInternet(),
             ],
             'url_pagina' => 'required|url|max:500',
 
@@ -596,7 +559,6 @@ class Formulario extends Component
         $datos = $this->validate($this->rules(), $this->mensajes());
 
         $esta_editando = filled($this->registro_editando_id);
-
         DB::transaction(function () use ($datos, $esta_editando) {
             if ($esta_editando) {
                 $registro = MonitoreoMedioElectronico::findOrFail($this->registro_editando_id);
@@ -638,6 +600,8 @@ class Formulario extends Component
                     'observaciones' => $datos['observaciones'],
 
                     'archivos' => $rutas_archivos,
+
+                    'usuario1_id' => auth()->id()
                 ]);
 
                 return;
@@ -664,6 +628,8 @@ class Formulario extends Component
 
                 'referencia' => $datos['referencia'],
                 'observaciones' => $datos['observaciones'],
+
+                'usuario1_id' => auth()->id(),
 
                 'archivos' => null,
             ]);
@@ -813,58 +779,6 @@ class Formulario extends Component
         $this->mostrar_filtros_tabla = ! $this->mostrar_filtros_tabla;
     }
 
-    // private function consultarRegistros()
-    // {
-    //     return MonitoreoMedioElectronico::query()
-    //         ->leftJoin('sujetos', 'monitoreo_medios_electronicos.sujeto_id', '=', 'sujetos.id')
-    //         ->leftJoin('partidos', 'monitoreo_medios_electronicos.organizacion_politica_id', '=', 'partidos.id')
-    //         ->leftJoin('portales_internet', 'monitoreo_medios_electronicos.portal_internet_id', '=', 'portales_internet.id')
-    //         ->select([
-    //             'monitoreo_medios_electronicos.id',
-    //             'monitoreo_medios_electronicos.referencia',
-    //             'monitoreo_medios_electronicos.fecha',
-    //             'monitoreo_medios_electronicos.url_pagina',
-    //             'monitoreo_medios_electronicos.archivos',
-    //             'monitoreo_medios_electronicos.validado',
-    //             'monitoreo_medios_electronicos.created_at',
-    //             'sujetos.nombre as sujeto_nombre',
-    //             'partidos.nombre as organizacion_nombre',
-    //             'portales_internet.nombre as portal_nombre',
-    //         ])
-    //         ->where('monitoreo_medios_electronicos.tipo_medio', $this->tipo_medio)
-    //         ->when($this->fecha_inicio_registro, function ($query) {
-    //             $query->whereDate('monitoreo_medios_electronicos.created_at', '>=', $this->fecha_inicio_registro);
-    //         })
-    //         ->when($this->fecha_fin_registro, function ($query) {
-    //             $query->whereDate('monitoreo_medios_electronicos.created_at', '<=', $this->fecha_fin_registro);
-    //         })
-    //         ->when($this->filtro_tipo_eleccion_id !== '', function ($query) {
-    //             $query->where(
-    //                 'monitoreo_medios_electronicos.tipo_eleccion_id',
-    //                 $this->filtro_tipo_eleccion_id
-    //             );
-    //         })
-    //         ->when($this->busqueda_tabla, function ($query) {
-    //             $texto_busqueda = trim($this->busqueda_tabla);
-    //             $busqueda = '%' . $texto_busqueda . '%';
-
-    //             $query->where(function ($q) use ($texto_busqueda, $busqueda) {
-    //                 if (is_numeric($texto_busqueda)) {
-    //                     $q->where('monitoreo_medios_electronicos.id', (int) $texto_busqueda);
-    //                 }
-
-    //                 $q->orWhere('monitoreo_medios_electronicos.referencia', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_medios_electronicos.observaciones', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_medios_electronicos.url_pagina', 'like', $busqueda)
-    //                     ->orWhere('sujetos.nombre', 'like', $busqueda)
-    //                     ->orWhere('partidos.nombre', 'like', $busqueda)
-    //                     ->orWhere('portales_internet.nombre', 'like', $busqueda);
-    //             });
-    //         })
-    //         ->orderByDesc('monitoreo_medios_electronicos.id')
-    //         ->paginate($this->cantidad_por_pagina);
-    // }
-
     private function consultarRegistros()
     {
         $userId = Auth::id();
@@ -887,23 +801,11 @@ class Formulario extends Component
             ])
             ->where('monitoreo_medios_electronicos.tipo_medio', $this->tipo_medio)
 
-            // Solo registros cuya URL empieza con alguna URL asignada al usuario logueado
-            // ->whereExists(function ($query) use ($userId) {
-            //     $query->select(DB::raw(1))
-            //         ->from('capturista_portal_internet as cpi')
-            //         ->join('portales_internet as pi_asignados', 'pi_asignados.id', '=', 'cpi.portal_internet_id')
-            //         ->where('cpi.user_id', $userId)
-            //         ->where('pi_asignados.tipo', 'Portal')
-            //         ->whereRaw('monitoreo_medios_electronicos.url_pagina LIKE CONCAT(pi_asignados.url, "%")');
-            // })
             ->when(! $this->usuarioPuedeVerTodo(), function ($query) use ($userId) {
-                $query->whereExists(function ($subquery) use ($userId) {
-                    $subquery->select(DB::raw(1))
-                        ->from('capturista_portal_internet as cpi')
-                        ->join('portales_internet as pi_asignados', 'pi_asignados.id', '=', 'cpi.portal_internet_id')
-                        ->where('cpi.user_id', $userId)
-                        ->where('pi_asignados.tipo', 'Portal')
-                        ->whereRaw('monitoreo_medios_electronicos.url_pagina LIKE CONCAT(pi_asignados.url, "%")');
+                $query->whereIn('monitoreo_medios_electronicos.portal_internet_id', function ($subquery) use ($userId) {
+                    $subquery->select('portal_internet_id')
+                        ->from('capturista_portal_internet')
+                        ->where('user_id', $userId);
                 });
             })
 
@@ -939,6 +841,7 @@ class Formulario extends Component
             ->orderByDesc('monitoreo_medios_electronicos.id')
             ->paginate($this->cantidad_por_pagina);
     }
+
     //endregion
 
     //region CUALITATIVOS
@@ -1023,6 +926,8 @@ class Formulario extends Component
             'cuali_tipo_mensaje' => 'nullable|in:A favor,Descalificativo,Crítica,Imparcial',
             'cuali_formato' => 'nullable|in:Mensaje,De entrevista,Informativo-narrativo',
         ]);
+
+        $datos['usuario2_id'] = auth()->id();
 
         MonitoreoMedioElectronico::findOrFail($this->registro_cualitativo_id)
             ->update($datos);
@@ -1253,6 +1158,22 @@ class Formulario extends Component
     }
     //endregion
 
+    private function reglaPortalInternet()
+    {
+        $regla = Rule::exists('portales_internet', 'id')
+            ->where('tipo', 'Portal');
+
+        if ($this->usuarioPuedeVerTodo()) {
+            return $regla;
+        }
+
+        return $regla->whereIn('id', function ($query) {
+            $query->select('portal_internet_id')
+                ->from('capturista_portal_internet')
+                ->where('user_id', Auth::id());
+        });
+    }
+
     private function usuarioPuedeVerTodo(): bool
     {
         $user = Auth::user();
@@ -1261,6 +1182,11 @@ class Formulario extends Component
             return false;
         }
 
-        return $user->hasAnyRole(['Administrador', 'Super Usuario']);
+        return $user->hasAnyRole([
+            'Administrador',
+            'Super Usuario',
+            'Super usuario',
+            'Consultor',
+        ]);
     }
 }

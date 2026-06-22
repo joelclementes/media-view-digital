@@ -29,6 +29,7 @@ class MonitoreoMedioElectronico extends Model
         'observaciones',
         'archivos',
         'validado',
+        'usuario1_id',
         'cuali_valoracion',
         'cuali_lenguaje_inclusivo',
         'cuali_estereotipo',
@@ -39,6 +40,7 @@ class MonitoreoMedioElectronico extends Model
         'cuali_objetividad',
         'cuali_tipo_mensaje',
         'cuali_formato',
+        'usuario2_id',
     ];
 
     protected $casts = [

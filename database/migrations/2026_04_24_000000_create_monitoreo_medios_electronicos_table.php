@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('monitoreo_medios_electronicos', function (Blueprint $table) {
-                        $table->id();
+            $table->id();
             $table->string('tipo_medio')->default('medios-electronicos');
 
             // Campos comunes en todos los medios
@@ -21,10 +21,10 @@ return new class extends Migration
             $table->foreignId('periodo_id')->nullable()->constrained('periodos');
             $table->string('etapa_sujeto')->nullable();
             $table->foreignId('tipo_eleccion_id')->nullable()->constrained('tipos_eleccion');
-            
+
             $table->foreignId('portal_internet_id')->nullable()->constrained('portales_internet');
             $table->text('url_pagina');
-            
+
             $table->date('fecha');
             $table->foreignId('tamano_id')->constrained('tamanos_publicacion');
             $table->foreignId('genero_id')->constrained('generos');
@@ -40,6 +40,7 @@ return new class extends Migration
 
             $table->boolean('validado')->default(false);
 
+            $table->foreignId('usuario1_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cuantitativos');;
 
             // valores directo en código (select)
             $table->string('cuali_valoracion')->nullable()->comment('Positiva/Negativa/Neutral');
@@ -69,6 +70,9 @@ return new class extends Migration
             $table->string('cuali_tipo_mensaje')->nullable()->comment('A favor/Descalificativo/Crítica/Imparcial');
             // valores directo en código (select)
             $table->string('cuali_formato')->nullable()->comment('Mensaje/De entrevista/Informativo-narrativo');
+
+            $table->foreignId('usuario2_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cualitativos');
+
             $table->timestamps();
         });
     }
