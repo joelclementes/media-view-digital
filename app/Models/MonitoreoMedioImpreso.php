@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 
 class MonitoreoMedioImpreso extends Model
 {
@@ -30,6 +31,7 @@ class MonitoreoMedioImpreso extends Model
         'referencia',
         'observaciones',
         'archivos',
+        'usuario1_id',
         'cuali_valoracion',
         'cuali_lenguaje_inclusivo',
         'cuali_estereotipo',
@@ -42,10 +44,21 @@ class MonitoreoMedioImpreso extends Model
         'cuali_tiraje',
         'cuali_circulacion',
         'cuali_distritos_id',
+        'usuario2_id',
     ];
 
     protected $casts = [
         'publicacion_fecha' => 'date',
         'archivos' => 'array',
     ];
+
+    public function capturista()
+    {
+        return $this->belongsTo(User::class, 'usuario1_id');
+    }
+
+    public function analista()
+    {
+        return $this->belongsTo(User::class, 'usuario2_id');
+    }
 }

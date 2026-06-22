@@ -40,7 +40,7 @@ return new class extends Migration
 
             $table->boolean('validado')->default(false);
 
-            $table->foreignId('usuario1_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cuantitativos');;
+            $table->foreignId('usuario1_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cuantitativos');
 
             // valores directo en código (select)
             $table->string('cuali_valoracion')->nullable()->comment('Positiva/Negativa/Neutral');

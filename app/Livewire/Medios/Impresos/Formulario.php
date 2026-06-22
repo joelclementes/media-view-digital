@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class Formulario extends Component
 {
@@ -214,12 +215,15 @@ class Formulario extends Component
         $datos = $this->validate();
 
         DB::transaction(function () use ($datos) {
-            $registro = $this->registro_editando_id
-                ? MonitoreoMedioImpreso::findOrFail($this->registro_editando_id)
-                : MonitoreoMedioImpreso::create(array_merge($datos, [
+            if ($this->registro_editando_id) {
+                $registro = MonitoreoMedioImpreso::findOrFail($this->registro_editando_id);
+            } else {
+                $registro = MonitoreoMedioImpreso::create(array_merge($datos, [
                     'tipo_medio' => $this->tipo_medio,
+                    'usuario1_id' => Auth::id(),
                     'archivos' => null,
                 ]));
+            }
 
             foreach ($this->archivos_eliminados as $ruta) {
                 Storage::disk('public')->delete($ruta);
@@ -235,10 +239,16 @@ class Formulario extends Component
                 $rutas_nuevas
             ));
 
-            $registro->update(array_merge($datos, [
+            $datosActualizar = array_merge($datos, [
                 'tipo_medio' => $this->tipo_medio,
                 'archivos' => $rutas_archivos,
-            ]));
+            ]);
+
+            if (! $this->registro_editando_id) {
+                $datosActualizar['usuario1_id'] = Auth::id();
+            }
+
+            $registro->update($datosActualizar);
         });
 
         $this->dispatch('impresos-registro-guardado', datos: [
@@ -260,11 +270,13 @@ class Formulario extends Component
             'observaciones' => $this->observaciones,
         ]);
 
+        $estaEditando = filled($this->registro_editando_id);
+
         $this->limpiarFormulario();
 
         session()->flash(
             'success',
-            $this->registro_editando_id
+            $estaEditando
                 ? 'Registro actualizado correctamente.'
                 : 'Registro de medio impreso guardado correctamente.'
         );
@@ -480,7 +492,10 @@ class Formulario extends Component
             'cuali_distritos_id' => 'nullable|exists:distritos,id',
         ]);
 
-        MonitoreoMedioImpreso::findOrFail($this->registro_cualitativo_id)->update($datos);
+        $datos['usuario2_id'] = Auth::id();
+
+        MonitoreoMedioImpreso::findOrFail($this->registro_cualitativo_id)
+            ->update($datos);
 
         $this->dispatch('impresos-cualitativos-guardados', datos: [
             'cuali_valoracion' => $this->cuali_valoracion,
@@ -601,44 +616,119 @@ class Formulario extends Component
         $this->resetPage();
     }
 
-    private function consultarRegistros()
-    {
-        return MonitoreoMedioImpreso::query()
-            ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
-            ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
-            ->select([
-                'monitoreo_medios_impresos.id',
-                'monitoreo_medios_impresos.referencia',
-                'monitoreo_medios_impresos.publicacion_fecha',
-                'monitoreo_medios_impresos.publicacion_seccion',
-                'monitoreo_medios_impresos.publicacion_pagina',
-                'monitoreo_medios_impresos.archivos',
-                'monitoreo_medios_impresos.created_at',
-                'sujetos.nombre as sujeto_nombre',
-                'partidos.nombre as organizacion_nombre',
-                'portales_prensa.nombre as medio_prensa_nombre',
-            ])
-            ->where('monitoreo_medios_impresos.tipo_medio', $this->tipo_medio)
-            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_medios_impresos.created_at', '>=', $this->fecha_inicio_registro))
-            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_medios_impresos.created_at', '<=', $this->fecha_fin_registro))
-            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_medios_impresos.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
-            ->when($this->busqueda_tabla, function ($query) {
-                $busqueda = '%' . trim($this->busqueda_tabla) . '%';
+    // private function consultarRegistros()
+    // {
+    //     return MonitoreoMedioImpreso::query()
+    //         ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
+    //         ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
+    //         ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
+    //         ->select([
+    //             'monitoreo_medios_impresos.id',
+    //             'monitoreo_medios_impresos.referencia',
+    //             'monitoreo_medios_impresos.publicacion_fecha',
+    //             'monitoreo_medios_impresos.publicacion_seccion',
+    //             'monitoreo_medios_impresos.publicacion_pagina',
+    //             'monitoreo_medios_impresos.archivos',
+    //             'monitoreo_medios_impresos.created_at',
+    //             'sujetos.nombre as sujeto_nombre',
+    //             'partidos.nombre as organizacion_nombre',
+    //             'portales_prensa.nombre as medio_prensa_nombre',
+    //         ])
+    //         ->where('monitoreo_medios_impresos.tipo_medio', $this->tipo_medio)
 
-                $query->where(function ($q) use ($busqueda) {
-                    $q->where('monitoreo_medios_impresos.referencia', 'like', $busqueda)
-                        ->orWhere('monitoreo_medios_impresos.observaciones', 'like', $busqueda)
-                        ->orWhere('monitoreo_medios_impresos.publicacion_seccion', 'like', $busqueda)
-                        ->orWhere('monitoreo_medios_impresos.publicacion_pagina', 'like', $busqueda)
-                        ->orWhere('sujetos.nombre', 'like', $busqueda)
-                        ->orWhere('partidos.nombre', 'like', $busqueda)
-                        ->orWhere('portales_prensa.nombre', 'like', $busqueda);
-                });
-            })
-            ->orderByDesc('monitoreo_medios_impresos.id')
-            ->paginate($this->cantidad_por_pagina);
-    }
+    //         ->when(! $this->usuarioPuedeVerTodo(), function ($query) {
+    //             $query->where('monitoreo_medios_impresos.usuario1_id', Auth::id());
+    //         })
+
+    //         ->when($this->fecha_inicio_registro, function ($query) {
+    //             $query->whereDate('monitoreo_medios_impresos.created_at', '>=', $this->fecha_inicio_registro);
+    //         })
+    //         ->when($this->fecha_fin_registro, function ($query) {
+    //             $query->whereDate('monitoreo_medios_impresos.created_at', '<=', $this->fecha_fin_registro);
+    //         })
+    //         ->when($this->filtro_tipo_eleccion_id !== '', function ($query) {
+    //             $query->where(
+    //                 'monitoreo_medios_impresos.tipo_eleccion_id',
+    //                 $this->filtro_tipo_eleccion_id
+    //             );
+    //         })
+    //         ->when($this->busqueda_tabla, function ($query) {
+    //             $texto_busqueda = trim($this->busqueda_tabla);
+    //             $busqueda = '%' . $texto_busqueda . '%';
+
+    //             $query->where(function ($q) use ($texto_busqueda, $busqueda) {
+    //                 if (is_numeric($texto_busqueda)) {
+    //                     $q->where('monitoreo_medios_impresos.id', (int) $texto_busqueda);
+    //                 }
+
+    //                 $q->orWhere('monitoreo_medios_impresos.referencia', 'like', $busqueda)
+    //                     ->orWhere('monitoreo_medios_impresos.observaciones', 'like', $busqueda)
+    //                     ->orWhere('monitoreo_medios_impresos.publicacion_seccion', 'like', $busqueda)
+    //                     ->orWhere('monitoreo_medios_impresos.publicacion_pagina', 'like', $busqueda)
+    //                     ->orWhere('sujetos.nombre', 'like', $busqueda)
+    //                     ->orWhere('partidos.nombre', 'like', $busqueda)
+    //                     ->orWhere('portales_prensa.nombre', 'like', $busqueda);
+    //             });
+    //         })
+    //         ->orderByDesc('monitoreo_medios_impresos.id')
+    //         ->paginate($this->cantidad_por_pagina);
+    // }
+
+    private function consultarRegistros()
+{
+    return MonitoreoMedioImpreso::query()
+        ->with([
+            'capturista:id,name',
+            'analista:id,name',
+        ])
+        ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
+        ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
+        ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
+        ->select([
+            'monitoreo_medios_impresos.*',
+            'sujetos.nombre as sujeto_nombre',
+            'partidos.nombre as organizacion_nombre',
+            'portales_prensa.nombre as medio_prensa_nombre',
+        ])
+        ->where('monitoreo_medios_impresos.tipo_medio', $this->tipo_medio)
+
+        ->when(! $this->usuarioPuedeVerTodo(), function ($query) {
+            $query->where('monitoreo_medios_impresos.usuario1_id', Auth::id());
+        })
+
+        ->when($this->fecha_inicio_registro, function ($query) {
+            $query->whereDate('monitoreo_medios_impresos.created_at', '>=', $this->fecha_inicio_registro);
+        })
+        ->when($this->fecha_fin_registro, function ($query) {
+            $query->whereDate('monitoreo_medios_impresos.created_at', '<=', $this->fecha_fin_registro);
+        })
+        ->when($this->filtro_tipo_eleccion_id !== '', function ($query) {
+            $query->where(
+                'monitoreo_medios_impresos.tipo_eleccion_id',
+                $this->filtro_tipo_eleccion_id
+            );
+        })
+        ->when($this->busqueda_tabla, function ($query) {
+            $texto_busqueda = trim($this->busqueda_tabla);
+            $busqueda = '%' . $texto_busqueda . '%';
+
+            $query->where(function ($q) use ($texto_busqueda, $busqueda) {
+                if (is_numeric($texto_busqueda)) {
+                    $q->where('monitoreo_medios_impresos.id', (int) $texto_busqueda);
+                }
+
+                $q->orWhere('monitoreo_medios_impresos.referencia', 'like', $busqueda)
+                    ->orWhere('monitoreo_medios_impresos.observaciones', 'like', $busqueda)
+                    ->orWhere('monitoreo_medios_impresos.publicacion_seccion', 'like', $busqueda)
+                    ->orWhere('monitoreo_medios_impresos.publicacion_pagina', 'like', $busqueda)
+                    ->orWhere('sujetos.nombre', 'like', $busqueda)
+                    ->orWhere('partidos.nombre', 'like', $busqueda)
+                    ->orWhere('portales_prensa.nombre', 'like', $busqueda);
+            });
+        })
+        ->orderByDesc('monitoreo_medios_impresos.id')
+        ->paginate($this->cantidad_por_pagina);
+}
 
     public function recuperarInfoAnterior(array $datos): void
     {
@@ -736,5 +826,21 @@ class Formulario extends Component
             $this->imagen_actual_indice === count($this->imagenes_cualitativas) - 1
             ? 0
             : $this->imagen_actual_indice + 1;
+    }
+
+    private function usuarioPuedeVerTodo(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasAnyRole([
+            'Administrador',
+            'Super Usuario',
+            'Super usuario',
+            'Consultor',
+        ]);
     }
 }

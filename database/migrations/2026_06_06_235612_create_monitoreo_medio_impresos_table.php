@@ -40,6 +40,8 @@ return new class extends Migration
 
             $table->json('archivos')->nullable();
 
+            $table->foreignId('usuario1_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cuantitativos');
+
 
             // valores directo en código (select).
             // Los valores descritos en ->comment()
@@ -81,6 +83,8 @@ return new class extends Migration
             
             // datos obtenidos de la tabla distritos (select)
             $table->foreignId('cuali_distritos_id')->nullable()->constrained('distritos')->comment('"Distrito"; relación con distritos');
+
+            $table->foreignId('usuario2_id')->nullable()->constrained('users')->comment('Usuario quien edite los datos cualitativos');
 
             $table->timestamps();
         });

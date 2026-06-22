@@ -170,6 +170,11 @@
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Sujeto</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Medio impreso</th>
+                            @if (!auth()->user()->hasRole('Consultor'))
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">
+                                    Capturó
+                                </th>
+                            @endif
                             <th class="px-4 py-3 text-center font-semibold text-gray-700">Acciones</th>
                         </tr>
                     </thead>
@@ -185,6 +190,9 @@
                                     {{ $registro->publicacion_fecha ? \Carbon\Carbon::parse($registro->publicacion_fecha)->format('d/m/Y') : 'Sin fecha' }}
                                 </td>
                                 <td class="px-4 py-3">{{ $registro->medio_prensa_nombre ?? 'Sin medio' }}</td>
+                                @if (!auth()->user()->hasRole('Consultor'))
+                                    <td class="px-4 py-3">{{ $registro->capturista?->name ?? 'Sin capturista' }}</td>
+                                @endif
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-center gap-2 text-primary-600">
                                         @can('crear_medio')
