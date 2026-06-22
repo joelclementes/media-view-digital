@@ -42,6 +42,12 @@ return new class extends Migration
 
             $table->json('archivos')->nullable();
 
+            $table->foreignId('usuario1_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->comment('Usuario quien edite los datos cuantitativos');
+
             // Los valores descritos en ->comment()
             $table->string('cuali_valoracion')->nullable()->comment('Select -> Positiva/Negativa/Neutral');
 
@@ -63,6 +69,10 @@ return new class extends Migration
             // Los valores descritos en ->comment()
             $table->string('cuali_criterio_evaluacion')->nullable()->comment('Select -> Presentación directa/Cita y voz/Cita y audio/Solo cita/Voz de las y los ciudadanos');
 
+            $table->foreignId('usuario2_id')->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->comment('Usuario quien edite los datos cualitativos');
 
             $table->timestamps();
         });

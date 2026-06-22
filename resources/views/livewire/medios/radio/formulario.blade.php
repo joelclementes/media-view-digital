@@ -146,6 +146,11 @@
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Medio</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Tipo</th>
+                            @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">
+                                    Capturó
+                                </th>
+                            @endif
                             <th class="px-4 py-3 text-center font-semibold text-gray-700">Acciones</th>
                         </tr>
                     </thead>
@@ -170,6 +175,11 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">{{ $registro->publicacion_tipo ?: 'Sin tipo' }}</td>
+                                @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                    <td class="px-4 py-3">
+                                        {{ $registro->capturista?->name ?? 'Sin capturista' }}
+                                    </td>
+                                @endif
                                 <td class="px-4 py-3">
                                     <div class="flex flex-wrap justify-center gap-2">
                                         @can('crear_medio')
@@ -262,24 +272,47 @@
             </div>
 
             {{-- <div class="grid grid-cols-1 gap-6 lg:grid-cols-2"> --}}
-                <div class="rounded-lg bg-white p-5 shadow-md">
-                    <h4 class="mb-4 text-lg font-semibold text-gray-800">
-                        Datos del registro
-                    </h4>
+            <div class="rounded-lg bg-white p-5 shadow-md">
+                <h4 class="mb-4 text-lg font-semibold text-gray-800">
+                    Datos del registro
+                </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Fecha de publicación:</span>{{ !empty($registro_cualitativo['publicacion_fecha']) ? \Carbon\Carbon::parse($registro_cualitativo['publicacion_fecha'])->format('d/m/Y') : 'Sin fecha' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Medio radio:</span>{{ $registro_cualitativo['medio_nombre'] ?? 'Sin medio' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Locutor:</span>{{ $registro_cualitativo['nombre_autor'] ?? 'Sin autor' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tipo de publicación:</span>{{ $registro_cualitativo['publicacion_tipo'] ?? 'Sin tipo' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Ubicación:</span>{{ $registro_cualitativo['publicacion_ubicacion'] ?? 'Sin ubicación' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Cobertura</span>{{ $registro_cualitativo['medio_cobertura'] ?? 'Sin cobertura' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Actor</span>{{ $registro_cualitativo['sujeto_nombre'] ?? 'Sin sujeto' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Género:</span>{{ $registro_cualitativo['sujeto_genero'] ?? 'Sin sujeto' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Org. Política:</span>{{ $registro_cualitativo['organizacion_nombre'] ?? 'Sin organización' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Etapa del sujeto:</span>{{ $registro_cualitativo['etapa_sujeto'] ?? 'Sin especificar' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tiempo:</span>@if (!empty($registro_cualitativo['publicacion_tiempo'])){{ gmdate('H:i:s', (int) $registro_cualitativo['publicacion_tiempo']) }} @else Sin tiempo @endif</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Fecha de
+                            publicación:</span>{{ !empty($registro_cualitativo['publicacion_fecha']) ? \Carbon\Carbon::parse($registro_cualitativo['publicacion_fecha'])->format('d/m/Y') : 'Sin fecha' }}
+                    </div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Medio
+                            radio:</span>{{ $registro_cualitativo['medio_nombre'] ?? 'Sin medio' }}</div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Locutor:</span>{{ $registro_cualitativo['nombre_autor'] ?? 'Sin autor' }}
+                    </div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tipo de
+                            publicación:</span>{{ $registro_cualitativo['publicacion_tipo'] ?? 'Sin tipo' }}</div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Ubicación:</span>{{ $registro_cualitativo['publicacion_ubicacion'] ?? 'Sin ubicación' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Cobertura</span>{{ $registro_cualitativo['medio_cobertura'] ?? 'Sin cobertura' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Actor</span>{{ $registro_cualitativo['sujeto_nombre'] ?? 'Sin sujeto' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Género:</span>{{ $registro_cualitativo['sujeto_genero'] ?? 'Sin sujeto' }}
+                    </div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Org.
+                            Política:</span>{{ $registro_cualitativo['organizacion_nombre'] ?? 'Sin organización' }}
+                    </div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Etapa del
+                            sujeto:</span>{{ $registro_cualitativo['etapa_sujeto'] ?? 'Sin especificar' }}</div>
+                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tiempo:</span>
+                        @if (!empty($registro_cualitativo['publicacion_tiempo']))
+                            {{ gmdate('H:i:s', (int) $registro_cualitativo['publicacion_tiempo']) }}
+                        @else
+                            Sin tiempo
+                        @endif
+                    </div>
                 </div>
-                    {{-- <dl class="space-y-1 text-sm">
+                {{-- <dl class="space-y-1 text-sm">
                         <div>
                             <dt class="font-semibold text-gray-600">Fecha de publicación:</dt>
                             <dd class="text-primary-800">
@@ -350,32 +383,32 @@
                             </dd>
                         </div>
                     </dl> --}}
-                </div>
+            </div>
 
-                <div class="rounded-lg bg-white p-5 shadow-md">
-                    <h4 class="mb-4 text-lg font-semibold text-gray-800">Audio</h4>
+            <div class="rounded-lg bg-white p-5 shadow-md">
+                <h4 class="mb-4 text-lg font-semibold text-gray-800">Audio</h4>
 
-                    @if (!empty($audios_cualitativos))
-                        <div class="space-y-4">
-                            @foreach ($audios_cualitativos as $audio)
-                                <div class="rounded-lg border border-gray-200 bg-white p-3">
-                                    <p class="mb-2 truncate text-sm font-medium text-gray-700">
-                                        {{ basename($audio) }}
-                                    </p>
-                                    <audio controls preload="metadata" class="w-full">
-                                        <source src="{{ Storage::url($audio) }}" type="audio/mpeg">
-                                        Tu navegador no soporta el reproductor de audio.
-                                    </audio>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div
-                            class="flex h-[360px] items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-500">
-                            Este registro no tiene audios cargados.
-                        </div>
-                    @endif
-                </div>
+                @if (!empty($audios_cualitativos))
+                    <div class="space-y-4">
+                        @foreach ($audios_cualitativos as $audio)
+                            <div class="rounded-lg border border-gray-200 bg-white p-3">
+                                <p class="mb-2 truncate text-sm font-medium text-gray-700">
+                                    {{ basename($audio) }}
+                                </p>
+                                <audio controls preload="metadata" class="w-full">
+                                    <source src="{{ Storage::url($audio) }}" type="audio/mpeg">
+                                    Tu navegador no soporta el reproductor de audio.
+                                </audio>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div
+                        class="flex h-[360px] items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-500">
+                        Este registro no tiene audios cargados.
+                    </div>
+                @endif
+            </div>
             {{-- </div> --}}
 
             <div class="rounded-lg bg-white p-5 shadow-md">

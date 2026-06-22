@@ -616,64 +616,6 @@ class Formulario extends Component
         $this->resetPage();
     }
 
-    // private function consultarRegistros()
-    // {
-    //     return MonitoreoMedioImpreso::query()
-    //         ->leftJoin('sujetos', 'monitoreo_medios_impresos.sujeto_id', '=', 'sujetos.id')
-    //         ->leftJoin('partidos', 'monitoreo_medios_impresos.organizacion_politica_id', '=', 'partidos.id')
-    //         ->leftJoin('portales_prensa', 'monitoreo_medios_impresos.medio_prensa_id', '=', 'portales_prensa.id')
-    //         ->select([
-    //             'monitoreo_medios_impresos.id',
-    //             'monitoreo_medios_impresos.referencia',
-    //             'monitoreo_medios_impresos.publicacion_fecha',
-    //             'monitoreo_medios_impresos.publicacion_seccion',
-    //             'monitoreo_medios_impresos.publicacion_pagina',
-    //             'monitoreo_medios_impresos.archivos',
-    //             'monitoreo_medios_impresos.created_at',
-    //             'sujetos.nombre as sujeto_nombre',
-    //             'partidos.nombre as organizacion_nombre',
-    //             'portales_prensa.nombre as medio_prensa_nombre',
-    //         ])
-    //         ->where('monitoreo_medios_impresos.tipo_medio', $this->tipo_medio)
-
-    //         ->when(! $this->usuarioPuedeVerTodo(), function ($query) {
-    //             $query->where('monitoreo_medios_impresos.usuario1_id', Auth::id());
-    //         })
-
-    //         ->when($this->fecha_inicio_registro, function ($query) {
-    //             $query->whereDate('monitoreo_medios_impresos.created_at', '>=', $this->fecha_inicio_registro);
-    //         })
-    //         ->when($this->fecha_fin_registro, function ($query) {
-    //             $query->whereDate('monitoreo_medios_impresos.created_at', '<=', $this->fecha_fin_registro);
-    //         })
-    //         ->when($this->filtro_tipo_eleccion_id !== '', function ($query) {
-    //             $query->where(
-    //                 'monitoreo_medios_impresos.tipo_eleccion_id',
-    //                 $this->filtro_tipo_eleccion_id
-    //             );
-    //         })
-    //         ->when($this->busqueda_tabla, function ($query) {
-    //             $texto_busqueda = trim($this->busqueda_tabla);
-    //             $busqueda = '%' . $texto_busqueda . '%';
-
-    //             $query->where(function ($q) use ($texto_busqueda, $busqueda) {
-    //                 if (is_numeric($texto_busqueda)) {
-    //                     $q->where('monitoreo_medios_impresos.id', (int) $texto_busqueda);
-    //                 }
-
-    //                 $q->orWhere('monitoreo_medios_impresos.referencia', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_medios_impresos.observaciones', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_medios_impresos.publicacion_seccion', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_medios_impresos.publicacion_pagina', 'like', $busqueda)
-    //                     ->orWhere('sujetos.nombre', 'like', $busqueda)
-    //                     ->orWhere('partidos.nombre', 'like', $busqueda)
-    //                     ->orWhere('portales_prensa.nombre', 'like', $busqueda);
-    //             });
-    //         })
-    //         ->orderByDesc('monitoreo_medios_impresos.id')
-    //         ->paginate($this->cantidad_por_pagina);
-    // }
-
     private function consultarRegistros()
 {
     return MonitoreoMedioImpreso::query()
