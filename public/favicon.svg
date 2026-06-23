@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Media View Digital favicon</title>
+  <desc id="desc">Círculo azul oscuro institucional con lupa blanca y letras MV dentro de la lente.</desc>
+
+  <!-- Fondo institucional -->
+  <circle cx="256" cy="256" r="244" fill="#0F2A44"/>
+
+  <!-- Lente de lupa -->
+  <circle cx="225" cy="218" r="118" fill="none" stroke="#FFFFFF" stroke-width="34"/>
+
+  <!-- Mango de lupa -->
+  <line x1="307" y1="306" x2="390" y2="389" stroke="#FFFFFF" stroke-width="42" stroke-linecap="round"/>
+
+  <!-- Letras MV dentro de la lente -->
+  <text x="225" y="240"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="78"
+        font-weight="800"
+        letter-spacing="-5"
+        fill="#FFFFFF">MV</text>
+</svg>
