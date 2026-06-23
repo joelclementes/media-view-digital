@@ -142,6 +142,11 @@
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Cine</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Ubicación</th>
+                            @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                <td class="px-4 py-3">
+                                    Capturó
+                                </td>
+                            @endif
                             <th class="px-4 py-3 text-center font-semibold text-gray-700">Acciones</th>
                         </tr>
                     </thead>
@@ -173,6 +178,11 @@
                                             class="block text-xs text-gray-500">{{ $registro->localidad_nombre }}</span>
                                     @endif
                                 </td>
+                                @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                    <td class="px-4 py-3">
+                                        {{ $registro->capturista_nombre ?? 'Sin capturista' }}
+                                    </td>
+                                @endif
                                 <td class="px-4 py-3">
                                     <div class="flex flex-wrap justify-center gap-2">
                                         @can('crear_medio')

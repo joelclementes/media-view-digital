@@ -29,12 +29,14 @@ class MonitoreoMedioCine extends Model
         'referencia',
         'observaciones',
         'archivos',
+        'usuario1_id',
         'cuali_valoracion',
         'cuali_lenguaje_inclusivo',
         'cuali_estereotipo',
         'cuali_violencia_temas_id',
         'cuali_resumen',
         'cuali_criterio_evaluacion',
+        'usuario2_id',
     ];
 
     protected $casts = [
@@ -42,4 +44,14 @@ class MonitoreoMedioCine extends Model
         'publicacion_fecha' => 'date',
         'publicacion_hora' => 'datetime:H:i',
     ];
+
+    public function capturista()
+    {
+        return $this->belongsTo(User::class, 'usuario1_id');
+    }
+
+    public function analista()
+    {
+        return $this->belongsTo(User::class, 'usuario2_id');
+    }
 }

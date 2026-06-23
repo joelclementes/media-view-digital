@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class Formulario extends Component
 {
@@ -234,13 +235,23 @@ class Formulario extends Component
         $datos['organizacion_id'] = $datos['organizacion_politica_id'] ?? null;
         unset($datos['organizacion_politica_id']);
 
-        DB::transaction(function () use ($datos) {
-            $registro = $this->registro_editando_id
-                ? MonitoreoMedioCine::findOrFail($this->registro_editando_id)
-                : MonitoreoMedioCine::create(array_merge($datos, [
+        $usuarioEsCapturista = Auth::user()?->hasRole('Capturista');
+
+        DB::transaction(function () use ($datos, $usuarioEsCapturista) {
+            if ($this->registro_editando_id) {
+                $registro = MonitoreoMedioCine::findOrFail($this->registro_editando_id);
+            } else {
+                $datosCrear = array_merge($datos, [
                     'tipo_medio' => $this->tipo_medio,
                     'archivos' => null,
-                ]));
+                ]);
+
+                if ($usuarioEsCapturista) {
+                    $datosCrear['usuario1_id'] = Auth::id();
+                }
+
+                $registro = MonitoreoMedioCine::create($datosCrear);
+            }
 
             foreach ($this->archivos_eliminados as $ruta) {
                 Storage::disk('public')->delete($ruta);
@@ -253,10 +264,16 @@ class Formulario extends Component
 
             $rutas_archivos = array_values(array_merge($this->archivos_existentes, $rutas_nuevas));
 
-            $registro->update(array_merge($datos, [
+            $datosActualizar = array_merge($datos, [
                 'tipo_medio' => $this->tipo_medio,
                 'archivos' => $rutas_archivos,
-            ]));
+            ]);
+
+            if ($usuarioEsCapturista) {
+                $datosActualizar['usuario1_id'] = Auth::id();
+            }
+
+            $registro->update($datosActualizar);
         });
 
         $mensaje = $this->registro_editando_id
@@ -416,7 +433,12 @@ class Formulario extends Component
             'cuali_criterio_evaluacion' => 'nullable|in:' . implode(',', $this->criterios_evaluacion),
         ]);
 
+        if (Auth::user()?->hasRole('Capturista')) {
+            $datos['usuario2_id'] = Auth::id();
+        }
+
         MonitoreoMedioCine::findOrFail($this->registro_cualitativo_id)->update($datos);
+
         $this->dispatch('cine-cualitativos-guardados', datos: $datos);
         $this->cerrarCualitativos();
         session()->flash('success', 'Datos cualitativos guardados correctamente.');
@@ -523,21 +545,28 @@ class Formulario extends Component
             ->leftJoin('cines', 'monitoreo_cine.medio_cine_id', '=', 'cines.id')
             ->leftJoin('municipios', 'monitoreo_cine.medio_municipio_id', '=', 'municipios.id')
             ->leftJoin('localidades', 'monitoreo_cine.medio_localidad_id', '=', 'localidades.id')
+            ->leftJoin('users as capturistas', 'monitoreo_cine.usuario1_id', '=', 'capturistas.id')
+            ->when(! $this->usuarioPuedeVerTodo(), function ($query) {
+                $query->where('monitoreo_cine.usuario1_id', Auth::id());
+            })
             ->when($this->fecha_inicio_registro, fn($query) => $query->whereDate('monitoreo_cine.publicacion_fecha', '>=', $this->fecha_inicio_registro))
             ->when($this->fecha_fin_registro, fn($query) => $query->whereDate('monitoreo_cine.publicacion_fecha', '<=', $this->fecha_fin_registro))
             ->when($this->filtro_tipo_eleccion_id, fn($query) => $query->where('monitoreo_cine.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
             ->when($this->filtro_municipio_id, fn($query) => $query->where('monitoreo_cine.medio_municipio_id', $this->filtro_municipio_id))
             ->when($this->busqueda_tabla, function ($query) {
-                $busqueda = '%' . $this->busqueda_tabla . '%';
+                $busqueda = '%' . trim($this->busqueda_tabla) . '%';
+
                 $query->where(function ($subquery) use ($busqueda) {
-                    $subquery->where('sujetos.nombre', 'like', $busqueda)
+                    $subquery->where('monitoreo_cine.id', 'like', $busqueda)
+                        ->orWhere('sujetos.nombre', 'like', $busqueda)
                         ->orWhere('partidos.nombre', 'like', $busqueda)
                         ->orWhere('cines.nombre', 'like', $busqueda)
                         ->orWhere('cines.nombre_cine', 'like', $busqueda)
                         ->orWhere('municipios.nombre', 'like', $busqueda)
                         ->orWhere('localidades.nombre', 'like', $busqueda)
                         ->orWhere('monitoreo_cine.medio_sala', 'like', $busqueda)
-                        ->orWhere('monitoreo_cine.referencia', 'like', $busqueda);
+                        ->orWhere('monitoreo_cine.referencia', 'like', $busqueda)
+                        ->orWhere('capturistas.name', 'like', $busqueda);
                 });
             })
             ->where('monitoreo_cine.tipo_medio', $this->tipo_medio)
@@ -550,6 +579,7 @@ class Formulario extends Component
                 'cines.nombre_cine as cine_nombre_comercial',
                 'municipios.nombre as municipio_nombre',
                 'localidades.nombre as localidad_nombre',
+                'capturistas.name as capturista_nombre',
             ])
             ->orderByDesc('monitoreo_cine.publicacion_fecha')
             ->orderByDesc('monitoreo_cine.id')
@@ -647,5 +677,21 @@ class Formulario extends Component
         }
 
         session()->flash('success', 'Datos cualitativos anteriores recuperados.');
+    }
+
+    private function usuarioPuedeVerTodo(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasAnyRole([
+            'Administrador',
+            'Super Usuario',
+            'Super usuario',
+            'Consultor',
+        ]);
     }
 }
