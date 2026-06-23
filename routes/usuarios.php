@@ -17,3 +17,6 @@ Route::put('/usuarios/{user}', [UserController::class, 'update'])
 Route::get('/usuarios/asignar-portales', [UsuariosPortales::class, 'index'])
     ->middleware(['auth'])
     ->name('asignar-portales');
+
+Route::patch('/usuarios/{user}/estado', [UserController::class, 'cambiarEstado'])
+    ->name('usuarios.estado');

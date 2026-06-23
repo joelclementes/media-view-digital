@@ -36,25 +36,29 @@
                     </p>
                 </div>
 
-                <form action="{{ route('usuarios.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                <form action="{{ route('usuarios.store') }}" method="POST"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     @csrf
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Nombre</label>
                         <input type="text" name="name" value="{{ old('name') }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                            required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Usuario / correo</label>
                         <input type="text" name="email" value="{{ old('email') }}"
-                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                            required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Rol</label>
                         <select name="role"
-                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                            required>
                             <option value="">Seleccione</option>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->name }}" @selected(old('role') === $role->name)>
@@ -67,13 +71,15 @@
                     <div>
                         <label class="block text-sm font-medium mb-1">Contraseña</label>
                         <input type="password" name="password"
-                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                            required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Confirmar contraseña</label>
                         <input type="password" name="password_confirmation"
-                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                            required>
                     </div>
 
                     <div class="md:col-span-2 lg:col-span-5 flex justify-end">
@@ -89,22 +95,16 @@
                         <label for="usuariosFiltro" class="block text-sm font-medium mb-1 text-gray-700">
                             Buscar
                         </label>
-                        <input
-                            type="text"
-                            id="usuariosFiltro"
-                            placeholder="Nombre, usuario o rol..."
-                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
-                        >
+                        <input type="text" id="usuariosFiltro" placeholder="Nombre, usuario o rol..."
+                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500">
                     </div>
 
                     <div class="w-full md:w-48">
                         <label for="usuariosPorPagina" class="block text-sm font-medium mb-1 text-gray-700">
                             Registros por página
                         </label>
-                        <select
-                            id="usuariosPorPagina"
-                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
-                        >
+                        <select id="usuariosPorPagina"
+                            class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500">
                             <option value="10">10</option>
                             <option value="25">25</option>
                             <option value="50">50</option>
@@ -120,6 +120,7 @@
                                 <th class="text-left px-4 py-3">Nombre</th>
                                 <th class="text-left px-4 py-3">Usuario</th>
                                 <th class="text-left px-4 py-3">Rol</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Activo</th>
                                 <th class="text-center px-4 py-3">Acciones</th>
                             </tr>
                         </thead>
@@ -130,10 +131,8 @@
                                     $rolUsuario = $user->getRoleNames()->first() ?? 'Sin rol';
                                 @endphp
 
-                                <tr
-                                    class="border-b hover:bg-gray-50 usuario-row"
-                                    data-search="{{ mb_strtolower($user->name . ' ' . $user->email . ' ' . $rolUsuario) }}"
-                                >
+                                <tr class="border-b hover:bg-gray-50 usuario-row"
+                                    data-search="{{ mb_strtolower($user->name . ' ' . $user->email . ' ' . $rolUsuario) }}">
                                     <td class="px-4 py-3 font-medium text-gray-800">
                                         {{ $user->name }}
                                     </td>
@@ -143,17 +142,22 @@
                                     </td>
 
                                     <td class="px-4 py-3">
-                                        <span class="inline-flex rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700">
+                                        <span
+                                            class="inline-flex rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700">
                                             {{ $rolUsuario }}
                                         </span>
                                     </td>
 
+<td class="px-4 py-3">
+    <livewire:usuarios.estado-switch
+        :user="$user"
+        :key="'estado-'.$user->id"
+    />
+</td>
+
                                     <td class="px-4 py-3 text-center">
-                                        <button
-                                            type="button"
-                                            onclick="abrirModal('modal-user-{{ $user->id }}')"
-                                            class="bg-primary-500 hover:bg-primary-600 text-white px-3 py-1 rounded-lg"
-                                        >
+                                        <button type="button" onclick="abrirModal('modal-user-{{ $user->id }}')"
+                                            class="bg-primary-500 hover:bg-primary-600 text-white px-3 py-1 rounded-lg">
                                             Editar
                                         </button>
                                     </td>
@@ -179,21 +183,15 @@
                     <p id="usuariosResumen" class="text-sm text-gray-500"></p>
 
                     <div class="flex items-center justify-end gap-2">
-                        <button
-                            type="button"
-                            id="usuariosAnterior"
-                            class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
+                        <button type="button" id="usuariosAnterior"
+                            class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
                             Anterior
                         </button>
 
                         <span id="usuariosPagina" class="text-sm text-gray-600"></span>
 
-                        <button
-                            type="button"
-                            id="usuariosSiguiente"
-                            class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
+                        <button type="button" id="usuariosSiguiente"
+                            class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
                             Siguiente
                         </button>
                     </div>
@@ -204,7 +202,8 @@
     </div>
 
     @foreach ($users as $user)
-        <div id="modal-user-{{ $user->id }}" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center px-4">
+        <div id="modal-user-{{ $user->id }}"
+            class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center px-4">
             <div class="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6">
 
                 <div class="flex justify-between items-center mb-6">
@@ -228,19 +227,22 @@
                         <div>
                             <label class="block text-sm font-medium mb-1">Nombre</label>
                             <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                                class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                                class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                                required>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium mb-1">Usuario / correo</label>
                             <input type="text" name="email" value="{{ old('text', $user->email) }}"
-                                class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                                class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                                required>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium mb-1">Rol</label>
                             <select name="role"
-                                class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500" required>
+                                class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500"
+                                required>
                                 @foreach ($roles as $role)
                                     <option value="{{ $role->name }}" @selected($user->hasRole($role->name))>
                                         {{ $role->name }}
@@ -287,7 +289,7 @@
             modal.classList.add('hidden');
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const filtroInput = document.getElementById('usuariosFiltro');
             const porPaginaSelect = document.getElementById('usuariosPorPagina');
             const resumen = document.getElementById('usuariosResumen');
@@ -350,24 +352,24 @@
                 btnSiguiente.disabled = paginaActual === totalPaginas;
             }
 
-            filtroInput.addEventListener('input', function () {
+            filtroInput.addEventListener('input', function() {
                 paginaActual = 1;
                 renderizarTabla();
             });
 
-            porPaginaSelect.addEventListener('change', function () {
+            porPaginaSelect.addEventListener('change', function() {
                 paginaActual = 1;
                 renderizarTabla();
             });
 
-            btnAnterior.addEventListener('click', function () {
+            btnAnterior.addEventListener('click', function() {
                 if (paginaActual > 1) {
                     paginaActual--;
                     renderizarTabla();
                 }
             });
 
-            btnSiguiente.addEventListener('click', function () {
+            btnSiguiente.addEventListener('click', function() {
                 const porPagina = parseInt(porPaginaSelect.value, 10);
                 const totalPaginas = Math.ceil(obtenerFilasFiltradas().length / porPagina);
 

@@ -24,7 +24,7 @@ class UserController extends Controller
         $roles = Role::query()
             ->when(
                 $usuarioAutenticado->hasRole('Administrador'),
-                fn ($query) => $query->whereNotIn('name', $this->rolesSuperUsuario)
+                fn($query) => $query->whereNotIn('name', $this->rolesSuperUsuario)
             )
             ->orderBy('name')
             ->get();
@@ -33,9 +33,9 @@ class UserController extends Controller
             ->with('roles')
             ->when(
                 $usuarioAutenticado->hasRole('Administrador'),
-                fn ($query) => $query->whereDoesntHave(
+                fn($query) => $query->whereDoesntHave(
                     'roles',
-                    fn ($subQuery) => $subQuery->whereIn('name', $this->rolesSuperUsuario)
+                    fn($subQuery) => $subQuery->whereIn('name', $this->rolesSuperUsuario)
                 )
             )
             ->orderBy('name')
@@ -53,6 +53,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'string', 'max:255', 'unique:users,email'],
             'role' => ['required', Rule::in($rolesPermitidos)],
             'password' => ['required', 'confirmed', 'min:8'],
+            'activo' => true,
         ]);
 
         $user = User::create([
@@ -113,9 +114,27 @@ class UserController extends Controller
         return Role::query()
             ->when(
                 auth()->user()->hasRole('Administrador'),
-                fn ($query) => $query->whereNotIn('name', $this->rolesSuperUsuario)
+                fn($query) => $query->whereNotIn('name', $this->rolesSuperUsuario)
             )
             ->pluck('name')
             ->toArray();
+    }
+
+    public function cambiarEstado(User $user)
+    {
+        abort_unless(
+            auth()->user()->hasAnyRole(['Administrador', 'Super Usuario', 'Super usuario']),
+            403
+        );
+
+        if (auth()->id() === $user->id) {
+            return back()->with('error', 'No puedes desactivar tu propio usuario.');
+        }
+
+        $user->update([
+            'activo' => ! $user->activo,
+        ]);
+
+        return back()->with('success', 'Estado del usuario actualizado correctamente.');
     }
 }
