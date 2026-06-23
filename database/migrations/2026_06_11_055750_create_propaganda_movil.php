@@ -45,6 +45,12 @@ return new class extends Migration
             $table->string('observaciones')->nullable();
             $table->json('archivos')->nullable();
 
+            $table->foreignId('usuario1_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->comment('Usuario quien edite los datos cuantitativos');
+
             // Datos cualitativos
             $table->string('cuali_valoracion')->nullable()->comment('Select -> Positiva/Negativa/Neutral');
             $table->string('cuali_lenguaje_inclusivo')->nullable()->comment('Si,No');
@@ -54,6 +60,11 @@ return new class extends Migration
             $table->string('cuali_equidad')->nullable();
             $table->string('cuali_calidad')->nullable();
 
+            $table->foreignId('usuario2_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->comment('Usuario quien edite los datos cuantitativos');
 
             $table->timestamps();
         });

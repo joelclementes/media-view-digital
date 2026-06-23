@@ -36,6 +36,7 @@ class PropagandaMovil extends Model
         'referencia_domiciliaria',
         'observaciones',
         'archivos',
+        'usuario1_id',
         'cuali_valoracion',
         'cuali_lenguaje_inclusivo',
         'cuali_estereotipo',
@@ -43,6 +44,7 @@ class PropagandaMovil extends Model
         'cuali_objetividad',
         'cuali_equidad',
         'cuali_calidad',
+        'usuario2_id',
     ];
 
     protected $casts = [
@@ -50,4 +52,14 @@ class PropagandaMovil extends Model
         'latitud' => 'decimal:15',
         'longitud' => 'decimal:15',
     ];
+
+    public function capturista()
+    {
+        return $this->belongsTo(User::class, 'usuario1_id');
+    }
+
+    public function analista()
+    {
+        return $this->belongsTo(User::class, 'usuario2_id');
+    }
 }

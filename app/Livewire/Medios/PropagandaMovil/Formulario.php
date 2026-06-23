@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class Formulario extends Component
 {
@@ -267,13 +268,23 @@ class Formulario extends Component
         $datos['latitud'] = $datos['latitud'] !== '' ? $datos['latitud'] : null;
         $datos['longitud'] = $datos['longitud'] !== '' ? $datos['longitud'] : null;
 
-        DB::transaction(function () use ($datos) {
-            $registro = $this->registro_editando_id
-                ? PropagandaMovil::findOrFail($this->registro_editando_id)
-                : PropagandaMovil::create(array_merge($datos, [
+        $usuarioEsCapturista = auth()->user()?->hasRole('Capturista');
+
+        DB::transaction(function () use ($datos, $usuarioEsCapturista) {
+            if ($this->registro_editando_id) {
+                $registro = PropagandaMovil::findOrFail($this->registro_editando_id);
+            } else {
+                $datosCrear = array_merge($datos, [
                     'tipo_medio' => $this->tipo_medio,
                     'archivos' => null,
-                ]));
+                ]);
+
+                if ($usuarioEsCapturista) {
+                    $datosCrear['usuario1_id'] = auth()->id();
+                }
+
+                $registro = PropagandaMovil::create($datosCrear);
+            }
 
             foreach ($this->archivos_eliminados as $ruta) {
                 Storage::disk('public')->delete($ruta);
@@ -286,10 +297,16 @@ class Formulario extends Component
 
             $rutas_archivos = array_values(array_merge($this->archivos_existentes, $rutas_nuevas));
 
-            $registro->update(array_merge($datos, [
+            $datosActualizar = array_merge($datos, [
                 'tipo_medio' => $this->tipo_medio,
                 'archivos' => $rutas_archivos,
-            ]));
+            ]);
+
+            if ($usuarioEsCapturista) {
+                $datosActualizar['usuario1_id'] = auth()->id();
+            }
+
+            $registro->update($datosActualizar);
         });
 
         $mensaje = $this->registro_editando_id
@@ -369,12 +386,35 @@ class Formulario extends Component
     public function limpiarFormulario(): void
     {
         $this->reset([
-            'busqueda_sujeto', 'resultados_sujetos', 'sujeto_seleccionado', 'sujeto_id',
-            'organizacion_politica_id', 'periodo_id', 'etapa_sujeto', 'tipo_eleccion_id',
-            'razon_social', 'distrito_id', 'municipio_id', 'localidad_id', 'latitud', 'longitud',
-            'vialidad', 'seccion', 'unidad', 'numero', 'placa', 'publicacion_medidas',
-            'publicacion_tipo_id', 'publicacion_version', 'referencia', 'referencia_domiciliaria',
-            'observaciones', 'archivos', 'registro_editando_id', 'archivos_existentes', 'archivos_eliminados',
+            'busqueda_sujeto',
+            'resultados_sujetos',
+            'sujeto_seleccionado',
+            'sujeto_id',
+            'organizacion_politica_id',
+            'periodo_id',
+            'etapa_sujeto',
+            'tipo_eleccion_id',
+            'razon_social',
+            'distrito_id',
+            'municipio_id',
+            'localidad_id',
+            'latitud',
+            'longitud',
+            'vialidad',
+            'seccion',
+            'unidad',
+            'numero',
+            'placa',
+            'publicacion_medidas',
+            'publicacion_tipo_id',
+            'publicacion_version',
+            'referencia',
+            'referencia_domiciliaria',
+            'observaciones',
+            'archivos',
+            'registro_editando_id',
+            'archivos_existentes',
+            'archivos_eliminados',
         ]);
 
         $this->resetValidation();
@@ -448,6 +488,10 @@ class Formulario extends Component
             'cuali_calidad' => 'nullable|string|max:255',
         ]);
 
+        if (auth()->user()?->hasRole('Capturista')) {
+            $datos['usuario2_id'] = auth()->id();
+        }
+
         PropagandaMovil::findOrFail($this->registro_cualitativo_id)->update($datos);
         $this->dispatch('propaganda-movil-cualitativos-guardados', datos: $datos);
         $this->cerrarCualitativos();
@@ -490,11 +534,26 @@ class Formulario extends Component
         session()->flash('success', 'Registro eliminado correctamente.');
     }
 
-    public function updatedFechaInicioRegistro(): void { $this->resetPage(); }
-    public function updatedFechaFinRegistro(): void { $this->resetPage(); }
-    public function updatedBusquedaTabla(): void { $this->resetPage(); }
-    public function updatedCantidadPorPagina(): void { $this->resetPage(); }
-    public function updatedFiltroTipoEleccionId(): void { $this->resetPage(); }
+    public function updatedFechaInicioRegistro(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedFechaFinRegistro(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedBusquedaTabla(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedCantidadPorPagina(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedFiltroTipoEleccionId(): void
+    {
+        $this->resetPage();
+    }
 
     public function alternarFiltrosTabla(): void
     {
@@ -511,59 +570,69 @@ class Formulario extends Component
         $this->resetPage();
     }
 
-    private function consultarRegistros()
-    {
-        return PropagandaMovil::query()
-            ->leftJoin('sujetos', 'monitoreo_propaganda_movil.sujeto_id', '=', 'sujetos.id')
-            ->leftJoin('partidos', 'monitoreo_propaganda_movil.organizacion_id', '=', 'partidos.id')
-            ->leftJoin('distritos', 'monitoreo_propaganda_movil.distrito_id', '=', 'distritos.id')
-            ->leftJoin('municipios', 'monitoreo_propaganda_movil.municipio_id', '=', 'municipios.id')
-            ->leftJoin('tipo_publicidad', 'monitoreo_propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
-            ->select([
-                'monitoreo_propaganda_movil.id',
-                'monitoreo_propaganda_movil.razon_social',
-                'monitoreo_propaganda_movil.unidad',
-                'monitoreo_propaganda_movil.numero',
-                'monitoreo_propaganda_movil.placa',
-                'monitoreo_propaganda_movil.referencia',
-                'monitoreo_propaganda_movil.publicacion_medidas',
-                'monitoreo_propaganda_movil.publicacion_version',
-                'monitoreo_propaganda_movil.archivos',
-                'monitoreo_propaganda_movil.created_at',
-                'sujetos.nombre as sujeto_nombre',
-                'partidos.nombre as organizacion_nombre',
-                'distritos.nombre as distrito_nombre',
-                'municipios.nombre as municipio_nombre',
-                'tipo_publicidad.nombre as tipo_publicidad_nombre',
-            ])
-            ->where('monitoreo_propaganda_movil.tipo_medio', $this->tipo_medio)
-            ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_propaganda_movil.created_at', '>=', $this->fecha_inicio_registro))
-            ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_propaganda_movil.created_at', '<=', $this->fecha_fin_registro))
-            ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_propaganda_movil.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
-            ->when($this->busqueda_tabla, function ($query) {
-                $busqueda = '%' . trim($this->busqueda_tabla) . '%';
-                $query->where(function ($q) use ($busqueda) {
-                    $q->where('monitoreo_propaganda_movil.id', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.razon_social', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.unidad', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.numero', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.placa', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.referencia', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.referencia_domiciliaria', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.vialidad', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.seccion', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.publicacion_medidas', 'like', $busqueda)
-                        ->orWhere('monitoreo_propaganda_movil.publicacion_version', 'like', $busqueda)
-                        ->orWhere('sujetos.nombre', 'like', $busqueda)
-                        ->orWhere('partidos.nombre', 'like', $busqueda)
-                        ->orWhere('distritos.nombre', 'like', $busqueda)
-                        ->orWhere('municipios.nombre', 'like', $busqueda)
-                        ->orWhere('tipo_publicidad.nombre', 'like', $busqueda);
-                });
-            })
-            ->orderByDesc('monitoreo_propaganda_movil.id')
-            ->paginate($this->cantidad_por_pagina);
-    }
+private function consultarRegistros()
+{
+    return PropagandaMovil::query()
+        ->leftJoin('sujetos', 'monitoreo_propaganda_movil.sujeto_id', '=', 'sujetos.id')
+        ->leftJoin('partidos', 'monitoreo_propaganda_movil.organizacion_id', '=', 'partidos.id')
+        ->leftJoin('distritos', 'monitoreo_propaganda_movil.distrito_id', '=', 'distritos.id')
+        ->leftJoin('municipios', 'monitoreo_propaganda_movil.municipio_id', '=', 'municipios.id')
+        ->leftJoin('tipo_publicidad', 'monitoreo_propaganda_movil.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+        ->leftJoin('users as capturistas', 'monitoreo_propaganda_movil.usuario1_id', '=', 'capturistas.id')
+        ->select([
+            'monitoreo_propaganda_movil.id',
+            'monitoreo_propaganda_movil.razon_social',
+            'monitoreo_propaganda_movil.unidad',
+            'monitoreo_propaganda_movil.numero',
+            'monitoreo_propaganda_movil.placa',
+            'monitoreo_propaganda_movil.referencia',
+            'monitoreo_propaganda_movil.publicacion_medidas',
+            'monitoreo_propaganda_movil.publicacion_version',
+            'monitoreo_propaganda_movil.archivos',
+            'monitoreo_propaganda_movil.created_at',
+            'monitoreo_propaganda_movil.usuario1_id',
+            'sujetos.nombre as sujeto_nombre',
+            'partidos.nombre as organizacion_nombre',
+            'distritos.nombre as distrito_nombre',
+            'municipios.nombre as municipio_nombre',
+            'tipo_publicidad.nombre as tipo_publicidad_nombre',
+            'capturistas.name as capturista_nombre',
+        ])
+        ->where('monitoreo_propaganda_movil.tipo_medio', $this->tipo_medio)
+
+        ->when(! $this->usuarioPuedeVerTodo(), function ($query) {
+            $query->where('monitoreo_propaganda_movil.usuario1_id', Auth::id());
+        })
+
+        ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_propaganda_movil.created_at', '>=', $this->fecha_inicio_registro))
+        ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_propaganda_movil.created_at', '<=', $this->fecha_fin_registro))
+        ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_propaganda_movil.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
+        ->when($this->busqueda_tabla, function ($query) {
+            $busqueda = '%' . trim($this->busqueda_tabla) . '%';
+
+            $query->where(function ($q) use ($busqueda) {
+                $q->where('monitoreo_propaganda_movil.id', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.razon_social', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.unidad', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.numero', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.placa', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.referencia', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.referencia_domiciliaria', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.vialidad', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.seccion', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.publicacion_medidas', 'like', $busqueda)
+                    ->orWhere('monitoreo_propaganda_movil.publicacion_version', 'like', $busqueda)
+                    ->orWhere('sujetos.nombre', 'like', $busqueda)
+                    ->orWhere('partidos.nombre', 'like', $busqueda)
+                    ->orWhere('distritos.nombre', 'like', $busqueda)
+                    ->orWhere('municipios.nombre', 'like', $busqueda)
+                    ->orWhere('tipo_publicidad.nombre', 'like', $busqueda)
+                    ->orWhere('capturistas.name', 'like', $busqueda);
+            });
+        })
+        ->orderByDesc('monitoreo_propaganda_movil.id')
+        ->paginate($this->cantidad_por_pagina);
+}
 
     public function recuperarInfoAnterior(array $datos): void
     {
@@ -640,4 +709,20 @@ class Formulario extends Component
             'observaciones' => $this->observaciones,
         ];
     }
+
+private function usuarioPuedeVerTodo(): bool
+{
+    $user = Auth::user();
+
+    if (! $user) {
+        return false;
+    }
+
+    return $user->hasAnyRole([
+        'Administrador',
+        'Super Usuario',
+        'Super usuario',
+        'Consultor',
+    ]);
+}
 }
