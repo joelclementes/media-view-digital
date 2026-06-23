@@ -40,6 +40,12 @@ return new class extends Migration
             $table->string('observaciones')->nullable();
             $table->json('archivos')->nullable();
 
+            $table->foreignId('usuario1_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->comment('Usuario quien edite los datos cuantitativos');
+
             $table->string('cuali_valoracion')->nullable()->comment('Select -> Positiva/Negativa/Neutral');
             $table->string('cuali_lenguaje_inclusivo')->nullable()->comment('Si,No');
             $table->string('cuali_estereotipo')->nullable()->comment('Select -> NA/Personas indígenas/Creencias religiosas de las personas/Personas afroamericanas/Personas de la diversidad sexual o de género/Personas jóvenes/Personas mayores/Personas con discapacidad/Personas que viven con VIH/Víctimas del delito');
@@ -47,6 +53,12 @@ return new class extends Migration
             $table->string('cuali_objetividad')->nullable();
             $table->string('cuali_equidad')->nullable();
             $table->string('cuali_calidad')->nullable();
+
+            $table->foreignId('usuario2_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->comment('Usuario quien edite los datos cuantitativos');
 
             $table->timestamps();
         });

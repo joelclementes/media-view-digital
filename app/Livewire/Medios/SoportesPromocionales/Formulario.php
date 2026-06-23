@@ -269,13 +269,25 @@ class Formulario extends Component
         $datos['latitud'] = $datos['latitud'] !== '' ? $datos['latitud'] : null;
         $datos['longitud'] = $datos['longitud'] !== '' ? $datos['longitud'] : null;
 
-        DB::transaction(function () use ($datos) {
-            $registro = $this->registro_editando_id
-                ? SoportePromocional::findOrFail($this->registro_editando_id)
-                : SoportePromocional::create(array_merge($datos, [
+        $usuarioEsCapturista = auth()->user()?->hasRole('Capturista');
+
+        DB::transaction(function () use ($datos, $usuarioEsCapturista) {
+            if ($this->registro_editando_id) {
+                $registro = SoportePromocional::findOrFail(
+                    $this->registro_editando_id
+                );
+            } else {
+                $datosCrear = array_merge($datos, [
                     'tipo_medio' => $this->tipo_medio,
                     'archivos' => null,
-                ]));
+                ]);
+
+                if ($usuarioEsCapturista) {
+                    $datosCrear['usuario1_id'] = auth()->id();
+                }
+
+                $registro = SoportePromocional::create($datosCrear);
+            }
 
             foreach ($this->archivos_eliminados as $ruta) {
                 Storage::disk('public')->delete($ruta);
@@ -291,10 +303,16 @@ class Formulario extends Component
                 $rutas_nuevas
             ));
 
-            $registro->update(array_merge($datos, [
+            $datosActualizar = array_merge($datos, [
                 'tipo_medio' => $this->tipo_medio,
                 'archivos' => $rutas_archivos,
-            ]));
+            ]);
+
+            if ($usuarioEsCapturista) {
+                $datosActualizar['usuario1_id'] = auth()->id();
+            }
+
+            $registro->update($datosActualizar);
         });
 
         $mensaje = $this->registro_editando_id
@@ -471,7 +489,13 @@ class Formulario extends Component
             'cuali_calidad' => 'nullable|string|max:255',
         ]);
 
-        SoportePromocional::findOrFail($this->registro_cualitativo_id)->update($datos);
+        if (auth()->user()?->hasRole('Capturista')) {
+            $datos['usuario2_id'] = auth()->id();
+        }
+
+        SoportePromocional::findOrFail(
+            $this->registro_cualitativo_id
+        )->update($datos);
         $this->dispatch('soportes-promocionales-cualitativos-guardados', datos: $datos);
         $this->cerrarCualitativos();
         session()->flash('success', 'Datos cualitativos guardados correctamente.');
@@ -557,6 +581,7 @@ class Formulario extends Component
             ->leftJoin('distritos', 'monit_soportes_promocionales.distrito_id', '=', 'distritos.id')
             ->leftJoin('municipios', 'monit_soportes_promocionales.municipio_id', '=', 'municipios.id')
             ->leftJoin('tipo_publicidad', 'monit_soportes_promocionales.publicacion_tipo_id', '=', 'tipo_publicidad.id')
+            ->leftJoin('users as capturistas', 'monit_soportes_promocionales.usuario1_id', '=', 'capturistas.id')
             ->select([
                 'monit_soportes_promocionales.id',
                 'monit_soportes_promocionales.referencia',
@@ -566,13 +591,18 @@ class Formulario extends Component
                 'monit_soportes_promocionales.publicacion_numero_fotos',
                 'monit_soportes_promocionales.archivos',
                 'monit_soportes_promocionales.created_at',
+                'monit_soportes_promocionales.usuario1_id',
                 'sujetos.nombre as sujeto_nombre',
                 'partidos.nombre as organizacion_nombre',
                 'distritos.nombre as distrito_nombre',
                 'municipios.nombre as municipio_nombre',
                 'tipo_publicidad.nombre as tipo_publicidad_nombre',
+                'capturistas.name as capturista_nombre',
             ])
             ->where('monit_soportes_promocionales.tipo_medio', $this->tipo_medio)
+            ->when(! $this->usuarioPuedeVerTodosLosRegistros(), function ($query) {
+                $query->where('monit_soportes_promocionales.usuario1_id', auth()->id());
+            })
             ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monit_soportes_promocionales.created_at', '>=', $this->fecha_inicio_registro))
             ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monit_soportes_promocionales.created_at', '<=', $this->fecha_fin_registro))
             ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monit_soportes_promocionales.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
@@ -591,7 +621,8 @@ class Formulario extends Component
                         ->orWhere('partidos.nombre', 'like', $busqueda)
                         ->orWhere('distritos.nombre', 'like', $busqueda)
                         ->orWhere('municipios.nombre', 'like', $busqueda)
-                        ->orWhere('tipo_publicidad.nombre', 'like', $busqueda);
+                        ->orWhere('tipo_publicidad.nombre', 'like', $busqueda)
+                        ->orWhere('capturistas.name', 'like', $busqueda);
                 });
             })
             ->orderByDesc('monit_soportes_promocionales.id')
@@ -668,5 +699,17 @@ class Formulario extends Component
             'referencia_domiciliaria' => $this->referencia_domiciliaria,
             'observaciones' => $this->observaciones,
         ];
+    }
+
+    private function usuarioPuedeVerTodosLosRegistros(): bool
+    {
+        $usuario = auth()->user();
+
+        return $usuario
+            && (
+                $usuario->hasRole('Administrador')
+                || $usuario->hasRole('Super Usuario')
+                || $usuario->hasRole('Consultor')
+            );
     }
 }

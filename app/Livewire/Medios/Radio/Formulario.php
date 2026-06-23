@@ -224,60 +224,26 @@ class Formulario extends Component
         ];
     }
 
-    // public function guardar(): void
-    // {
-    //     $datos = $this->validate();
-
-    //     DB::transaction(function () use ($datos) {
-    //         $registro = $this->registro_editando_id
-    //             ? MonitoreoMedioRadio::findOrFail($this->registro_editando_id)
-    //             : MonitoreoMedioRadio::create(array_merge($datos, [
-    //                 'tipo_medio' => $this->tipo_medio,
-    //                 'archivos' => null,
-    //             ]));
-
-    //         foreach ($this->archivos_eliminados as $ruta) {
-    //             Storage::disk('public')->delete($ruta);
-    //         }
-
-    //         $rutas_nuevas = $this->guardarArchivosDelRegistro(
-    //             $registro->id,
-    //             count($this->archivos_existentes) + 1
-    //         );
-
-    //         $rutas_archivos = array_values(array_merge(
-    //             $this->archivos_existentes,
-    //             $rutas_nuevas
-    //         ));
-
-    //         $registro->update(array_merge($datos, [
-    //             'tipo_medio' => $this->tipo_medio,
-    //             'archivos' => $rutas_archivos,
-    //         ]));
-    //     });
-
-    //     $mensaje = $this->registro_editando_id
-    //         ? 'Registro actualizado correctamente.'
-    //         : 'Registro de radio guardado correctamente.';
-
-    //     $this->dispatch('radio-registro-guardado', datos: $this->datosParaRecuperar());
-    //     $this->limpiarFormulario();
-    //     session()->flash('success', $mensaje);
-    // }
-
     public function guardar(): void
     {
         $datos = $this->validate();
 
-        DB::transaction(function () use ($datos) {
+        $usuarioEsCapturista = Auth::user()?->hasRole('Capturista');
+
+        DB::transaction(function () use ($datos, $usuarioEsCapturista) {
             if ($this->registro_editando_id) {
                 $registro = MonitoreoMedioRadio::findOrFail($this->registro_editando_id);
             } else {
-                $registro = MonitoreoMedioRadio::create(array_merge($datos, [
+                $datosCrear = array_merge($datos, [
                     'tipo_medio' => $this->tipo_medio,
-                    'usuario1_id' => Auth::id(),
                     'archivos' => null,
-                ]));
+                ]);
+
+                if ($usuarioEsCapturista) {
+                    $datosCrear['usuario1_id'] = Auth::id();
+                }
+
+                $registro = MonitoreoMedioRadio::create($datosCrear);
             }
 
             foreach ($this->archivos_eliminados as $ruta) {
@@ -299,7 +265,7 @@ class Formulario extends Component
                 'archivos' => $rutas_archivos,
             ]);
 
-            if (! $this->registro_editando_id) {
+            if ($usuarioEsCapturista) {
                 $datosActualizar['usuario1_id'] = Auth::id();
             }
 
@@ -453,24 +419,6 @@ class Formulario extends Component
         $this->resetValidation();
     }
 
-    // public function guardarCualitativos(): void
-    // {
-    //     $datos = $this->validate([
-    //         'cuali_valoracion' => 'nullable|in:Positiva,Negativa,Neutral',
-    //         'cuali_lenguaje_inclusivo' => 'nullable|in:Si,No',
-    //         'cuali_estereotipo' => 'nullable|in:' . implode(',', $this->estereotipos),
-    //         'cuali_violencia_temas_id' => 'nullable|exists:violencia_temas,id',
-    //         'cuali_tipos_eleccion_id' => 'nullable|exists:tipos_eleccion,id',
-    //         'cuali_resumen' => 'nullable|string|max:65535',
-    //         'cuali_criterio_evaluacion' => 'nullable|in:' . implode(',', $this->criterios_evaluacion),
-    //     ]);
-
-    //     MonitoreoMedioRadio::findOrFail($this->registro_cualitativo_id)->update($datos);
-    //     $this->dispatch('radio-cualitativos-guardados', datos: $datos);
-    //     $this->cerrarCualitativos();
-    //     session()->flash('success', 'Datos cualitativos guardados correctamente.');
-    // }
-
     public function guardarCualitativos(): void
     {
         $datos = $this->validate([
@@ -483,7 +431,9 @@ class Formulario extends Component
             'cuali_criterio_evaluacion' => 'nullable|in:' . implode(',', $this->criterios_evaluacion),
         ]);
 
-        $datos['usuario2_id'] = Auth::id();
+        if (Auth::user()?->hasRole('Capturista')) {
+            $datos['usuario2_id'] = Auth::id();
+        }
 
         MonitoreoMedioRadio::findOrFail($this->registro_cualitativo_id)
             ->update($datos);
@@ -565,47 +515,6 @@ class Formulario extends Component
         $this->cantidad_por_pagina = 10;
         $this->resetPage();
     }
-
-    // private function consultarRegistros()
-    // {
-    //     return MonitoreoMedioRadio::query()
-    //         ->leftJoin('sujetos', 'monitoreo_radio.sujeto_id', '=', 'sujetos.id')
-    //         ->leftJoin('partidos', 'monitoreo_radio.organizacion_politica_id', '=', 'partidos.id')
-    //         ->leftJoin('municipios', 'monitoreo_radio.medio_municipio_id', '=', 'municipios.id')
-    //         ->select([
-    //             'monitoreo_radio.id',
-    //             'monitoreo_radio.medio_nombre',
-    //             'monitoreo_radio.medio_siglas',
-    //             'monitoreo_radio.publicacion_fecha',
-    //             'monitoreo_radio.publicacion_hora',
-    //             'monitoreo_radio.publicacion_tipo',
-    //             'monitoreo_radio.archivos',
-    //             'monitoreo_radio.created_at',
-    //             'sujetos.nombre as sujeto_nombre',
-    //             'partidos.nombre as organizacion_nombre',
-    //             'municipios.nombre as municipio_nombre',
-    //         ])
-    //         ->where('monitoreo_radio.tipo_medio', $this->tipo_medio)
-    //         ->when($this->fecha_inicio_registro, fn($q) => $q->whereDate('monitoreo_radio.created_at', '>=', $this->fecha_inicio_registro))
-    //         ->when($this->fecha_fin_registro, fn($q) => $q->whereDate('monitoreo_radio.created_at', '<=', $this->fecha_fin_registro))
-    //         ->when($this->filtro_tipo_eleccion_id !== '', fn($q) => $q->where('monitoreo_radio.tipo_eleccion_id', $this->filtro_tipo_eleccion_id))
-    //         ->when($this->busqueda_tabla, function ($query) {
-    //             $busqueda = '%' . trim($this->busqueda_tabla) . '%';
-
-    //             $query->where(function ($q) use ($busqueda) {
-    //                 $q->where('monitoreo_radio.id', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_radio.observaciones', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_radio.medio_nombre', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_radio.medio_siglas', 'like', $busqueda)
-    //                     ->orWhere('monitoreo_radio.publicacion_tipo', 'like', $busqueda)
-    //                     ->orWhere('sujetos.nombre', 'like', $busqueda)
-    //                     ->orWhere('partidos.nombre', 'like', $busqueda)
-    //                     ->orWhere('municipios.nombre', 'like', $busqueda);
-    //             });
-    //         })
-    //         ->orderByDesc('monitoreo_radio.id')
-    //         ->paginate($this->cantidad_por_pagina);
-    // }
 
     private function consultarRegistros()
     {

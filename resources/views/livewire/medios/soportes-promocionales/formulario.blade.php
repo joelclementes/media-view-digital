@@ -6,8 +6,8 @@
     @endif
 
     @if (!$mostrar_panel_cualitativo)
-    @can('crear_medio')
-        <div class="bg-white overflow-hidden shadow-md sm:rounded-md p-4">
+        @can('crear_medio')
+            <div class="bg-white overflow-hidden shadow-md sm:rounded-md p-4">
                 <div class="mb-4 flex justify-start">
                     <button type="button" onclick="recuperarInfoAnteriorSoportesPromocionales()"
                         class="rounded-md border border-primary-300 bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100">
@@ -30,10 +30,10 @@
 
                 <div class="flex flex-col sm:flex-row justify-end gap-3">
                     {{-- @if ($registro_editando_id) --}}
-                        <button type="button" wire:click="limpiarFormulario"
-                            class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                            Limpiar
-                        </button>
+                    <button type="button" wire:click="limpiarFormulario"
+                        class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                        Limpiar
+                    </button>
                     {{-- @endif --}}
 
                     <button type="button" wire:click="guardar" wire:loading.attr="disabled"
@@ -45,7 +45,7 @@
                     </button>
                 </div>
             </div>
-            @endcan
+        @endcan
 
         <div class="mt-6 overflow-hidden rounded-lg bg-white shadow-md">
             <div class="border-b border-gray-200 p-4">
@@ -61,7 +61,8 @@
                     </button>
                 </div>
 
-                <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5 {{ $mostrar_filtros_tabla ? '' : 'hidden' }}">
+                <div
+                    class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5 {{ $mostrar_filtros_tabla ? '' : 'hidden' }}">
                     <div class="lg:col-span-2">
                         <x-label for="busqueda_tabla" value="Buscar registro" />
                         <x-input id="busqueda_tabla" type="text" wire:model.live.debounce.500ms="busqueda_tabla"
@@ -70,12 +71,14 @@
 
                     <div>
                         <x-label for="fecha_inicio_registro" value="Fecha inicial" />
-                        <x-input id="fecha_inicio_registro" type="date" wire:model.live="fecha_inicio_registro" class="w-full" />
+                        <x-input id="fecha_inicio_registro" type="date" wire:model.live="fecha_inicio_registro"
+                            class="w-full" />
                     </div>
 
                     <div>
                         <x-label for="fecha_fin_registro" value="Fecha final" />
-                        <x-input id="fecha_fin_registro" type="date" wire:model.live="fecha_fin_registro" class="w-full" />
+                        <x-input id="fecha_fin_registro" type="date" wire:model.live="fecha_fin_registro"
+                            class="w-full" />
                     </div>
 
                     <div>
@@ -119,6 +122,11 @@
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Ubicación</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Tipo</th>
                             <th class="px-4 py-3 text-left font-semibold text-gray-700">Referencia</th>
+                            @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                <td class="px-4 py-3">
+                                    Capturó
+                                </td>
+                            @endif
                             <th class="px-4 py-3 text-center font-semibold text-gray-700">Acciones</th>
                         </tr>
                     </thead>
@@ -132,21 +140,29 @@
                                 <td class="px-4 py-3">
                                     {{ $registro->municipio_nombre ?? 'Sin municipio' }}
                                     @if ($registro->distrito_nombre)
-                                        <span class="block text-xs text-gray-500">{{ $registro->distrito_nombre }}</span>
+                                        <span
+                                            class="block text-xs text-gray-500">{{ $registro->distrito_nombre }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
                                     {{ $registro->tipo_publicidad_nombre ?? 'Sin tipo' }}
                                     @if ($registro->publicacion_medidas)
-                                        <span class="block text-xs text-gray-500">{{ $registro->publicacion_medidas }}</span>
+                                        <span
+                                            class="block text-xs text-gray-500">{{ $registro->publicacion_medidas }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
                                     {{ $registro->referencia ?: 'Sin referencia' }}
                                     @if ($registro->publicacion_version)
-                                        <span class="block text-xs text-gray-500">Versión: {{ $registro->publicacion_version }}</span>
+                                        <span class="block text-xs text-gray-500">Versión:
+                                            {{ $registro->publicacion_version }}</span>
                                     @endif
                                 </td>
+                                @if (auth()->user()->hasAnyRole(['Administrador', 'Super usuario', 'Super Usuario', 'Capturista']))
+                                    <td class="px-4 py-3">
+                                        {{ $registro->capturista?->name ?? 'Sin capturista' }}
+                                    </td>
+                                @endif
                                 <td class="px-4 py-3">
                                     <div class="flex flex-wrap justify-center gap-2">
                                         @can('crear_medio')
@@ -157,8 +173,8 @@
                                             </button>
                                         @endcan
 
-                                        <a href="{{ route('m-soportes-promocionales-testigo', $registro->id) }}" target="_blank"
-                                            title="Testigo"
+                                        <a href="{{ route('m-soportes-promocionales-testigo', $registro->id) }}"
+                                            target="_blank" title="Testigo"
                                             class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
                                             <x-lucide-file-type class="h-5 w-5" />
                                         </a>
@@ -170,7 +186,8 @@
                                                 <x-lucide-pencil class="h-5 w-5" />
                                             </button>
                                         @else
-                                            <a href="{{ route('m-soportes-promocionales-show', $registro->id) }}" title="Ver"
+                                            <a href="{{ route('m-soportes-promocionales-show', $registro->id) }}"
+                                                title="Ver"
                                                 class="rounded-md p-1.5 hover:bg-primary-50 hover:text-primary-800">
                                                 <x-lucide-eye class="h-5 w-5" />
                                             </a>
@@ -188,7 +205,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-4 py-8 text-center text-gray-500">No hay registros con los filtros seleccionados.</td>
+                                <td colspan="7" class="px-4 py-8 text-center text-gray-500">No hay registros con
+                                    los filtros seleccionados.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -205,7 +223,8 @@
                 <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
                     <h3 class="text-lg font-semibold text-gray-900">Confirmar eliminación</h3>
                     <p class="mt-2 text-sm text-gray-600">
-                        ¿Seguro que deseas eliminar <span class="font-semibold">{{ $registro_eliminar_referencia }}</span>?
+                        ¿Seguro que deseas eliminar <span
+                            class="font-semibold">{{ $registro_eliminar_referencia }}</span>?
                         Esta acción también eliminará las imágenes relacionadas.
                     </p>
 
@@ -227,7 +246,8 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-xl font-semibold text-gray-800">Datos cualitativos</h3>
-                    <p class="text-sm text-gray-500">Registro de soporte promocional #{{ $registro_cualitativo_id }}</p>
+                    <p class="text-sm text-gray-500">Registro de soporte promocional #{{ $registro_cualitativo_id }}
+                    </p>
                 </div>
 
                 <button type="button" wire:click="cerrarCualitativos"
@@ -239,15 +259,33 @@
             <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                 <h4 class="mb-4 text-lg font-semibold text-gray-800">Datos del registro</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Sujeto</span>{{ $registro_cualitativo['sujeto_nombre'] ?? 'Sin sujeto' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Organización</span>{{ $registro_cualitativo['organizacion_nombre'] ?? 'Sin organización' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Candidatura</span>{{ $registro_cualitativo['tipo_eleccion_nombre'] ?? 'Sin candidatura' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Distrito</span>{{ $registro_cualitativo['distrito_nombre'] ?? 'Sin distrito' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Municipio</span>{{ $registro_cualitativo['municipio_nombre'] ?? 'Sin municipio' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Localidad</span>{{ $registro_cualitativo['localidad_nombre'] ?? 'Sin localidad' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Tipo</span>{{ $registro_cualitativo['tipo_publicidad_nombre'] ?? 'Sin tipo' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Medidas</span>{{ $registro_cualitativo['publicacion_medidas'] ?? 'Sin medidas' }}</div>
-                    <div><span class="block text-xs font-semibold uppercase text-gray-500">Referencia</span>{{ $registro_cualitativo['referencia'] ?? 'Sin referencia' }}</div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Sujeto</span>{{ $registro_cualitativo['sujeto_nombre'] ?? 'Sin sujeto' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Organización</span>{{ $registro_cualitativo['organizacion_nombre'] ?? 'Sin organización' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Candidatura</span>{{ $registro_cualitativo['tipo_eleccion_nombre'] ?? 'Sin candidatura' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Distrito</span>{{ $registro_cualitativo['distrito_nombre'] ?? 'Sin distrito' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Municipio</span>{{ $registro_cualitativo['municipio_nombre'] ?? 'Sin municipio' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Localidad</span>{{ $registro_cualitativo['localidad_nombre'] ?? 'Sin localidad' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Tipo</span>{{ $registro_cualitativo['tipo_publicidad_nombre'] ?? 'Sin tipo' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Medidas</span>{{ $registro_cualitativo['publicacion_medidas'] ?? 'Sin medidas' }}
+                    </div>
+                    <div><span
+                            class="block text-xs font-semibold uppercase text-gray-500">Referencia</span>{{ $registro_cualitativo['referencia'] ?? 'Sin referencia' }}
+                    </div>
                 </div>
             </div>
 
@@ -259,13 +297,16 @@
                 @if (count($imagenes_cualitativas) > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         @foreach ($imagenes_cualitativas as $imagen)
-                            <a href="{{ asset('storage/' . $imagen) }}" target="_blank" class="block overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-                                <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del soporte" class="h-48 w-full object-cover">
+                            <a href="{{ asset('storage/' . $imagen) }}" target="_blank"
+                                class="block overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                                <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del soporte"
+                                    class="h-48 w-full object-cover">
                             </a>
                         @endforeach
                     </div>
                 @else
-                    <p class="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">Este registro no tiene imágenes cargadas.</p>
+                    <p class="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">Este registro no
+                        tiene imágenes cargadas.</p>
                 @endif
             </div>
 
@@ -273,14 +314,15 @@
                 <div class="mb-4">
 
                     <button type="button" onclick="recuperarCualitativosSoportesPromocionales()"
-                    class="rounded-md border border-primary-300 bg-primary-50 px-3 py-2 text-xs font-medium text-primary-700 hover:bg-primary-100">
-                    Recuperar cualitativos anteriores
-                </button>
-            </div>
+                        class="rounded-md border border-primary-300 bg-primary-50 px-3 py-2 text-xs font-medium text-primary-700 hover:bg-primary-100">
+                        Recuperar cualitativos anteriores
+                    </button>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <x-label for="cuali_valoracion" value="Valoración" />
-                        <select id="cuali_valoracion" wire:model.live="cuali_valoracion" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <select id="cuali_valoracion" wire:model.live="cuali_valoracion"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
                             <option value="">Seleccionar valoración</option>
                             @foreach ($valoraciones as $valoracion)
                                 <option value="{{ $valoracion }}">{{ $valoracion }}</option>
@@ -291,7 +333,8 @@
 
                     <div>
                         <x-label for="cuali_lenguaje_inclusivo" value="Lenguaje inclusivo" />
-                        <select id="cuali_lenguaje_inclusivo" wire:model.live="cuali_lenguaje_inclusivo" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <select id="cuali_lenguaje_inclusivo" wire:model.live="cuali_lenguaje_inclusivo"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
                             <option value="">Seleccionar</option>
                             @foreach ($opciones_si_no as $opcion)
                                 <option value="{{ $opcion }}">{{ $opcion }}</option>
@@ -302,7 +345,8 @@
 
                     <div>
                         <x-label for="cuali_estereotipo" value="Estereotipo" />
-                        <select id="cuali_estereotipo" wire:model.live="cuali_estereotipo" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <select id="cuali_estereotipo" wire:model.live="cuali_estereotipo"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
                             <option value="">Seleccionar estereotipo</option>
                             @foreach ($estereotipos as $estereotipo)
                                 <option value="{{ $estereotipo }}">{{ $estereotipo }}</option>
@@ -313,7 +357,8 @@
 
                     <div>
                         <x-label for="cuali_violencia_temas_id" value="Tema de violencia" />
-                        <select id="cuali_violencia_temas_id" wire:model.live="cuali_violencia_temas_id" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <select id="cuali_violencia_temas_id" wire:model.live="cuali_violencia_temas_id"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
                             <option value="">Seleccionar tema</option>
                             @foreach ($violencia_temas as $tema)
                                 <option value="{{ $tema->id }}">{{ $tema->nombre }}</option>
@@ -324,25 +369,29 @@
 
                     <div>
                         <x-label for="cuali_objetividad" value="Objetividad" />
-                        <x-input id="cuali_objetividad" type="text" wire:model.live.debounce.500ms="cuali_objetividad" class="w-full" />
+                        <x-input id="cuali_objetividad" type="text"
+                            wire:model.live.debounce.500ms="cuali_objetividad" class="w-full" />
                         <x-input-error for="cuali_objetividad" class="mt-1" />
                     </div>
 
                     <div>
                         <x-label for="cuali_equidad" value="Equidad" />
-                        <x-input id="cuali_equidad" type="text" wire:model.live.debounce.500ms="cuali_equidad" class="w-full" />
+                        <x-input id="cuali_equidad" type="text" wire:model.live.debounce.500ms="cuali_equidad"
+                            class="w-full" />
                         <x-input-error for="cuali_equidad" class="mt-1" />
                     </div>
 
                     <div>
                         <x-label for="cuali_calidad" value="Calidad" />
-                        <x-input id="cuali_calidad" type="text" wire:model.live.debounce.500ms="cuali_calidad" class="w-full" />
+                        <x-input id="cuali_calidad" type="text" wire:model.live.debounce.500ms="cuali_calidad"
+                            class="w-full" />
                         <x-input-error for="cuali_calidad" class="mt-1" />
                     </div>
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <button type="button" wire:click="cerrarCualitativos" class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <button type="button" wire:click="cerrarCualitativos"
+                        class="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                         Cancelar
                     </button>
                     <button type="button" wire:click="guardarCualitativos" wire:loading.attr="disabled"

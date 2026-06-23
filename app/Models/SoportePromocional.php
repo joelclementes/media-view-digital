@@ -34,6 +34,7 @@ class SoportePromocional extends Model
         'referencia_domiciliaria',
         'observaciones',
         'archivos',
+        'usuario1_id',
         'cuali_valoracion',
         'cuali_lenguaje_inclusivo',
         'cuali_estereotipo',
@@ -41,6 +42,7 @@ class SoportePromocional extends Model
         'cuali_objetividad',
         'cuali_equidad',
         'cuali_calidad',
+        'usuario2_id',
     ];
 
     protected $casts = [
@@ -50,4 +52,14 @@ class SoportePromocional extends Model
         'publicacion_cantidad' => 'integer',
         'publicacion_numero_fotos' => 'integer',
     ];
+
+    public function capturista()
+    {
+        return $this->belongsTo(User::class, 'usuario1_id');
+    }
+
+    public function analista()
+    {
+        return $this->belongsTo(User::class, 'usuario2_id');
+    }
 }

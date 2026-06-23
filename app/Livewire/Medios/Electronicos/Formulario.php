@@ -559,7 +559,9 @@ class Formulario extends Component
         $datos = $this->validate($this->rules(), $this->mensajes());
 
         $esta_editando = filled($this->registro_editando_id);
-        DB::transaction(function () use ($datos, $esta_editando) {
+        $usuario_es_capturista = auth()->user()?->hasRole('Capturista');
+
+        DB::transaction(function () use ($datos, $esta_editando, $usuario_es_capturista) {
             if ($esta_editando) {
                 $registro = MonitoreoMedioElectronico::findOrFail($this->registro_editando_id);
 
@@ -577,7 +579,7 @@ class Formulario extends Component
                     $rutas_nuevas
                 ));
 
-                $registro->update([
+                $datos_actualizar = [
                     'tipo_medio' => $this->tipo_medio,
 
                     'sujeto_id' => $datos['sujeto_id'],
@@ -600,14 +602,18 @@ class Formulario extends Component
                     'observaciones' => $datos['observaciones'],
 
                     'archivos' => $rutas_archivos,
+                ];
 
-                    'usuario1_id' => auth()->id()
-                ]);
+                if ($usuario_es_capturista) {
+                    $datos_actualizar['usuario1_id'] = auth()->id();
+                }
+
+                $registro->update($datos_actualizar);
 
                 return;
             }
 
-            $registro = MonitoreoMedioElectronico::create([
+            $datos_crear = [
                 'tipo_medio' => $this->tipo_medio,
 
                 'sujeto_id' => $datos['sujeto_id'],
@@ -629,10 +635,14 @@ class Formulario extends Component
                 'referencia' => $datos['referencia'],
                 'observaciones' => $datos['observaciones'],
 
-                'usuario1_id' => auth()->id(),
-
                 'archivos' => null,
-            ]);
+            ];
+
+            if ($usuario_es_capturista) {
+                $datos_crear['usuario1_id'] = auth()->id();
+            }
+
+            $registro = MonitoreoMedioElectronico::create($datos_crear);
 
             $rutas_archivos = $this->guardarArchivosDelRegistro($registro->id);
 
@@ -927,7 +937,9 @@ class Formulario extends Component
             'cuali_formato' => 'nullable|in:Mensaje,De entrevista,Informativo-narrativo',
         ]);
 
-        $datos['usuario2_id'] = auth()->id();
+        if (auth()->user()?->hasRole('Capturista')) {
+            $datos['usuario2_id'] = auth()->id();
+        }
 
         MonitoreoMedioElectronico::findOrFail($this->registro_cualitativo_id)
             ->update($datos);
