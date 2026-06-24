@@ -1,5 +1,5 @@
-<div class="py-6">
-    <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+<div>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
         @if (session()->has('success'))
             <div class="rounded-md bg-green-50 p-4 text-sm text-green-700 border border-green-200">
