@@ -1,8 +1,8 @@
 <?php
-use App\Livewire\Catalogos\Sujetos\Formulario as SujetosFormulario;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SujetoController;
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/catalogos/sujetos', SujetosFormulario::class)
+Route::middleware('can:administrar_catalogos')->group(function () {
+    Route::get('/catalogos/sujetos', [SujetoController::class, 'index'])
         ->name('catalogos.sujetos');
 });

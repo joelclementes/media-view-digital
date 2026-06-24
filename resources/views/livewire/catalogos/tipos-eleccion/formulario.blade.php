@@ -77,12 +77,12 @@
                         type="text"
                         wire:model.live.debounce.400ms="buscar"
                         placeholder="Buscar por nombre..."
-                        class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
 
                     <select
                         wire:model.live="perPage"
-                        class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
                         <option value="10">10 registros</option>
                         <option value="50">50 registros</option>
@@ -112,7 +112,7 @@
                                     <button
                                         type="button"
                                         wire:click="editar({{ $tipoEleccion->id }})"
-                                        class="text-indigo-600 hover:text-indigo-900 font-medium"
+                                        class="text-primary-600 hover:text-primary-900 font-medium"
                                     >
                                         {{ $tipoEleccion->nombre }}
                                     </button>

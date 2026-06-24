@@ -54,7 +54,7 @@
                     <select
                         id="genero_id"
                         wire:model.defer="genero_id"
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
                         <option value="">Selecciona un género</option>
                         @foreach ($generos as $genero)
@@ -69,7 +69,7 @@
                     <select
                         id="distrito_id"
                         wire:model.live="distrito_id"
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
                         <option value="">Selecciona un distrito</option>
                         @foreach ($distritos as $distrito)
@@ -86,7 +86,7 @@
                         id="municipio_id"
                         wire:model.defer="municipio_id"
                         @disabled(!$distrito_id)
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-500"
                     >
                         @if (!$distrito_id)
                             <option value="">Selecciona primero un distrito</option>
@@ -105,7 +105,7 @@
                     <select
                         id="partido_id"
                         wire:model.defer="partido_id"
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
                         <option value="">Selecciona una opción</option>
                         @foreach ($partidos as $partido)
@@ -139,12 +139,12 @@
                         type="text"
                         wire:model.live.debounce.400ms="buscar"
                         placeholder="Buscar..."
-                        class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
 
                     <select
                         wire:model.live="perPage"
-                        class="border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
                         <option value="10">10 registros</option>
                         <option value="50">50 registros</option>
@@ -179,7 +179,7 @@
                                     <button
                                         type="button"
                                         wire:click="editar({{ $sujeto->id }})"
-                                        class="text-indigo-600 hover:text-indigo-900 font-medium"
+                                        class="text-primary-600 hover:text-primary-900 font-medium"
                                     >
                                         {{ $sujeto->nombre }}
                                     </button>
