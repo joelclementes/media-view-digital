@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class TipoEleccion extends Model
 {
     protected $table = 'tipos_eleccion';
+
+    protected $fillable = [
+        'nombre',
+    ];
 }
