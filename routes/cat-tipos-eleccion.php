@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\TipoEleccionController;
+use App\Livewire\Catalogos\TiposEleccion\Formulario as TiposEleccionFormulario;
 use Illuminate\Support\Facades\Route;
 
-Route::resource('cat-tipos-eleccion', TipoEleccionController::class)
-    ->parameters([
-        'cat-tipos-eleccion' => 'tipoEleccion',
-    ]);
+Route::get('/cat-tipos-eleccion', TiposEleccionFormulario::class)
+    ->name('cat-tipos-eleccion.index');

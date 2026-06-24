@@ -230,13 +230,9 @@
                             class="ps-8">
                             Tipos de elección
                         </x-responsive-nav-link>
-<x-responsive-nav-link
-    href="{{ route('catalogos.sujetos') }}"
-    :active="request()->routeIs('catalogos.sujetos')"
-    class="ps-8"
->
-    Sujetos
-</x-responsive-nav-link>
+                        <x-responsive-nav-link href="{{ route('catalogos.sujetos') }}" :active="request()->routeIs('catalogos.sujetos')" class="ps-8">
+                            Sujetos
+                        </x-responsive-nav-link>
                     </div>
 
                 </div>
