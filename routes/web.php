@@ -29,8 +29,9 @@ Route::middleware([
     require __DIR__ . '/medios-cine.php';
     require __DIR__ . '/usuarios.php';
     require __DIR__ . '/roles-permisos.php';
-    
+
     // Catálogos
     require __DIR__ . '/cat-tipos-eleccion.php';
+    require __DIR__ . '/cat-sujetos.php';
 
 });
