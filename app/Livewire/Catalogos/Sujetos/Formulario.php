@@ -92,6 +92,8 @@ class Formulario extends Component
         $this->distrito_id = $sujeto->municipio?->distrito_id;
 
         $this->resetValidation();
+
+        $this->dispatch('scroll-arriba');
     }
 
     public function actualizar(): void
@@ -212,14 +214,14 @@ class Formulario extends Component
             ->orderBy('nombre')
             ->paginate($this->perPage);
 
-return view('livewire.catalogos.sujetos.formulario', [
-    'generos' => GeneroSujeto::orderBy('nombre')->get(),
-    'distritos' => Distrito::orderBy('nombre')->get(),
-    'municipiosFormulario' => $municipiosFormulario,
-    'partidos' => Partido::whereIn('tipo', ['Partido', 'Asociación'])
-        ->orderBy('nombre')
-        ->get(),
-    'sujetos' => $sujetos,
-])->layout('layouts.app');
+        return view('livewire.catalogos.sujetos.formulario', [
+            'generos' => GeneroSujeto::orderBy('nombre')->get(),
+            'distritos' => Distrito::orderBy('nombre')->get(),
+            'municipiosFormulario' => $municipiosFormulario,
+            'partidos' => Partido::whereIn('tipo', ['Partido', 'Asociación'])
+                ->orderBy('nombre')
+                ->get(),
+            'sujetos' => $sujetos,
+        ])->layout('layouts.app');
     }
 }

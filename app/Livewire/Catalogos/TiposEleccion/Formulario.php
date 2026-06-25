@@ -71,6 +71,8 @@ class Formulario extends Component
         $this->nombre = $tipoEleccion->nombre;
 
         $this->resetValidation();
+
+        $this->dispatch('scroll-arriba');
     }
 
     public function actualizar(): void

@@ -34,5 +34,6 @@ Route::middleware([
     require __DIR__ . '/cat-tipos-eleccion.php';
     require __DIR__ . '/cat-sujetos.php';
     require __DIR__ . '/cat-tamanos-publicacion.php';
+    require __DIR__ . '/cat-generos.php';
 
 });

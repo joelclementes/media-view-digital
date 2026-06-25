@@ -17,15 +17,15 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-800">
-                        {{ $tamanoPublicacionId ? 'Editar tamaño de publicación' : 'Registrar tamaño de publicación' }}
+                        {{ $genero_id ? 'Editar género' : 'Registrar género' }}
                     </h2>
 
                     <p class="text-sm text-gray-500">
-                        Captura el nombre del tamaño de publicación.
+                        Captura el nombre del género y el medio al que pertenece.
                     </p>
                 </div>
 
-                @if ($tamanoPublicacionId)
+                @if ($genero_id)
                     <button
                         type="button"
                         wire:click="limpiarFormulario"
@@ -36,7 +36,8 @@
                 @endif
             </div>
 
-            <form wire:submit.prevent="{{ $tamanoPublicacionId ? 'actualizar' : 'guardar' }}" class="space-y-4">
+            <form wire:submit.prevent="{{ $genero_id ? 'actualizar' : 'guardar' }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
                 <div>
                     <x-label for="nombre" value="Nombre" />
 
@@ -46,15 +47,31 @@
                         class="mt-1 block w-full"
                         wire:model.defer="nombre"
                         autocomplete="off"
-                        autofocus
                     />
 
                     <x-input-error for="nombre" class="mt-2" />
                 </div>
 
                 <div>
+                    <x-label for="medio" value="Medio" />
+
+                    <select
+                        id="medio"
+                        wire:model.defer="medio"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    >
+                        <option value="">Selecciona un medio</option>
+                        <option value="Electrónico">Electrónico</option>
+                        <option value="Impreso">Impreso</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+
+                    <x-input-error for="medio" class="mt-2" />
+                </div>
+
+                <div class="flex items-end">
                     <x-button>
-                        {{ $tamanoPublicacionId ? 'Actualizar' : 'Guardar' }}
+                        {{ $genero_id ? 'Actualizar' : 'Guardar' }}
                     </x-button>
                 </div>
             </form>
@@ -64,11 +81,11 @@
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-800">
-                        Tamaños de publicación registrados
+                        Géneros registrados
                     </h2>
 
                     <p class="text-sm text-gray-500">
-                        Busca y administra los tamaños de publicación.
+                        Busca por nombre o medio.
                     </p>
                 </div>
 
@@ -76,7 +93,7 @@
                     <input
                         type="text"
                         wire:model.live.debounce.400ms="buscar"
-                        placeholder="Buscar por nombre..."
+                        placeholder="Buscar..."
                         class="border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     >
 
@@ -99,6 +116,10 @@
                                 Nombre
                             </th>
 
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Medio
+                            </th>
+
                             <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Acciones
                             </th>
@@ -106,23 +127,27 @@
                     </thead>
 
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse ($tamanosPublicacion as $tamanoPublicacion)
+                        @forelse ($generos as $genero)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-sm">
                                     <button
                                         type="button"
-                                        wire:click="editar({{ $tamanoPublicacion->id }})"
+                                        wire:click="editar({{ $genero->id }})"
                                         class="text-primary-600 hover:text-primary-900 font-medium"
                                     >
-                                        {{ $tamanoPublicacion->nombre }}
+                                        {{ $genero->nombre }}
                                     </button>
+                                </td>
+
+                                <td class="px-4 py-3 text-sm text-gray-700">
+                                    {{ $genero->medio  }}
                                 </td>
 
                                 <td class="px-4 py-3 text-sm text-center">
                                     <button
                                         type="button"
-                                        wire:click="confirmarEliminar({{ $tamanoPublicacion->id }})"
-                                        class="inline-flex items-center justify-center rounded-full p-2 text-red-600 hover:bg-red-50 hover:text-red-800 transition"
+                                        wire:click="confirmarEliminar({{ $genero->id }})"
+                                        class="inline-flex items-center text-red-600 hover:text-red-800"
                                         title="Eliminar"
                                     >
                                         <x-lucide-trash-2 class="h-5 w-5" />
@@ -131,8 +156,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="px-4 py-6 text-center text-sm text-gray-500">
-                                    No hay tamaños de publicación registrados.
+                                <td colspan="3" class="px-4 py-6 text-center text-sm text-gray-500">
+                                    No hay géneros registrados.
                                 </td>
                             </tr>
                         @endforelse
@@ -141,7 +166,7 @@
             </div>
 
             <div class="mt-4">
-                {{ $tamanosPublicacion->links() }}
+                {{ $generos->links() }}
             </div>
         </div>
     </div>
@@ -156,15 +181,11 @@
 
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">
-                            Eliminar tamaño de publicación
+                            Confirmar eliminación
                         </h3>
 
                         <p class="mt-2 text-sm text-gray-600">
-                            ¿Deseas eliminar este tamaño de publicación?
-                        </p>
-
-                        <p class="mt-3 text-sm text-gray-600">
-                            Esta acción no se podrá deshacer. Si el registro está relacionado con monitoreos, el sistema no permitirá eliminarlo.
+                            ¿Deseas eliminar este género? Esta acción no se podrá realizar si el género ya está relacionado con registros de monitoreo.
                         </p>
                     </div>
                 </div>

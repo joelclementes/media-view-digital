@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire\Catalogos\TamanosPublicacion;
+namespace App\Livewire\Catalogos\Generos;
 
-use App\Models\TamanoPublicacion;
+use App\Models\Genero;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
@@ -14,13 +14,37 @@ class Formulario extends Component
     use WithPagination;
 
     public string $nombre = '';
+    public string $medio = '';
     public string $buscar = '';
     public int $perPage = 10;
 
-    public ?int $tamanoPublicacionId = null;
+    public ?int $genero_id = null;
     public ?int $confirmingDeleteId = null;
 
     protected string $paginationTheme = 'tailwind';
+
+    protected function rules(): array
+    {
+        return [
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('generos', 'nombre')
+                    ->where(fn($query) => $query->where('medio', $this->medio))
+                    ->ignore($this->genero_id),
+            ],
+            'medio' => ['required', Rule::in(['Electrónico', 'Impreso', 'N/A'])],
+        ];
+    }
+
+    protected array $messages = [
+        'nombre.required' => 'El nombre es obligatorio.',
+        'nombre.max' => 'El nombre no debe exceder 255 caracteres.',
+        'nombre.unique' => 'Este género ya existe para el medio seleccionado.',
+        'medio.required' => 'Debes seleccionar el medio.',
+        'medio.in' => 'El medio seleccionado no es válido.',
+    ];
 
     public function updatedBuscar(): void
     {
@@ -32,43 +56,27 @@ class Formulario extends Component
         $this->resetPage();
     }
 
-    protected function rules(): array
-    {
-        return [
-            'nombre' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('tamanos_publicacion', 'nombre')->ignore($this->tamanoPublicacionId),
-            ],
-        ];
-    }
-
-    protected array $messages = [
-        'nombre.required' => 'El nombre es obligatorio.',
-        'nombre.max' => 'El nombre no debe exceder 255 caracteres.',
-        'nombre.unique' => 'Este tamaño de publicación ya existe.',
-    ];
-
     public function guardar(): void
     {
         $this->validate();
 
-        TamanoPublicacion::create([
+        Genero::create([
             'nombre' => trim($this->nombre),
+            'medio' => $this->medio,
         ]);
 
         $this->limpiarFormulario();
 
-        session()->flash('success', 'Tamaño de publicación guardado correctamente.');
+        session()->flash('success', 'Género guardado correctamente.');
     }
 
     public function editar(int $id): void
     {
-        $tamanoPublicacion = TamanoPublicacion::findOrFail($id);
+        $genero = Genero::findOrFail($id);
 
-        $this->tamanoPublicacionId = $tamanoPublicacion->id;
-        $this->nombre = $tamanoPublicacion->nombre;
+        $this->genero_id = $genero->id;
+        $this->nombre = $genero->nombre;
+        $this->medio = $genero->medio;
 
         $this->resetValidation();
 
@@ -79,15 +87,16 @@ class Formulario extends Component
     {
         $this->validate();
 
-        $tamanoPublicacion = TamanoPublicacion::findOrFail($this->tamanoPublicacionId);
+        $genero = Genero::findOrFail($this->genero_id);
 
-        $tamanoPublicacion->update([
+        $genero->update([
             'nombre' => trim($this->nombre),
+            'medio' => $this->medio,
         ]);
 
         $this->limpiarFormulario();
 
-        session()->flash('success', 'Tamaño de publicación actualizado correctamente.');
+        session()->flash('success', 'Género actualizado correctamente.');
     }
 
     public function confirmarEliminar(int $id): void
@@ -106,34 +115,34 @@ class Formulario extends Component
             return;
         }
 
-        if ($this->tamanoPublicacionTieneRelaciones($this->confirmingDeleteId)) {
+        if ($this->generoTieneRelaciones($this->confirmingDeleteId)) {
             $this->confirmingDeleteId = null;
 
-            session()->flash('error', 'No se puede borrar porque este tamaño de publicación ya está relacionado con registros de monitoreo.');
+            session()->flash('error', 'No se puede eliminar el género porque ya está relacionado con registros de monitoreo.');
             return;
         }
 
-        TamanoPublicacion::findOrFail($this->confirmingDeleteId)->delete();
+        Genero::findOrFail($this->confirmingDeleteId)->delete();
 
-        if ($this->tamanoPublicacionId === $this->confirmingDeleteId) {
+        if ($this->genero_id === $this->confirmingDeleteId) {
             $this->limpiarFormulario();
         }
 
         $this->confirmingDeleteId = null;
 
-        session()->flash('success', 'Tamaño de publicación eliminado correctamente.');
+        session()->flash('success', 'Género eliminado correctamente.');
     }
 
-    private function tamanoPublicacionTieneRelaciones(int $tamanoPublicacionId): bool
+    private function generoTieneRelaciones(int $generoId): bool
     {
         $relaciones = [
             [
                 'tabla' => 'monitoreo_medios_electronicos',
-                'columna' => 'tamano_id',
+                'columna' => 'genero_id',
             ],
             [
                 'tabla' => 'monitoreo_medios_impresos',
-                'columna' => 'publicacion_tamano_id',
+                'columna' => 'publicacion_genero_id',
             ],
         ];
 
@@ -141,9 +150,7 @@ class Formulario extends Component
             if (
                 Schema::hasTable($relacion['tabla']) &&
                 Schema::hasColumn($relacion['tabla'], $relacion['columna']) &&
-                DB::table($relacion['tabla'])
-                ->where($relacion['columna'], $tamanoPublicacionId)
-                ->exists()
+                DB::table($relacion['tabla'])->where($relacion['columna'], $generoId)->exists()
             ) {
                 return true;
             }
@@ -156,7 +163,8 @@ class Formulario extends Component
     {
         $this->reset([
             'nombre',
-            'tamanoPublicacionId',
+            'medio',
+            'genero_id',
         ]);
 
         $this->resetValidation();
@@ -164,15 +172,19 @@ class Formulario extends Component
 
     public function render()
     {
-        $tamanosPublicacion = TamanoPublicacion::query()
+        $generos = Genero::query()
             ->when($this->buscar, function ($query) {
-                $query->where('nombre', 'like', '%' . $this->buscar . '%');
+                $query->where(function ($q) {
+                    $q->where('nombre', 'like', '%' . $this->buscar . '%')
+                        ->orWhere('medio', 'like', '%' . $this->buscar . '%');
+                });
             })
+            ->orderBy('medio')
             ->orderBy('nombre')
             ->paginate($this->perPage);
 
-        return view('livewire.catalogos.tamanos-publicacion.formulario', [
-            'tamanosPublicacion' => $tamanosPublicacion,
+        return view('livewire.catalogos.generos.formulario', [
+            'generos' => $generos,
         ])->layout('layouts.app');
     }
 }

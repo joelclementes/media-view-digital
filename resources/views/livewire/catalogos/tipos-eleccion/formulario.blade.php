@@ -190,3 +190,14 @@
         </div>
     @endif
 </div>
+
+@script
+<script>
+    $wire.on('scroll-arriba', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+</script>
+@endscript
