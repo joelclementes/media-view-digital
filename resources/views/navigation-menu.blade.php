@@ -82,6 +82,12 @@
                         </div>
                     @endcan
 
+                    @can('ver_reportes')
+                        <x-nav-link href="{{ route('reportes.capturas.index') }}" :active="request()->routeIs('reportes.capturas.*')">
+                            Reportes
+                        </x-nav-link>
+                    @endcan
+
                     @can('administrar_usuarios')
                         <x-nav-link href="{{ route('usuarios.index') }}" :active="request()->routeIs('usuarios.*')">
                             Usuarios
@@ -279,6 +285,12 @@
                     </div>
 
                 </div>
+            @endcan
+
+            @can('ver_reportes')
+                <x-responsive-nav-link href="{{ route('reportes.capturas.index') }}" :active="request()->routeIs('reportes.capturas.*')">
+                    Reportes
+                </x-responsive-nav-link>
             @endcan
 
             @can('administrar_usuarios')
