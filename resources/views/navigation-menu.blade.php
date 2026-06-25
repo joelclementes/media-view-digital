@@ -22,7 +22,7 @@
                             <button type="button" x-on:click="openCatalogosDesktop = ! openCatalogosDesktop"
                                 x-on:click.outside="openCatalogosDesktop = false"
                                 class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none
-                                request()->routeIs('cat-tipos-eleccion.*') || request()->routeIs('catalogos.sujetos') || request()->routeIs('cat-tamanos-publicacion.*') || request()->routeIs('catalogos.generos') || request()->routeIs('cat-violencia-temas.*')
+                                request()->routeIs('cat-tipos-eleccion.*') || request()->routeIs('catalogos.sujetos') || request()->routeIs('cat-tamanos-publicacion.*') || request()->routeIs('catalogos.generos') || request()->routeIs('cat-violencia-temas.*') || request()->routeIs('cat-periodos.*')
                                     ? 'border-primary-400 text-gray-900 focus:border-primary-700'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300' }}">
                                 Catálogos
@@ -70,6 +70,13 @@
                                         ? 'bg-primary-50 text-primary-700 font-semibold'
                                         : 'text-gray-700 hover:bg-gray-100' }}">
                                     Temas de violencia
+                                </a>
+                                <a href="{{ route('cat-periodos.index') }}"
+                                    class="block px-4 py-2 text-sm transition
+                                    {{ request()->routeIs('cat-periodos.*')
+                                        ? 'bg-primary-50 text-primary-700 font-semibold'
+                                        : 'text-gray-700 hover:bg-gray-100' }}">
+                                    Periodos electorales
                                 </a>
                             </div>
                         </div>
@@ -261,8 +268,13 @@
                         <x-responsive-nav-link href="{{ route('catalogos.generos') }}" :active="request()->routeIs('catalogos.generos')" class="ps-8">
                             Géneros periodísticos
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link href="{{ route('cat-violencia-temas.index') }}" :active="request()->routeIs('cat-violencia-temas.*')" class="ps-8">
+                        <x-responsive-nav-link href="{{ route('cat-violencia-temas.index') }}" :active="request()->routeIs('cat-violencia-temas.*')"
+                            class="ps-8">
                             Temas de violencia
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link href="{{ route('cat-periodos.index') }}" :active="request()->routeIs('cat-periodos.*')"
+                            class="ps-8">
+                            Periodos electorales
                         </x-responsive-nav-link>
                     </div>
 

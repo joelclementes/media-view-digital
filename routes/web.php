@@ -36,5 +36,6 @@ Route::middleware([
     require __DIR__ . '/cat-tamanos-publicacion.php';
     require __DIR__ . '/cat-generos.php';
     require __DIR__ . '/cat-violencia-temas.php';
+    require __DIR__ . '/cat-periodos.php';
 
 });
