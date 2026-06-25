@@ -45,10 +45,17 @@
                                 </a>
                                 <a href="{{ route('catalogos.sujetos') }}"
                                     class="block px-4 py-2 text-sm transition
-                            {{ request()->routeIs('catalogos.sujetos')
-                                ? 'bg-primary-50 text-primary-700 font-semibold'
-                                : 'text-gray-700 hover:bg-gray-100' }}">
+                                    {{ request()->routeIs('catalogos.sujetos')
+                                        ? 'bg-primary-50 text-primary-700 font-semibold'
+                                        : 'text-gray-700 hover:bg-gray-100' }}">
                                     Sujetos
+                                </a>
+                                <a href="{{ route('cat-tamanos-publicacion.index') }}"
+                                    class="block px-4 py-2 text-sm transition
+                                    {{ request()->routeIs('cat-tamanos-publicacion.*')
+                                        ? 'bg-primary-50 text-primary-700 font-semibold'
+                                        : 'text-gray-700 hover:bg-gray-100' }}">
+                                    Tamaños de publicación
                                 </a>
                             </div>
                         </div>
@@ -213,7 +220,7 @@
                 <div>
                     <button type="button" x-on:click="catalogosOpen = ! catalogosOpen"
                         class="flex w-full items-center justify-between border-l-4 py-2 pe-4 ps-3 text-start text-base font-medium transition duration-150 ease-in-out focus:outline-none
-                        {{ request()->routeIs('cat-tipos-eleccion.*') || request()->routeIs('catalogos.sujetos')
+                        {{ request()->routeIs('cat-tipos-eleccion.*') || request()->routeIs('catalogos.sujetos') || request()->routeIs('cat-tamanos-publicacion.*')
                             ? 'border-primary-400 bg-primary-50 text-primary-700'
                             : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800' }}">
                         <span>Catálogos</span>
@@ -232,6 +239,9 @@
                         </x-responsive-nav-link>
                         <x-responsive-nav-link href="{{ route('catalogos.sujetos') }}" :active="request()->routeIs('catalogos.sujetos')" class="ps-8">
                             Sujetos
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link href="{{ route('cat-tamanos-publicacion.index') }}" :active="request()->routeIs('cat-tamanos-publicacion.*')" class="ps-8">
+                            Tamaños de publicación
                         </x-responsive-nav-link>
                     </div>
 
