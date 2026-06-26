@@ -25,6 +25,7 @@ class RoleSeeder extends Seeder
 
         Permission::create(['name' => 'subir_reportes'])->syncRoles([$rolSuperUsuario,$rolAdministrador]);
         Permission::create(['name' => 'ver_reportes'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolConsultor]);
+        Permission::create(['name' => 'ver_reportes_capturas'])->syncRoles([$rolSuperUsuario,$rolAdministrador]);
         Permission::create(['name' => 'ver_soportes_promocionales'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
         Permission::create(['name' => 'ver_medios_electronicos'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);
         Permission::create(['name' => 'ver_medios_impresos'])->syncRoles([$rolSuperUsuario,$rolAdministrador, $rolCapturista, $rolConsultor]);

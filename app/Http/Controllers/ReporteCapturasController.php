@@ -113,37 +113,72 @@ class ReporteCapturasController extends Controller
         return $pdf->stream('reporte_capturas_' . now()->format('Ymd_His') . '.pdf');
     }
 
+    // private function generarResultados(string $tipo, ?string $fechaInicial, ?string $fechaFinal)
+    // {
+    //     $medio = $this->medios()[$tipo];
+
+    //     $queryConteos = DB::table($medio['tabla'])
+    //         ->select('usuario1_id', DB::raw('COUNT(*) as total'))
+    //         ->whereNotNull('usuario1_id');
+
+    //     if ($fechaInicial) {
+    //         $queryConteos->whereDate($medio['fecha'], '>=', $fechaInicial);
+    //     }
+
+    //     if ($fechaFinal) {
+    //         $queryConteos->whereDate($medio['fecha'], '<=', $fechaFinal);
+    //     }
+
+    //     $conteos = $queryConteos
+    //         ->groupBy('usuario1_id')
+    //         ->pluck('total', 'usuario1_id');
+
+    //     return User::role('Capturista')
+    //         ->select('id', 'name', 'email')
+    //         ->orderBy('name')
+    //         ->get()
+    //         ->map(function ($user) use ($conteos) {
+    //             return (object) [
+    //                 'id' => $user->id,
+    //                 'nombre' => $user->name,
+    //                 'email' => $user->email,
+    //                 'total' => (int) ($conteos[$user->id] ?? 0),
+    //             ];
+    //         });
+    // }
+
     private function generarResultados(string $tipo, ?string $fechaInicial, ?string $fechaFinal)
-    {
-        $medio = $this->medios()[$tipo];
+{
+    $medio = $this->medios()[$tipo];
 
-        $queryConteos = DB::table($medio['tabla'])
-            ->select('usuario1_id', DB::raw('COUNT(*) as total'))
-            ->whereNotNull('usuario1_id');
+    $queryConteos = DB::table($medio['tabla'])
+        ->select('usuario1_id', DB::raw('COUNT(*) as total'))
+        ->whereNotNull('usuario1_id');
 
-        if ($fechaInicial) {
-            $queryConteos->whereDate($medio['fecha'], '>=', $fechaInicial);
-        }
-
-        if ($fechaFinal) {
-            $queryConteos->whereDate($medio['fecha'], '<=', $fechaFinal);
-        }
-
-        $conteos = $queryConteos
-            ->groupBy('usuario1_id')
-            ->pluck('total', 'usuario1_id');
-
-        return User::role('Capturista')
-            ->select('id', 'name', 'email')
-            ->orderBy('name')
-            ->get()
-            ->map(function ($user) use ($conteos) {
-                return (object) [
-                    'id' => $user->id,
-                    'nombre' => $user->name,
-                    'email' => $user->email,
-                    'total' => (int) ($conteos[$user->id] ?? 0),
-                ];
-            });
+    if ($fechaInicial) {
+        $queryConteos->whereDate($medio['fecha'], '>=', $fechaInicial);
     }
+
+    if ($fechaFinal) {
+        $queryConteos->whereDate($medio['fecha'], '<=', $fechaFinal);
+    }
+
+    $conteos = $queryConteos
+        ->groupBy('usuario1_id')
+        ->pluck('total', 'usuario1_id');
+
+    return User::role('Capturista')
+        ->select('id', 'name', 'email')
+        ->whereIn('id', $conteos->keys())
+        ->orderBy('name')
+        ->get()
+        ->map(function ($user) use ($conteos) {
+            return (object) [
+                'id' => $user->id,
+                'nombre' => $user->name,
+                'email' => $user->email,
+                'total' => (int) ($conteos[$user->id] ?? 0),
+            ];
+        });
+}
 }

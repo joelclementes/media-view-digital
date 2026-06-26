@@ -50,16 +50,16 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'string', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'string', 'max:255', 'unique:users,email'],
             'role' => ['required', Rule::in($rolesPermitidos)],
             'password' => ['required', 'confirmed', 'min:8'],
-            'activo' => true,
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'activo' => true,
         ]);
 
         $user->assignRole($validated['role']);

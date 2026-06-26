@@ -60,7 +60,7 @@
                             name="fecha_inicial"
                             type="date"
                             class="mt-1 block w-full"
-                            value="{{ request('fecha_inicial') }}"
+                            value="{{ request('fecha_inicial', now()->format('Y-m-d')) }}"
                         />
                     </div>
 
@@ -72,7 +72,7 @@
                             name="fecha_final"
                             type="date"
                             class="mt-1 block w-full"
-                            value="{{ request('fecha_final') }}"
+                            value="{{ request('fecha_final', now()->format('Y-m-d')) }}"
                         />
                     </div>
 
